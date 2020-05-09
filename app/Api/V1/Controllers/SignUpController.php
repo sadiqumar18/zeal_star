@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers;
 use Config;
 use App\User;
 use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\SignUpRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -14,15 +15,17 @@ class SignUpController extends Controller
     public function signUp(SignUpRequest $request, JWTAuth $JWTAuth)
     {
 
+
+
         $user = new User($request->all());
-        if(!$user->save()) {
+        if (!$user->save()) {
             throw new HttpException(500);
         }
 
-        if(!Config::get('boilerplate.sign_up.release_token')) {
+        if (!Config::get('boilerplate.sign_up.release_token')) {
             return response()->json([
                 'status' => 'ok',
-                $user
+                'user' => $user
             ], 201);
         }
 

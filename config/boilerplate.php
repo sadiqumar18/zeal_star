@@ -12,10 +12,11 @@ return [
         // here you can specify some validation rules for your sign-in request
         'validation_rules' => [
             'fullname' => 'required',
-            'email' => 'required|email',
-            'number' => 'required',
+            'email' => 'required|email|unique:users',
+            'number' => 'required|unique:users',
             'password' => 'required',
-            'pin' => 'required|min:6'
+            'pin' => 'required|min:6',
+            'webhook_url'=>'url'
         ]
     ],
 

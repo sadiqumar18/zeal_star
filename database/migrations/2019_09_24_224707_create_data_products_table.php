@@ -15,10 +15,11 @@ class CreateDataProductsTable extends Migration
     {
         Schema::create('data_products', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('data_bundle');
-            $table->string('data_name');
-            $table->string('ussd_string');
-            $table->string('amount');
+            $table->string('bundle')->unique();
+            $table->string('network');
+            $table->string('code')->unique();
+            $table->string('validity')->nullable();
+            $table->decimal('price')->default(0);
             $table->timestamps();
         });
     }

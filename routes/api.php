@@ -58,6 +58,22 @@ $api->version('v1', function (Router $api) {
         ]);
     });
 
+
+
+    $api->group(['prefix'=>'data','middleware'=>['jwt.auth']], function(Router $api) {
+
+
+        $api->post('/vend','App\\Api\\V1\\Controllers\\DataProductController@purchase');
+        $api->get('/bundles', 'App\\Api\\V1\\Controllers\\DataProductController@index');
+        $api->post('/bundle/{id}','App\\Api\\V1\\Controllers\\DataProductController@update');
+
+
+       
+
+
+
+    });
+
   
 
 

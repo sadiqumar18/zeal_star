@@ -17,8 +17,10 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'fullname', 'email','number', 'password','pin',
+        'fullname', 'email','number', 'password','pin','webhook_url','api_key','balance'
     ];
+
+   
 
     /**
      * The attributes that should be hidden for arrays.
@@ -26,7 +28,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','pin'
     ];
 
     /**
@@ -58,5 +60,11 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+
+    public function dataTransactions()
+    {
+        return $this->hasMany(DataTransaction::class);
     }
 }
