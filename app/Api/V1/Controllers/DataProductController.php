@@ -65,7 +65,7 @@ class DataProductController extends Controller
             case 'mtn':
             
                 $message_details = [
-                    'access_code'=>'',
+                    'access_code'=>'z8cfdf',
                     'code'=>$code,
                     'number'=>'131',
                     'referrence'=>$referrence,
