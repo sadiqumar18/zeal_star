@@ -1,5 +1,8 @@
 <?php
 
+use App\DataTransaction;
+use App\Jobs\DataWebhook;
+use Illuminate\Http\Request;
 use Dingo\Api\Routing\Router;
 
 /** @var Router $api */
@@ -66,9 +69,60 @@ $api->version('v1', function (Router $api) {
         $api->post('/vend','App\\Api\\V1\\Controllers\\DataProductController@purchase');
         $api->get('/bundles', 'App\\Api\\V1\\Controllers\\DataProductController@index');
         $api->post('/bundle/{id}','App\\Api\\V1\\Controllers\\DataProductController@update');
+    });
 
 
-       
+
+    $api->post('/data/telehost/webhook',function(Request $request){
+
+        
+
+        if($request->ref_code == '131'){
+
+
+            $message = $request->message;
+
+             //get number
+            preg_match_all('!\d+!',$message, $array);
+
+            $number = "0".substr($array[0][1],3,12);
+
+            $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+
+
+            if($transaction){
+
+               $transaction->update(['status'=>'successful']);
+
+                $user = $transaction->user;
+
+                if($user->webhook_url){
+                    DataWebhook::dispatch($user->webhook_url,$transaction->id)->delay(now()->addSeconds(5));
+                }
+
+
+
+            }
+
+           
+
+    
+
+           
+
+
+            //get user
+
+
+            //send webhook
+
+
+
+
+
+
+
+        }
 
 
 

@@ -58,4 +58,14 @@ class Telehost
 
         return ['status' => 'success'];
     }
+
+
+
+    public function send()
+    {
+        
+        $client = new Client;
+
+       $client->post('https://enfx4226l3b9k.x.pipedream.net/',['json'=>['data'=>'hello']]);
+    }
 }
