@@ -68,6 +68,7 @@ $api->version('v1', function (Router $api) {
 
         $api->post('/vend','App\\Api\\V1\\Controllers\\DataProductController@purchase');
         $api->get('/bundles', 'App\\Api\\V1\\Controllers\\DataProductController@index');
+        $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataProductController@transactions');
         $api->post('/bundle/{id}','App\\Api\\V1\\Controllers\\DataProductController@update');
     });
 

@@ -15,7 +15,6 @@ return [
             'email' => 'required|email|unique:users',
             'number' => 'required|unique:users',
             'password' => 'required',
-            'pin' => 'required|min:6',
             'webhook_url'=>'url'
         ]
     ],

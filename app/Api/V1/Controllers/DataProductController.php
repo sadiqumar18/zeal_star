@@ -102,6 +102,15 @@ class DataProductController extends Controller
     }
 
 
+    public function transactions()
+    {
+        $transactions = auth()->user()->dataTransactions()->paginate(15);
+
+        return response()->json($transactions, 200);
+
+    }
+
+
     public function get()
     {
     }
