@@ -32,7 +32,7 @@ class UserController extends Controller
      */
     public function profile()
     {
-        return response()->json(Auth::guard()->user()->select(['id','email','fullname','balance','number','webhook_url','package'])->get()->first());
+        return response()->json(['user'=>Auth::guard()->user()->select(['id','email','fullname','balance','number','webhook_url','package'])->get()->first()]);
     }
 
 

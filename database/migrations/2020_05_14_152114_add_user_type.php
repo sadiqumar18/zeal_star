@@ -15,7 +15,7 @@ class AddUserType extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('package',50)->default('standard');
-            $table->dropColumn(['api_key']);
+            //$table->dropColumn(['api_key']);
         });
     }
 
