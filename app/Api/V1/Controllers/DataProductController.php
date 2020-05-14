@@ -27,10 +27,7 @@ class DataProductController extends Controller
     }
 
 
-    public function update(Request $request, $id)
-    {
-        DataProduct::findOrFail($id)->update($request->all());
-    }
+    
 
 
     public function purchase(Request $request, DataProduct $dataProduct)
@@ -105,6 +102,8 @@ class DataProductController extends Controller
     public function transactions()
     {
         $transactions = auth()->user()->dataTransactions()->paginate(15);
+
+        dd(auth()->user()->assignRole('admin'));
 
         return response()->json($transactions, 200);
 
