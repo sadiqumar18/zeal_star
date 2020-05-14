@@ -2,11 +2,12 @@
 
 namespace App\Api\V1\Controllers;
 
-use Auth;
+
 use App\User;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Api\V1\Requests\LoginRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -29,9 +30,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function me()
+    public function profile()
     {
-        return response()->json(Auth::guard()->user());
+        return response()->json(Auth::guard()->user()->select(['id','email','fullname','balance','number','webhook_url','package'])->get()->first());
     }
 
 

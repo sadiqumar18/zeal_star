@@ -71,6 +71,11 @@ $api->version('v1', function (Router $api) {
     });
 
 
+    $api->group(['prefix'=>'user','middleware'=>['jwt.auth']], function(Router $api) {
+
+        $api->get('/profile', 'App\\Api\\V1\\Controllers\\UserController@profile');
+       
+    });
 
 
     $api->group(['prefix'=>'admin','middleware'=>['admin']], function(Router $api) {
