@@ -103,8 +103,6 @@ class DataProductController extends Controller
     {
         $transactions = auth()->user()->dataTransactions()->paginate(15);
 
-        dd(auth()->user()->assignRole('admin'));
-
         return response()->json($transactions, 200);
 
     }
