@@ -33,13 +33,13 @@ class DataProductController extends Controller
     public function purchase(Request $request, DataProduct $dataProduct)
     {
 
+       
         $this->validate($request, [
             'network' => 'required|exists:data_products',
             'bundle' => 'required|exists:data_products',
-            'number' => 'required|min:11',
+            'number' => 'required|regex:/(0)[0-9]{10}/|size:11',
             'referrence' => 'required|unique:data_transactions'
         ]);
-
 
         $network = $request->network;
         $bundle = $request->bundle;

@@ -46,6 +46,8 @@ class DataTransactionController extends Controller
     {
         $transaction = DataTransaction::whereReferrence($referrence)->first();
 
+        
+
 
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
