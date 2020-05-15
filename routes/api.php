@@ -67,7 +67,7 @@ $api->version('v1', function (Router $api) {
         $api->post('/vend','App\\Api\\V1\\Controllers\\DataProductController@purchase');
         $api->get('/bundles', 'App\\Api\\V1\\Controllers\\DataProductController@index');
         $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataProductController@transactions');
-        $api->post('/bundle/{id}','App\\Api\\V1\\Controllers\\DataProductController@update');
+        $api->get('/bundle/status/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@status');
     });
 
 
@@ -80,11 +80,13 @@ $api->version('v1', function (Router $api) {
 
     $api->group(['prefix'=>'admin','middleware'=>['admin']], function(Router $api) {
 
+       
 
         $api->group(['prefix'=>'data','middleware'=>['jwt.auth']], function(Router $api) {
             $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataController@adminTransactions');
             $api->post('/bundle','App\\Api\\V1\\Controllers\\DataController@create');
             $api->post('/bundle/{bundle}','App\\Api\\V1\\Controllers\\DataController@update');
+            $api->get('/bundle/reverse/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@reverseTransaction');
         });
 
 
@@ -100,9 +102,14 @@ $api->version('v1', function (Router $api) {
     $api->post('/data/telehost/webhook',function(Request $request){
 
         
+        //successfully
 
-        if($request->ref_code == '131'){
+        //$message = $request->message;
 
+        $check_success = (strpos($request->message, 'successfully') !== false);
+
+
+        if($request->ref_code == '131' and $check_success){
 
             $message = $request->message;
 
