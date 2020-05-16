@@ -87,6 +87,7 @@ $api->version('v1', function (Router $api) {
             $api->post('/bundle','App\\Api\\V1\\Controllers\\DataController@create');
             $api->post('/bundle/{bundle}','App\\Api\\V1\\Controllers\\DataController@update');
             $api->get('/bundle/reverse/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@reverseTransaction');
+            $api->get('/bundle/retry/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@retry');
         });
 
 

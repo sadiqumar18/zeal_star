@@ -6,9 +6,12 @@ namespace App\Api\V1\Controllers;
 
 use App\DataProduct;
 use App\DataTransaction;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Jobs\DataWebhook;
+use App\Services\Telehost;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Jobs\SendTelehostMessage;
+use App\Http\Controllers\Controller;
 
 class DataTransactionController extends Controller
 {
@@ -58,5 +61,46 @@ class DataTransactionController extends Controller
         }
 
         return response()->json(['status' => 'success', 'data' => $transaction]);
+    }
+
+
+    public function retry(Telehost $telehost,$referrence)
+    {
+
+        $transaction = DataTransaction::whereReferrence($referrence)->first();
+
+        if (is_null($transaction)) {
+            return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
+        }
+
+        $dataBundle = DataProduct::whereBundle($transaction->bundle)->first();
+
+        $code =  str_replace('{{number}}', $transaction->number, $dataBundle->code);
+
+        switch (strtolower($transaction->network)) {
+            case 'mtn':
+                $message_details = [
+                    'access_code'=>'z8cfdf',
+                    'code'=>$code,
+                    'number'=>'131',
+                    'referrence'=>Str::random(15),
+                ];
+
+                $response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
+
+
+                break;
+
+            default:
+                # code...
+                break;
+        }
+
+
+
+
+
+
+
     }
 }

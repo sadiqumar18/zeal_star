@@ -51,6 +51,8 @@ class Telehost
 
         $response = json_decode($response, true);
 
+        dd($response);
+
         if ($response['status'] = !'success') {
             return ['status' => 'failed'];
         }
