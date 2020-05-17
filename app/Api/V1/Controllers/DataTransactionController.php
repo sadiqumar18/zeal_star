@@ -79,8 +79,11 @@ class DataTransactionController extends Controller
 
         switch (strtolower($transaction->network)) {
             case 'mtn':
+
+                $access_code = ['z8cfdf','5k9iep'];
+
                 $message_details = [
-                    'access_code'=>'z8cfdf',
+                    'access_code'=>$access_code[rand(0,1)],
                     'code'=>$code,
                     'number'=>'131',
                     'referrence'=>Str::random(15),

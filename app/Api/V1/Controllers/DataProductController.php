@@ -61,6 +61,8 @@ class DataProductController extends Controller
         switch (strtolower($network)) {
             case 'mtn':
             
+                $access_code = ['z8cfdf','5k9iep'];
+
                 $message_details = [
                     'access_code'=>'z8cfdf',
                     'code'=>$code,
