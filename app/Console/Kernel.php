@@ -28,6 +28,7 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 
         $schedule->command('telescope:prune --hours=1')->hourly();
+        $schedule->command('telescope:clear')->hourly();
     }
 
     /**
