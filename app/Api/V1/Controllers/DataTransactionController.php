@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Jobs\SendTelehostMessage;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class DataTransactionController extends Controller
 {
@@ -83,7 +84,7 @@ class DataTransactionController extends Controller
                 $access_code = ['z8cfdf','5k9iep'];
 
                 $message_details = [
-                    'access_code'=>$access_code[rand(0,1)],
+                    'access_code'=>'z8cfdf',
                     'code'=>$code,
                     'number'=>'131',
                     'referrence'=>Str::random(15),
@@ -91,6 +92,7 @@ class DataTransactionController extends Controller
 
                 $response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
 
+                Log::info($message_details);
 
                 break;
 

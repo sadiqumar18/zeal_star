@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\RetryData;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        RetryData::class
     ];
 
     /**
@@ -29,6 +30,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('telescope:prune --hours=1')->hourly();
         $schedule->command('telescope:clear')->hourly();
+        $schedule->command('retry:data')->everyMinute();
+
     }
 
     /**

@@ -71,7 +71,7 @@ class DataProductController extends Controller
                     'amount'=>$dataBundle->price
                 ];
 
-                SendTelehostMessage::dispatch($user,$message_details)->delay(now()->addSeconds(5));
+                SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
   
                 break;
 
