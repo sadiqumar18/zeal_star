@@ -46,14 +46,15 @@ class RetryData extends Command
         $dt = $dataTransaction->whereStatus('processing')->get();
        
         $filtered =  $dt->filter(function($array){
-            return $array->created_at->lt(Carbon::now()->subMinutes(10));
+            return $array->updated_at->lt(Carbon::now()->subMinutes(10));
         })->each(function($array)
         {
 
-
-            $delay = DB::table('jobs')->count()*5;
+           $delay = DB::table('jobs')->count()*10;
 
            JobsRetryData::dispatch($array->referrence)->delay(now()->addSeconds($delay));
+
+           $array->update(['updated_at'=>Carbon::now()]);
 
         });
 
