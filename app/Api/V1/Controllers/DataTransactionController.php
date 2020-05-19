@@ -81,7 +81,7 @@ class DataTransactionController extends Controller
         switch (strtolower($transaction->network)) {
             case 'mtn':
 
-                $access_code = ['z8cfdf','5k9iep'];
+                $access_code = ['z8cfdf','zwb1ek'];
 
                 $message_details = [
                     'access_code'=>'z8cfdf',

@@ -99,6 +99,17 @@ $api->version('v1', function (Router $api) {
     });
 
 
+    $api->get('/data/retry',function(Request $request){
+
+       // dd($request->minutes);
+
+        $theExitCode = Artisan::call("retry:data {$request->minutes}");
+        $result = Artisan::output(); 
+
+
+    });
+
+
 
     $api->post('/data/telehost/webhook',function(Request $request){
 

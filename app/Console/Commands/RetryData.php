@@ -15,7 +15,7 @@ class RetryData extends Command
      *
      * @var string
      */
-    protected $signature = 'retry:data';
+    protected $signature = 'retry:data {minutes}';
 
     /**
      * The console command description.
@@ -41,20 +41,29 @@ class RetryData extends Command
      */
     public function handle(DataTransaction $dataTransaction)
     {
+       // dd($this->argument('minutes'));
       
 
         $dt = $dataTransaction->whereStatus('processing')->get();
+
+
+        //dd(DataTransaction::whereDate('created_at', Carbon::yesterday())->count());
+       
+
        
         $filtered =  $dt->filter(function($array){
-            return $array->updated_at->lt(Carbon::now()->subMinutes(10));
+            return $array->created_at->lt(Carbon::now()->subMinutes($this->argument('minutes')));
         })->each(function($array)
         {
+            
+            $delay = DB::table('jobs')->count()+10;
 
-           $delay = DB::table('jobs')->count()*10;
+            var_dump($array->number);
+
 
            JobsRetryData::dispatch($array->referrence)->delay(now()->addSeconds($delay));
 
-           $array->update(['updated_at'=>Carbon::now()]);
+           //$array->update(['updated_at'=>Carbon::now()]);
 
         });
 
