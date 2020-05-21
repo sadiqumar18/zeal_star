@@ -41,29 +41,28 @@ class RetryData extends Command
      */
     public function handle(DataTransaction $dataTransaction)
     {
-       // dd($this->argument('minutes'));
-      
+        // dd($this->argument('minutes'));
+
 
         $dt = $dataTransaction->whereStatus('processing')->get();
 
 
         //dd(DataTransaction::whereDate('created_at', Carbon::yesterday())->count());
-       
 
-       
-        $filtered =  $dt->filter(function($array){
+
+
+        $filtered =  $dt->filter(function ($array) {
             return $array->created_at->lt(Carbon::now()->subMinutes($this->argument('minutes')));
-        })->each(function($array)
-        {
-            
-            $delay = DB::table('jobs')->count()+20;
+        })->each(function ($array) {
+
+            $delay = DB::table('jobs')->count() + 20;
 
             var_dump($array->number);
 
 
-           JobsRetryData::dispatch($array->referrence)->delay(now()->addSeconds($delay));
+            JobsRetryData::dispatch($array->referrence)->delay(now()->addSeconds($delay));
 
-           //$array->update(['updated_at'=>Carbon::now()]);
+            //$array->update(['updated_at'=>Carbon::now()]);
 
         });
 

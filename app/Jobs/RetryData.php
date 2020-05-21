@@ -33,8 +33,8 @@ class RetryData implements ShouldQueue
      *
      * @return void
      */
-    public function handle(DataTransactionController $dataTransaction,Telehost $telehost)
+    public function handle(DataTransactionController $dataTransaction, Telehost $telehost)
     {
-        $dataTransaction->retry($telehost,$this->referrence);
+        $dataTransaction->retry($telehost, $this->referrence);
     }
 }

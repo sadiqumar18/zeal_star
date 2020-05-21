@@ -4,6 +4,7 @@ use App\DataTransaction;
 use App\Jobs\DataWebhook;
 use Illuminate\Http\Request;
 use Dingo\Api\Routing\Router;
+use Illuminate\Support\Facades\Artisan;
 
 /** @var Router $api */
 $api = app(Router::class);
@@ -89,6 +90,8 @@ $api->version('v1', function (Router $api) {
             $api->post('/bundle/{bundle}','App\\Api\\V1\\Controllers\\DataController@update');
             $api->get('/bundle/reverse/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@reverseTransaction');
             $api->get('/bundle/retry/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@retry');
+            $api->get('/bundle/success/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@success');
+  
         });
 
 

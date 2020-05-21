@@ -42,10 +42,10 @@ class DataWebhook implements ShouldQueue
     {
 
         $client->post($this->url, [
-            'timeout'=>15,
-             'json' => [
-                 'data' => DataTransaction::select('bundle','number','referrence','price','status','updated_at')->where('id',$this->id)->first()
-                 ]
-            ]);
+            'timeout' => 15,
+            'json' => [
+                'data' => DataTransaction::select('bundle', 'number', 'referrence', 'price', 'status', 'updated_at')->where('id', $this->id)->first()
+            ]
+        ]);
     }
 }
