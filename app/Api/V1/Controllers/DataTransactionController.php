@@ -53,8 +53,6 @@ class DataTransactionController extends Controller
         $transaction = DataTransaction::whereReferrence($referrence)->first();
 
 
-
-
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
         }
@@ -102,6 +100,9 @@ class DataTransactionController extends Controller
                 # code...
                 break;
         }
+
+
+        return response()->json(['status' => 'success', 'data' => $transaction]);
     }
 
     public function success(Request $request)
@@ -142,6 +143,30 @@ class DataTransactionController extends Controller
             ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
             ->whereDate('created_at', Carbon::create($request->date))
             ->where('user_id', auth()->user()->id)
+            ->first();
+
+        return response()->json(['analysis' => $totals], 200);
+    }
+
+
+    public function analysisAdmin(Request $request)
+    {
+
+        $this->validate($request, [
+            'date' => 'required|date_format:Y/m/d',
+        ]);
+
+        $totals = DB::table('data_transactions')
+            ->selectRaw('count(*) as total')
+            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'MTN-1GB'")
+            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) as 'MTN-2GB'")
+            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) as 'MTN-3GB'")
+            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) as 'MTN-5GB'")
+            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) as 'MTN-500MB'")
+            ->selectRaw("count(case when status = 'successful' then 1 end) as successful")
+            ->selectRaw("count(case when status = 'processing' then 1 end) as processing")
+            ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
+            ->whereDate('created_at', Carbon::create($request->date))
             ->first();
 
         return response()->json(['analysis' => $totals], 200);
