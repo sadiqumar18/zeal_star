@@ -56,7 +56,7 @@ class RetryData extends Command
         })->each(function($array)
         {
             
-            $delay = DB::table('jobs')->count()+10;
+            $delay = DB::table('jobs')->count()+20;
 
             var_dump($array->number);
 

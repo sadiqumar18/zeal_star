@@ -68,6 +68,7 @@ $api->version('v1', function (Router $api) {
         $api->get('/bundles', 'App\\Api\\V1\\Controllers\\DataProductController@index');
         $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataProductController@transactions');
         $api->get('/bundle/status/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@status');
+        $api->get('analysis','App\\Api\\V1\\Controllers\\DataTransactionController@analysis');
     });
 
 
@@ -118,6 +119,8 @@ $api->version('v1', function (Router $api) {
 
         //$message = $request->message;
 
+        //dd($request->all());
+
         $check_success = (strpos($request->message, 'successfully') !== false);
 
 
@@ -130,8 +133,30 @@ $api->version('v1', function (Router $api) {
 
             $number = "0".substr($array[0][1],3,12);
 
-            $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+            $bundle = explode(' ',$message)[4];
 
+           
+
+            switch ($bundle) {
+                case '500MB':
+                    $bundle = 'MTN-500MB';
+                    break;
+                case '1000MB':
+                    $bundle = 'MTN-1GB';
+                    break;   
+                case '2000MB':
+                    $bundle = 'MTN-2GB';
+                    break;
+                case '3000MB':
+                    $bundle = 'MTN-3GB';
+                    break;
+                case '5000MB':
+                    $bundle = 'MTN-5GB';
+                    break;            
+
+            }
+
+            $transaction = DataTransaction::whereNumber($number)->whereBundle($bundle)->whereStatus('processing')->first();
 
             if($transaction){
 
