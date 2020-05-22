@@ -184,7 +184,6 @@ class DataTransactionController extends Controller
             ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
             ->whereDate('created_at', '>=', Carbon::create($request->from))
             ->whereDate('created_at', '<=', Carbon::create($request->to))
-            ->where('user_id', auth()->user()->id)
             ->first();
 
         return response()->json(['analysis' => $totals], 200);
