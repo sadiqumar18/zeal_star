@@ -147,19 +147,30 @@ class DataTransactionController extends Controller
             ->where('user_id', auth()->user()->id)
             ->first();
 
-        /*dd($totals);
 
-            $values = collect([
-                       'MTN-1GB'=>$totals->oneGB,
-                       'MTN-2GB'=>$totals->twoGB,
-                       'MTN-3GB'=>$totals->threeGB,
-                       'MTN-5GB'=>$totals->fiveGB,
-                       'MTN-500MB'=>$totals->fiveMB,
-                      ]);
 
-        dd($values);  */
+        $values = collect([
+            'onGB' => $totals->oneGB,
+            'twoGB' => $totals->twoGB,
+            'threeGB' => $totals->threeGB,
+            'fiveGB' => $totals->fiveGB,
+            'five_hundred_MB' => $totals->five_hundred_MB,
+        ]);
 
-        return response()->json(['analysis' => $totals], 200);
+        $sum = $values->sum();
+
+        $new_values = collect(
+            [
+                'total_transaction_count' => $totals->total,
+                'total_bundle_consumed' => $sum,
+                'processing' => $totals->processing,
+                'reversed' => $totals->reversed,
+                'successful' => $totals->successful,
+            ]
+        )->merge($values);
+
+
+        return response()->json(['analysis' => $new_values], 200);
     }
 
 
@@ -186,7 +197,28 @@ class DataTransactionController extends Controller
             ->whereDate('created_at', '<=', Carbon::create($request->to))
             ->first();
 
-        return response()->json(['analysis' => $totals], 200);
+        $values = collect([
+            'onGB' => $totals->oneGB,
+            'twoGB' => $totals->twoGB,
+            'threeGB' => $totals->threeGB,
+            'fiveGB' => $totals->fiveGB,
+            'five_hundred_MB' => $totals->five_hundred_MB,
+        ]);
+
+        $sum = $values->sum();
+
+        $new_values = collect(
+            [
+                'total_transaction_count' => $totals->total,
+                'total_bundle_consumed' => $sum,
+                'processing' => $totals->processing,
+                'reversed' => $totals->reversed,
+                'successful' => $totals->successful,
+            ]
+        )->merge($values);
+
+
+        return response()->json(['analysis' => $new_values], 200);
     }
 
 
@@ -216,6 +248,31 @@ class DataTransactionController extends Controller
             ->where('user_id', auth()->user()->id)
             ->first();
 
-        return response()->json(['analysis' => $totals], 200);
+
+        $values = collect([
+            'onGB' => $totals->oneGB,
+            'twoGB' => $totals->twoGB,
+            'threeGB' => $totals->threeGB,
+            'fiveGB' => $totals->fiveGB,
+            'five_hundred_MB' => $totals->five_hundred_MB,
+        ]);
+
+        $sum = $values->sum();
+
+        $new_values = collect(
+            [
+                'total_transaction_count' => $totals->total,
+                'total_bundle_consumed' => $sum,
+                'processing' => $totals->processing,
+                'reversed' => $totals->reversed,
+                'successful' => $totals->successful,
+            ]
+        )->merge($values);
+
+
+        return response()->json(['analysis' => $new_values], 200);
+
+
+        
     }
 }
