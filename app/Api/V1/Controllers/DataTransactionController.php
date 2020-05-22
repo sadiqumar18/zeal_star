@@ -4,6 +4,7 @@
 
 namespace App\Api\V1\Controllers;
 
+use App\User;
 use Carbon\Carbon;
 use App\DataProduct;
 use App\DataTransaction;
@@ -126,24 +127,37 @@ class DataTransactionController extends Controller
 
     public function analysis(Request $request)
     {
-
         $this->validate($request, [
-            'date' => 'required|date_format:Y/m/d',
+            'from' => 'required|date_format:Y/m/d',
+            'to' => 'required|date_format:Y/m/d'
         ]);
 
         $totals = DB::table('data_transactions')
             ->selectRaw('count(*) as total')
-            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'MTN-1GB'")
-            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) as 'MTN-2GB'")
-            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) as 'MTN-3GB'")
-            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) as 'MTN-5GB'")
-            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) as 'MTN-500MB'")
+            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'oneGB'")
+            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) * 2 as 'twoGB'")
+            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) * 3 as 'threeGB'")
+            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) * 5 as 'fiveGB'")
+            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) * 0.5 as 'five_hundred_MB'")
             ->selectRaw("count(case when status = 'successful' then 1 end) as successful")
             ->selectRaw("count(case when status = 'processing' then 1 end) as processing")
             ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
-            ->whereDate('created_at', Carbon::create($request->date))
+            ->whereDate('created_at', '>=', Carbon::create($request->from))
+            ->whereDate('created_at', '<=', Carbon::create($request->to))
             ->where('user_id', auth()->user()->id)
             ->first();
+
+        /*dd($totals);
+
+            $values = collect([
+                       'MTN-1GB'=>$totals->oneGB,
+                       'MTN-2GB'=>$totals->twoGB,
+                       'MTN-3GB'=>$totals->threeGB,
+                       'MTN-5GB'=>$totals->fiveGB,
+                       'MTN-500MB'=>$totals->fiveMB,
+                      ]);
+
+        dd($values);  */
 
         return response()->json(['analysis' => $totals], 200);
     }
@@ -153,20 +167,54 @@ class DataTransactionController extends Controller
     {
 
         $this->validate($request, [
-            'date' => 'required|date_format:Y/m/d',
+            'from' => 'required|date_format:Y/m/d',
+            'to' => 'required|date_format:Y/m/d'
         ]);
+
 
         $totals = DB::table('data_transactions')
             ->selectRaw('count(*) as total')
-            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'MTN-1GB'")
-            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) as 'MTN-2GB'")
-            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) as 'MTN-3GB'")
-            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) as 'MTN-5GB'")
-            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) as 'MTN-500MB'")
+            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'oneGB'")
+            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) * 2 as 'twoGB'")
+            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) * 3 as 'threeGB'")
+            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) * 5 as 'fiveGB'")
+            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) * 0.5 as 'five_hundred_MB'")
             ->selectRaw("count(case when status = 'successful' then 1 end) as successful")
             ->selectRaw("count(case when status = 'processing' then 1 end) as processing")
             ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
-            ->whereDate('created_at', Carbon::create($request->date))
+            ->whereDate('created_at', '>=', Carbon::create($request->from))
+            ->whereDate('created_at', '<=', Carbon::create($request->to))
+            ->where('user_id', auth()->user()->id)
+            ->first();
+
+        return response()->json(['analysis' => $totals], 200);
+    }
+
+
+    public function analysisByUser(Request $request)
+    {
+        $this->validate($request, [
+            'from' => 'required|date_format:Y/m/d',
+            'to' => 'required|date_format:Y/m/d',
+            'email' => 'required|email|exists:users'
+        ]);
+
+        $user = User::whereEmail($request->email)->first();
+
+
+        $totals = DB::table('data_transactions')
+            ->selectRaw('count(*) as total')
+            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'oneGB'")
+            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) * 2 as 'twoGB'")
+            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) * 3 as 'threeGB'")
+            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) * 5 as 'fiveGB'")
+            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) * 0.5 as 'five_hundred_MB'")
+            ->selectRaw("count(case when status = 'successful' then 1 end) as successful")
+            ->selectRaw("count(case when status = 'processing' then 1 end) as processing")
+            ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
+            ->whereDate('created_at', '>=', Carbon::create($request->from))
+            ->whereDate('created_at', '<=', Carbon::create($request->to))
+            ->where('user_id', auth()->user()->id)
             ->first();
 
         return response()->json(['analysis' => $totals], 200);

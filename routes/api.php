@@ -92,6 +92,7 @@ $api->version('v1', function (Router $api) {
             $api->get('/bundle/retry/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@retry');
             $api->get('/bundle/success/{referrence}','App\\Api\\V1\\Controllers\\DataTransactionController@success');
             $api->get('/analysis','App\\Api\\V1\\Controllers\\DataTransactionController@analysisAdmin');
+            $api->get('/analysis/user','App\\Api\\V1\\Controllers\\DataTransactionController@analysisByUser');
 
         });
 
