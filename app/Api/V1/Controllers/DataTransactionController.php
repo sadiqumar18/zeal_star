@@ -271,8 +271,5 @@ class DataTransactionController extends Controller
 
 
         return response()->json(['analysis' => $new_values], 200);
-
-
-        
     }
 }

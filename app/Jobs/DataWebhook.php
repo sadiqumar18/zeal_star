@@ -19,16 +19,18 @@ class DataWebhook implements ShouldQueue
 
     protected $url;
     protected $id;
+    protected $message;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($url, $id)
+    public function __construct($url, $id,$message = null)
     {
         $this->url = $url;
         $this->id = $id;
+        $this->message = $message;
 
         Log::info($id);
     }
@@ -44,7 +46,8 @@ class DataWebhook implements ShouldQueue
         $client->post($this->url, [
             'timeout' => 15,
             'json' => [
-                'data' => DataTransaction::select('bundle', 'number', 'referrence', 'price', 'status', 'updated_at')->where('id', $this->id)->first()
+                'data' => DataTransaction::select('bundle', 'number', 'referrence', 'price', 'status', 'updated_at')->where('id', $this->id)->first(),
+                'message' => ($this->message)?$this->message:""
             ]
         ]);
     }
