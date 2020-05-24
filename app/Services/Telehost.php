@@ -61,6 +61,30 @@ class Telehost
     }
 
 
+    public function sendUssd($access_code, $usssd_code, $referrence)
+    {
+        $params = [
+            'ref_code' => $referrence,
+            'access_code' => $access_code,
+            'ussd_code' => $usssd_code
+        ];
+
+        $response = $this->client->post('/api/post-ussd', ['json' => $params])->getBody();
+
+        $response = json_decode($response, true);
+
+
+        if ($response['status'] = !'success') {
+            return ['status' => 'failed'];
+        }
+
+
+        return ['status' => 'success'];
+    }
+
+
+
+
 
     public function send()
     {

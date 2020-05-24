@@ -8,6 +8,7 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendTelehostMessage;
+use App\Jobs\SendTelehostUssd;
 use App\Services\Telehost;
 
 class DataProductController extends Controller
@@ -27,13 +28,13 @@ class DataProductController extends Controller
     }
 
 
-    
+
 
 
     public function purchase(Request $request, DataProduct $dataProduct)
     {
 
-       
+
         $this->validate($request, [
             'network' => 'required|exists:data_products',
             'bundle' => 'required|exists:data_products',
@@ -48,9 +49,14 @@ class DataProductController extends Controller
 
         $user = auth()->user();
 
+
+
         $dataBundle = DataProduct::wherebundle($bundle)->first();
 
-        if ($dataBundle->price > $user->balance) {
+        $dataPrice = $this->getDataPrice($user, $dataBundle);
+
+
+        if ($dataPrice > $user->balance) {
             return response()->json(['status' => 'failed', 'message' => 'Insuficient balance!!'], 400);
         }
 
@@ -60,19 +66,30 @@ class DataProductController extends Controller
 
         switch (strtolower($network)) {
             case 'mtn':
-            
-                $access_code = ['z8cfdf','q76wx8'];
+
+                $access_code = ['z8cfdf', 'q76wx8'];
 
                 $message_details = [
-                    'access_code'=>'z8cfdf',//access_code[rand(0,1)],
-                    'code'=>$code,
-                    'number'=>'131',
-                    'referrence'=>$referrence,
-                    'amount'=>$dataBundle->price
+                    'access_code' => 'z8cfdf', //access_code[rand(0,1)],
+                    'code' => $code,
+                    'number' => '131',
+                    'referrence' => $referrence,
+                    // 'amount' => $dataBundle->price
                 ];
 
                 SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
-  
+
+                break;
+            case 'glo':
+
+                $message_details = [
+                    'access_code' => 'z8cfdf', //access_code[rand(0,1)],
+                    'ussd_code' => $code,
+                    'referrence' => $referrence,
+                ];
+
+                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+
                 break;
 
             default:
@@ -83,7 +100,7 @@ class DataProductController extends Controller
 
 
 
-        $new_balance = $user->balance - $dataBundle->price;
+        $new_balance = $user->balance - $dataPrice;
 
 
         $user->update(['balance' => $new_balance]);
@@ -92,7 +109,7 @@ class DataProductController extends Controller
             "number" => $number,
             "referrence" => $referrence,
             "network" => $network,
-            "price" => $dataBundle->price,
+            "price" => $dataPrice,
             "bundle" => $bundle
         ]));
 
@@ -106,7 +123,6 @@ class DataProductController extends Controller
         $transactions = auth()->user()->dataTransactions()->paginate(15);
 
         return response()->json($transactions, 200);
-
     }
 
 
@@ -130,5 +146,27 @@ class DataProductController extends Controller
 
     public function destroy()
     {
+    }
+
+
+    public function getDataPrice($user, $dataBundle)
+    {
+        switch ($user->package) {
+            case 'standard':
+                return $dataBundle->standard;
+                break;
+            case 'agent':
+                return  $dataBundle->agent;
+                break;
+            case 'vendor':
+                return $dataBundle->vendor;
+                break;
+            case 'merchant':
+                return $dataBundle->merchant;
+                break;
+            case 'reseller':
+                return $dataBundle->reseller;
+                break;
+        }
     }
 }
