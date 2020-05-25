@@ -57,9 +57,12 @@ class UserController extends Controller
         }
 
         return response()->json(['status'=>'success','message'=>'Balance successfully updated'],201);
+    }
 
-        
 
 
+    public function users()
+    {
+        return response()->json(['status'=>'success','users'=>User::paginate(15)]);
     }
 }

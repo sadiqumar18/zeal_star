@@ -96,6 +96,13 @@ $api->version('v1', function (Router $api) {
         $api->group(['prefix' => 'funding', 'middleware' => ['jwt.auth']], function (Router $api) {
             $api->post('/user', 'App\\Api\\V1\\Controllers\\UserController@fund');
         });
+
+        $api->group(['prefix' => 'user', 'middleware' => ['jwt.auth']], function (Router $api) {
+            $api->get('/list', 'App\\Api\\V1\\Controllers\\UserController@users');
+        });
+
+
+
     });
 
 
