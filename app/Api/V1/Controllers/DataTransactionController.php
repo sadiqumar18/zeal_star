@@ -69,7 +69,7 @@ class DataTransactionController extends Controller
     public function retry(Telehost $telehost, $referrence)
     {
 
-        $transaction = DataTransaction::whereReferrence($referrence)->first();
+        $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
 
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
@@ -109,7 +109,7 @@ class DataTransactionController extends Controller
     public function success(Request $request)
     {
 
-        $transaction = DataTransaction::whereReferrence($request->referrence)->first();
+        $transaction = DataTransaction::whereReferrence($request->referrence)->whereStatus('processing')->first();
 
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
