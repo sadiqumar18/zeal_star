@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\SendTelehostMessage;
 use App\Jobs\SendTelehostUssd;
 use App\Services\Telehost;
+use App\Services\Telerivet;
 
 class DataProductController extends Controller
 {
@@ -31,7 +32,7 @@ class DataProductController extends Controller
 
 
 
-    public function purchase(Request $request, DataProduct $dataProduct)
+    public function purchase(Request $request,Telehost $telehost,Telerivet $telerivet)
     {
 
 
@@ -77,13 +78,17 @@ class DataProductController extends Controller
                     // 'amount' => $dataBundle->price
                 ];
 
-                SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
+                //$telehost->sendMessage('z8cfdf', $code, '131', $referrence);
+
+                $telerivet->sendMessage($code,'131');
+
+                //SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
 
                 break;
             case 'glo':
 
                 $message_details = [
-                    'access_code' => 'z8cfdf', //access_code[rand(0,1)],
+                    'access_code' => '2lerfb', //access_code[rand(0,1)],
                     'ussd_code' => $code,
                     'referrence' => $referrence,
                 ];

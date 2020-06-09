@@ -125,12 +125,146 @@ $api->version('v1', function (Router $api) {
 
         //dd($request->all());
 
-        $check_success = (strpos($request->message, 'successfully') !== false);
+
+        switch($request->ref_code){
+
+            case '131':
+
+                $check_success = (strpos($request->message, 'successfully') !== false);
+
+                if ($check_success) {
+
+                    $message = $request->message;
+        
+                    //get number
+                    preg_match_all('!\d+!', $message, $array);
+        
+                    $number = "0" . substr($array[0][1], 3, 12);
+        
+                    $bundle = explode(' ', $message)[4];
+        
+        
+        
+                    switch ($bundle) {
+                        case '500MB':
+                            $bundle = 'MTN-500MB';
+                            break;
+                        case '1000MB':
+                            $bundle = 'MTN-1GB';
+                            break;
+                        case '2000MB':
+                            $bundle = 'MTN-2GB';
+                            break;
+                        case '3000MB':
+                            $bundle = 'MTN-3GB';
+                            break;
+                        case '5000MB':
+                            $bundle = 'MTN-5GB';
+                            break;
+                    }
+        
+                    $transaction = DataTransaction::whereNumber($number)->whereBundle($bundle)->whereStatus('processing')->first();
+        
+                    
+        
+                    if ($transaction) {
+        
+                        
+        
+                        $transaction->update(['status' => 'successful']);
+        
+                        $user = $transaction->user;
+        
+                        \Log::info(empty($user->webhook_url));
+        
+                        if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                            DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                        }
+                    }
+        
+                    return response()->json(['status'=>'success']);
+                } 
+            break;
+            
+            
+
+            case '127':
+
+                $check_success = (strpos($request->message, 'successfully') !== false);
+
+                
+
+                if ($check_success) {
+
+                    $message = $request->message;
+
+                     //get number
+                     preg_match_all('!\d+!', $message, $array);
+        
+                     $number = "0" . substr($array[0][1], 3, 12);
+
+                     
 
 
-        if ($request->ref_code == '131' and $check_success) {
+                     $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+        
+                     if ($transaction) {
+        
+                    
+                        $transaction->update(['status' => 'successful']);
+        
+                        $user = $transaction->user;
+        
+                        \Log::info(empty($user->webhook_url));
+        
+                        if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                            DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                        }
+                    }
 
-            $message = $request->message;
+                    dd($number);
+        
+                    return response()->json(['status'=>'success']);
+
+
+                }
+
+
+
+            break;
+
+
+            
+        }
+
+
+
+       
+
+
+        
+    });
+
+
+
+
+    $api->post('/data/telerivet/webhook', function (Request $request) {
+
+
+        //successfully
+
+        //$message = $request->message;
+
+        //dd($request->all());
+
+
+        
+        $check_success = (strpos($request->content, 'successfully') !== false);
+
+
+        if ($request->from_number == '131' and $check_success) {
+
+            $message = $request->content;
 
             //get number
             preg_match_all('!\d+!', $message, $array);
@@ -161,16 +295,29 @@ $api->version('v1', function (Router $api) {
 
             $transaction = DataTransaction::whereNumber($number)->whereBundle($bundle)->whereStatus('processing')->first();
 
+            
+
             if ($transaction) {
 
                 $transaction->update(['status' => 'successful']);
 
                 $user = $transaction->user;
 
-                if ($user->webhook_url) {
+                if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
                     DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
                 }
             }
+
+            return response()->json(['status'=>'success']);
         }
     });
+
+
+
+  
+  
+
+
+
+
 });

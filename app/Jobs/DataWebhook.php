@@ -21,6 +21,9 @@ class DataWebhook implements ShouldQueue
     protected $id;
     protected $message;
 
+
+    public $tries = 1;
+
     /**
      * Create a new job instance.
      *
@@ -32,7 +35,7 @@ class DataWebhook implements ShouldQueue
         $this->id = $id;
         $this->message = $message;
 
-        Log::info($id);
+       // Log::info($id);
     }
 
     /**
@@ -50,5 +53,8 @@ class DataWebhook implements ShouldQueue
                 'message' => ($this->message)?$this->message:""
             ]
         ]);
+
+        
+
     }
 }

@@ -16,6 +16,7 @@ use App\Jobs\SendTelehostMessage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Services\Telerivet;
 
 class DataTransactionController extends Controller
 {
@@ -66,18 +67,22 @@ class DataTransactionController extends Controller
     }
 
 
-    public function retry(Telehost $telehost, $referrence)
+    public function retry(Telerivet $telerivet, $referrence)
     {
 
-        $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
+        $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->where('bundle','!=','MTN-500MB')->first();
 
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
         }
 
+       
+
         $dataBundle = DataProduct::whereBundle($transaction->bundle)->first();
 
         $code =  str_replace('{{number}}', $transaction->number, $dataBundle->code);
+
+        
 
         switch (strtolower($transaction->network)) {
             case 'mtn':
@@ -91,9 +96,11 @@ class DataTransactionController extends Controller
                     'referrence' => Str::random(15),
                 ];
 
-                $response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
+                $telerivet->sendMessage($code,'131');
 
-                Log::info($message_details);
+                
+                //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
+
 
                 break;
 

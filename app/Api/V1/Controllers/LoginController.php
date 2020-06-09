@@ -23,6 +23,8 @@ class LoginController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
+        
+
         try {
             $token = Auth::guard()->attempt($credentials);
 
@@ -32,6 +34,18 @@ class LoginController extends Controller
 
         } catch (JWTException $e) {
             throw new HttpException(500);
+        }
+
+        if(Auth::user()->hasrole('admin')){
+
+            return response()
+            ->json([
+                'status' => 'ok',
+                'token' => $token,
+                'is_admin'=>true,
+                'expires_in' => Auth::guard()->factory()->getTTL() * 60
+            ]);
+
         }
 
         return response()
