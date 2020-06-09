@@ -63,7 +63,7 @@ $api->version('v1', function (Router $api) {
 
 
     $api->group(['prefix' => 'data', 'middleware' => ['jwt.auth']], function (Router $api) {
-        $api->post('/vend', 'App\\Api\\V1\\Controllers\\DataProductController@purchase');
+        $api->post('/vend', 'App\\Api\\V1\\Controllers\\DataProductController@purchase')->middleware('check_referrence');
         $api->get('/bundles', 'App\\Api\\V1\\Controllers\\DataProductController@index');
         $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataProductController@transactions');
         $api->get('/bundle/status/{referrence}', 'App\\Api\\V1\\Controllers\\DataTransactionController@status');

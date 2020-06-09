@@ -58,6 +58,7 @@ class Kernel extends HttpKernel
 
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
         'jwt.refresh' => RefreshToken::class,
-        'admin'=> \App\Http\Middleware\IsAdmin::class
+        'admin'=> \App\Http\Middleware\IsAdmin::class,
+        'check_referrence'=> \App\Http\Middleware\CheckReferrence::class
     ];
 }

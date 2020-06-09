@@ -1,7 +1,7 @@
 <?php
 
-use App\Services\Telehost;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
