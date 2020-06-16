@@ -26,6 +26,11 @@ Route::get('/', function () {
 });
 
 
+Route::get('/contact', function () {
+    return view('contact');
+});
+
+
 
 Route::get('test',function(Telehost $telehost){
 
