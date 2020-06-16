@@ -106,9 +106,9 @@
 					class=""></i></a>
 			<h1 class="page-title">ZealVend</h1>
 			<div class="">
-				<em>login</em>
-				<em>register</em>
-				<em>dashboard</em>
+				<em></em>
+				<em></em>
+				<em></em>
 			</div>
 		</header><!-- Header area end -->
 		<!-- Page content start -->
