@@ -1,5 +1,8 @@
 <?php
 
+
+ini_set('max_execution_time', 0); 
+
 use App\DataTransaction;
 use App\Jobs\DataWebhook;
 use Illuminate\Http\Request;
@@ -167,6 +170,7 @@ $api->version('v1', function (Router $api) {
         
                     $transaction = DataTransaction::whereNumber($number)->whereBundle($bundle)->whereStatus('processing')->first();
         
+                    return response()->json(['status'=>'success']);
                     
         
                     if ($transaction) {
@@ -224,7 +228,7 @@ $api->version('v1', function (Router $api) {
                         }
                     }
 
-                    dd($number);
+                   
         
                     return response()->json(['status'=>'success']);
 
@@ -235,16 +239,45 @@ $api->version('v1', function (Router $api) {
 
             break;
 
+            default:
 
-            
-        }
+            $check_success = (strpos($request->message, 'successfully') !== false);
 
+                
 
+            if ($check_success) {
 
-       
+                $message = $request->message;
 
+                 //get number
+                 preg_match_all('!\d+!', $message, $array);
+    
+                 $number = "0" . substr($array[0][1], 3, 12);
 
-        
+                 $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+    
+                 if ($transaction) {
+    
+                
+                    $transaction->update(['status' => 'successful']);
+    
+                    $user = $transaction->user;
+    
+                    \Log::info(empty($user->webhook_url));
+    
+                    if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                    }
+                }
+
+               
+    
+                return response()->json(['status'=>'success']);
+
+    }
+
+}
+  
     });
 
 

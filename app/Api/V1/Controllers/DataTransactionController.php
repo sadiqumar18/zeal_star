@@ -70,7 +70,7 @@ class DataTransactionController extends Controller
     public function retry(Telerivet $telerivet, $referrence)
     {
 
-        $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->where('bundle','!=','MTN-500MB')->first();
+        $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
 
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);

@@ -141,7 +141,7 @@ class Telehost
 
        
 
-     /*  for ($i=0; $i < 50; $i++) { 
+      for ($i=0; $i < 1; $i++) { 
 
             $params2 = [
                     'ref_code'=>Str::random(15),
@@ -156,12 +156,14 @@ class Telehost
 
             var_dump(json_decode($response2));
         }
-        */
+        
 
 
 
-        for ($i=0; $i < 1; $i++) { 
+        /*for ($i=0; $i < 4; $i++) { 
 
+
+            sleep(5);
             $params2 = [
                     'ref_code'=>Str::random(15),
                     'ussd_code'=>'*123#',
