@@ -16,31 +16,27 @@ class  Telerivet{
     public function __construct() {
 
         $api_key = env('TELERIVET_API_KEY');
-        $this->client = new Client(['auth' => [$api_key, '']]);
+        $this->client = new Client(['auth' => [$api_key, ''],'timeout'=>0]);
     }
 
 
     public function sendMessage($message,$number)
     {
 
+        
+
         $project_id ='PJ13abe76a22dceea6';
 
 
         $id = DataTransaction::all()->last()->id;
 
-        
-        if($id%2 == 0){
 
+        //if(strpos($message, 'SMEB') !== false){
             $phone_id = 'PNd6018e2dc833fff0';
-
-            
-
-
-        }else{
-
-            $phone_id = 'PNeaab88357cae0f87';
-
-        }
+       // }else{
+           // $phone_id = 'PN967910faee3b13b7';
+       // }
+        
 
         $data = [
             'content'=>$message,
