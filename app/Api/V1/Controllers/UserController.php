@@ -4,11 +4,13 @@ namespace App\Api\V1\Controllers;
 
 
 use App\User;
+use Carbon\Carbon;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Api\V1\Requests\LoginRequest;
+use App\Services\Payant;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -64,5 +66,62 @@ class UserController extends Controller
     public function users()
     {
         return response()->json(['status'=>'success','users'=>User::paginate(15)]);
+    }
+
+
+    public function generateAccount(Request $request)
+    {
+
+      
+        
+        $amount = $request->amount;
+       
+        $user = auth()->user();
+
+        $data = [
+            "client"=>[
+                'first_name'=>$user->fullname,
+                'last_name'=>$user->fullname,
+                'email'=>$user->email,
+                'phone'=>"+234" . substr($user->number, 1, 12)
+            ],
+            'items'=>[
+                [
+                'item'=>'Zealvend account funding',
+                'description'=>'funding',
+                'unit_cost'=>"{$amount}",
+                'quantity'=>1
+                ]
+            ],
+            "due_date"=>Carbon::now()->format('d/m/Y'),
+            "fee_bearer"=>"client"
+        ];
+
+    
+        $payant = new Payant;
+
+       $result = $payant->createInvoice($data);
+
+
+       
+        if($result['status'] == 'failed'){
+            return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
+        };
+
+
+        $referrence = $result['data']->reference_code;
+
+        $response = $payant->generateAccount($referrence);
+
+
+
+        if($response['status'] == 'failed'){
+            return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
+        };
+
+
+        return response()->json(['status'=>'success','account_number'=>$response['account_number'],'account_name'=>$response['account_name']]);
+
+
     }
 }
