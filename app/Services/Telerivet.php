@@ -31,7 +31,7 @@ class  Telerivet{
         //$id = DataTransaction::all()->last()->id;
 
 
-        if(strpos($message, 'SMEB') !== false || strpos($message, 'SMED') !== false){
+        if(strpos($message, 'SMEB') !== false || strpos($message, 'SMED') !== false || strpos($message, 'SMEC') !== false){
             $phone_id = 'PN95ea83f99b1adea8';
           }else{
             $phone_id = 'PNd6018e2dc833fff0';
