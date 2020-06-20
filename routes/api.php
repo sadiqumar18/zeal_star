@@ -77,7 +77,7 @@ $api->version('v1', function (Router $api) {
     $api->group(['prefix' => 'user', 'middleware' => ['jwt.auth']], function (Router $api) {
 
         $api->get('/profile', 'App\\Api\\V1\\Controllers\\UserController@profile');
-        $api->post('/account','App\\Api\\V1\\Controllers\\UserController@generateAccount');
+        $api->post('/create/account','App\\Api\\V1\\Controllers\\UserController@generateAccount');
         
     });
 
