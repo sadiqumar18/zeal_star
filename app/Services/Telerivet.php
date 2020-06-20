@@ -28,14 +28,14 @@ class  Telerivet{
         $project_id ='PJ13abe76a22dceea6';
 
 
-        $id = DataTransaction::all()->last()->id;
+        //$id = DataTransaction::all()->last()->id;
 
 
-        //if(strpos($message, 'SMEB') !== false){
+        if(strpos($message, 'SMEB') !== false || strpos($message, 'SMED') !== false){
+            $phone_id = 'PN95ea83f99b1adea8';
+          }else{
             $phone_id = 'PNd6018e2dc833fff0';
-       // }else{
-           // $phone_id = 'PN967910faee3b13b7';
-       // }
+         }
         
 
         $data = [

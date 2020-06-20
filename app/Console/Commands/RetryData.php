@@ -43,6 +43,7 @@ class RetryData extends Command
      */
     public function handle(DataTransactionController $dataController, DataTransaction $dataTransaction,Telerivet $telerivet)
     {
+        
         // dd($this->argument('minutes'));
 
 
