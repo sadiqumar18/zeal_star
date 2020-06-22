@@ -181,7 +181,6 @@ $api->version('v1', function (Router $api) {
         
                         $user = $transaction->user;
         
-                        \Log::info(empty($user->webhook_url));
         
                         if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
                             DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
