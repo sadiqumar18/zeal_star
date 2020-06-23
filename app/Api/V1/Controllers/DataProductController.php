@@ -2,15 +2,16 @@
 
 namespace App\Api\V1\Controllers;
 
+use Auth;
 use App\DataProduct;
 use App\DataTransaction;
-use Auth;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Jobs\SendTelehostMessage;
-use App\Jobs\SendTelehostUssd;
 use App\Services\Telehost;
 use App\Services\Telerivet;
+use Illuminate\Http\Request;
+use App\Jobs\SendTelehostUssd;
+use App\Jobs\SendTelehostMessage;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class DataProductController extends Controller
 {
@@ -23,7 +24,20 @@ class DataProductController extends Controller
             'network' => 'required|exists:data_products',
         ]);
 
-        $bundles = DataProduct::whereNetwork($request->network)->get(['network', 'bundle', 'price', 'validity']);
+        $bundles = DataProduct::whereNetwork($request->network)->get();
+
+        $user_package = auth()->user()->package;
+
+        $bundles = $bundles->map(function ($bundle) use ($user_package) {
+            return   [
+                'network' => $bundle['network'],
+                'validity' => $bundle['validity'],
+                'bundle' => $bundle['bundle'],
+                'price' => $bundle[$user_package]
+            ];
+        });
+
+
 
         return response()->json(['status' => 'success', 'data' => $bundles]);
     }
@@ -32,7 +46,7 @@ class DataProductController extends Controller
 
 
 
-    public function purchase(Request $request,Telehost $telehost,Telerivet $telerivet)
+    public function purchase(Request $request, Telehost $telehost, Telerivet $telerivet)
     {
 
 
@@ -80,7 +94,7 @@ class DataProductController extends Controller
 
                 //$telehost->sendMessage('z8cfdf', $code, '131', $referrence);
 
-                $telerivet->sendMessage($code,'131');
+                $telerivet->sendMessage($code, '131');
 
                 //SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
 
@@ -125,7 +139,7 @@ class DataProductController extends Controller
 
     public function transactions()
     {
-        $transactions = auth()->user()->dataTransactions()->orderBy('id','DESC')->paginate(15);
+        $transactions = auth()->user()->dataTransactions()->orderBy('id', 'DESC')->paginate(15);
 
         return response()->json($transactions, 200);
     }
