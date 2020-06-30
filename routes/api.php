@@ -258,7 +258,7 @@ $api->version('v1', function (Router $api) {
                  if ($transaction) {
     
                 
-                    $transaction->update(['status' => 'successful']);
+                    $transaction->update(['status' => 'successful','message'=>$message]);
     
                     $user = $transaction->user;
     
