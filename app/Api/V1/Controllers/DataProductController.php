@@ -111,6 +111,20 @@ class DataProductController extends Controller
 
                 break;
 
+            case 'airtel':
+                
+                $message_details = [
+                    'access_code' => 'rujsvo', //access_code[rand(0,1)],
+                    'ussd_code' => $code,
+                    'referrence' => $referrence,
+                ];
+
+                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+                
+
+
+            break;
+
             default:
                 # code...
                 break;

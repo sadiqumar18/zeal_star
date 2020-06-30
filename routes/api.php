@@ -348,6 +348,19 @@ $api->version('v1', function (Router $api) {
 
 
 
+
+    $api->post('/payant/webhook', function (Request $request) {
+
+
+
+
+
+
+    });
+
+
+
+
   
   
 
