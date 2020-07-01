@@ -31,6 +31,11 @@ Route::get('/contact', function () {
 });
 
 
+Route::get('/account/verify/webhook', function () {
+    return view('contact');
+});
+
+
 
 Route::get('test',function(Telehost $telehost){
 

@@ -94,8 +94,26 @@ class UserController extends Controller
                 ]
             ],
             "due_date"=>Carbon::now()->format('d/m/Y'),
-            "fee_bearer"=>"client"
+            "fee_bearer"=>"client",
+            "split_details"=>[
+                "type"=>"percentage",
+                "fee_bearer"=>"client",
+                "receivers"=>[
+                    [
+                        "wallet_reference_code"=>"Jo4ZhR6WTj",
+                        "value"=>"95",
+                        "primary"=>"true"
+                    ],
+                    [
+                        "wallet_reference_code"=>"cRyFviDf6t",
+                        "value"=>"5",
+                        "primary"=>"false"
+                    ]
+                ]
+            ]
         ];
+
+        //dd(json_encode($data));
 
     
         $payant = new Payant;
@@ -120,7 +138,14 @@ class UserController extends Controller
         };
 
 
-        return response()->json(['status'=>'success','account_number'=>$response['account_number'],'account_name'=>$response['account_name']]);
+        return response()->json([
+            'status'=>'success',
+            'account_number'=>$response['account_number'],
+            'account_name'=>$response['account_name'],
+            'amount'=>$response['amount'],
+            'bank_name'=>$response['bank_name'],
+            'message'=>"Make a bank transfer to this account within 10 mins."
+            ]);
 
 
     }

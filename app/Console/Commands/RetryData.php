@@ -47,7 +47,7 @@ class RetryData extends Command
         // dd($this->argument('minutes'));
 
 
-        $dt = $dataTransaction->whereStatus('processing')->orderBy('id','DESC')->get();
+        $dt = $dataTransaction->whereStatus('processing')->orderBy('id','DESC')->limit(10)->get();
 
 
         //dd(DataTransaction::whereDate('created_at', Carbon::yesterday())->count());
@@ -55,7 +55,7 @@ class RetryData extends Command
 
         
 
-        
+     sleep(2);        
 
 
 

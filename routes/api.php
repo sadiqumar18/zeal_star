@@ -242,15 +242,21 @@ $api->version('v1', function (Router $api) {
 
             $check_success = (strpos($request->message, 'successfully') !== false);
 
-                
+           
 
             if ($check_success) {
+
+               
 
                 $message = $request->message;
 
                  //get number
                  preg_match_all('!\d+!', $message, $array);
-    
+
+                
+
+                 if((strpos($request->message, '234')) !== false){
+        
                  $number = "0" . substr($array[0][1], 3, 12);
 
                  $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
@@ -268,6 +274,35 @@ $api->version('v1', function (Router $api) {
                         DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
                     }
                 }
+
+
+            }else{
+
+
+                $number = $array[0][1];
+
+
+                $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+   
+                if ($transaction) {
+   
+               
+                   $transaction->update(['status' => 'successful','message'=>$message]);
+   
+                   $user = $transaction->user;
+   
+                   \Log::info(empty($user->webhook_url));
+   
+                   if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                       DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                   }
+               }
+
+
+
+
+
+            }
 
                
     
@@ -349,11 +384,20 @@ $api->version('v1', function (Router $api) {
 
 
 
+    $api->get('/payant/webhook', function (Request $request) {
+
+        if($request->type == 'subscribe' and $request->verify_token == '3pCOSN3C0wUkA1EJQzjAWDtaLIE0HLLFdGkQJbtf9FwymrBl0x'){
+
+
+            return response()->json($request->challenge,200);
+
+
+        }
+
+    });
+
+
     $api->post('/payant/webhook', function (Request $request) {
-
-
-
-
 
 
     });

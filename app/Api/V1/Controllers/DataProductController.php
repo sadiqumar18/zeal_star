@@ -101,6 +101,9 @@ class DataProductController extends Controller
                 break;
             case 'glo':
 
+
+               // return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
+
                 $message_details = [
                     'access_code' => '2lerfb', //access_code[rand(0,1)],
                     'ussd_code' => $code,

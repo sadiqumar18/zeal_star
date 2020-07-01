@@ -40,7 +40,6 @@ class Payant
 
         $response = json_decode($response);
 
-
         if ($response->status != 'success') {
             return ['status' => 'failed'];
         }
@@ -60,15 +59,24 @@ class Payant
             'reference_code' => $referrence
         ];
 
+       
+
         $response = $this->client->post('https://api.payant.ng/pay/sdk/bank-transfer', ['json' => $data])->getBody();
 
         $response = json_decode($response);
 
-       
+    
+
         if ($response->status != 'pending') {
             return ['status' => 'failed'];
         }
 
-        return ['status' => 'success', 'account_name' => $response->data->account_name, 'account_number' => $response->data->account_number];
+        return [
+            'status' => 'success',
+            'account_name' => $response->data->account_name, 
+            'account_number' => $response->data->account_number,
+            'bank_name' => 'Providus bank',
+            'amount' => $response->data->amount
+        ];
     }
 }
