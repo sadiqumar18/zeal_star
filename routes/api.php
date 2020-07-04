@@ -3,6 +3,7 @@
 
 ini_set('max_execution_time', 0); 
 
+use App\Wallet;
 use App\DataTransaction;
 use App\Jobs\DataWebhook;
 use Illuminate\Http\Request;
@@ -397,10 +398,7 @@ $api->version('v1', function (Router $api) {
     });
 
 
-    $api->post('/payant/webhook', function (Request $request) {
-
-
-    });
+    $api->post('/payant/webhook', 'App\\Api\\V1\\Controllers\\WalletController@verifyPayment');
 
 
 
