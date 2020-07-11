@@ -4,13 +4,15 @@ namespace App\Api\V1\Controllers;
 
 
 use App\User;
+use App\Wallet;
 use Carbon\Carbon;
+use App\Services\Payant;
 use Tymon\JWTAuth\JWTAuth;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Api\V1\Requests\LoginRequest;
-use App\Services\Payant;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -52,7 +54,20 @@ class UserController extends Controller
 
         $new_balance = $user->balance + $request->amount;
 
+        //set wallet transaction
+
+        Wallet::create([
+            'user_id'=>$user->id,
+            'referrence'=>Str::random(20),
+            'amount'=>$request->amount,
+            'balance_before'=>$user->balance,
+            'balance_after'=>$new_balance,
+            'description'=>"manual funding"
+        ]);
+
         $flag = $user->update(['balance'=>$new_balance]);
+
+
 
         if(!$flag){
             return response()->json(['status'=>'error','message'=>'Unable to update user balance'],400);
