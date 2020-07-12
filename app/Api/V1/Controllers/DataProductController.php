@@ -77,24 +77,22 @@ class DataProductController extends Controller
 
         $code = str_replace('{{number}}', $number, $dataBundle->code);
 
-
-
-        switch (strtolower($network)) {
+          switch (strtolower($network)) {
             case 'mtn':
 
                 $access_code = ['z8cfdf', 'q76wx8'];
 
                 $message_details = [
-                    'access_code' => 'z8cfdf', //access_code[rand(0,1)],
+                    'access_code' => '4gxfue', //access_code[rand(0,1)],
                     'code' => $code,
                     'number' => '131',
                     'referrence' => $referrence,
                     // 'amount' => $dataBundle->price
                 ];
 
-                //$telehost->sendMessage('z8cfdf', $code, '131', $referrence);
+                $telehost->sendMessage('4gxfue', $code, '131', $referrence);
 
-                $telerivet->sendMessage($code, '131');
+                //$telerivet->sendMessage($code, '131');
 
                 //SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
 
@@ -115,6 +113,8 @@ class DataProductController extends Controller
                 break;
 
             case 'airtel':
+
+                
                 
                 $message_details = [
                     'access_code' => 'rujsvo', //access_code[rand(0,1)],

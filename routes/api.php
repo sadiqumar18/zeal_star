@@ -171,7 +171,7 @@ $api->version('v1', function (Router $api) {
         
                     $transaction = DataTransaction::whereNumber($number)->whereBundle($bundle)->whereStatus('processing')->first();
         
-                    return response()->json(['status'=>'success']);
+                   // return response()->json(['status'=>'success']);
                     
         
                     if ($transaction) {
@@ -241,24 +241,51 @@ $api->version('v1', function (Router $api) {
 
             default:
 
+           
+
             $check_success = (strpos($request->message, 'successfully') !== false);
 
            
-
             if ($check_success) {
+
+              
+
+                $transaction = DataTransaction::where('referrence',$request->ref_code)->whereStatus('processing')->first();
+    
+                 if ($transaction) {
+
+                   
+                
+                    $transaction->update(['status' => 'successful','message'=>$request->message]);
+    
+                    $user = $transaction->user;
+    
+                    
+    
+                    if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                    }
+                }
+
+
+
+
 
                
 
-                $message = $request->message;
+            /*    $message = $request->message;
 
                  //get number
                  preg_match_all('!\d+!', $message, $array);
 
+              
                 
 
-                 if((strpos($request->message, '234')) !== false){
-        
+                 if((strpos($request->message, '234')) != false){
+
+                   
                  $number = "0" . substr($array[0][1], 3, 12);
+
 
                  $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
     
@@ -279,8 +306,10 @@ $api->version('v1', function (Router $api) {
 
             }else{
 
-
+              
                 $number = $array[0][1];
+
+               
 
 
                 $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
@@ -289,6 +318,8 @@ $api->version('v1', function (Router $api) {
    
                
                    $transaction->update(['status' => 'successful','message'=>$message]);
+
+                 
    
                    $user = $transaction->user;
    
@@ -303,7 +334,7 @@ $api->version('v1', function (Router $api) {
 
 
 
-            }
+            }*/
 
                
     
@@ -395,6 +426,19 @@ $api->version('v1', function (Router $api) {
 
         }
 
+    });
+
+
+
+    $api->get('/device/status/{device_id}', function (Request $request) {
+
+       
+    });
+
+
+    $api->post('/device/status', function (Request $request) {
+
+       
     });
 
 

@@ -74,17 +74,15 @@ class RetryData extends Command
             return $array->created_at->lt(Carbon::now()->subMinutes($this->argument('minutes')));
             
 
-        })->each(function ($array) use ($dataController,$telerivet){
+        })->each(function ($array) use ($dataController){
 
            // $delay = DB::table('jobs')->count() + 20;
 
            
 
-          
-
            // $telerivet->sendMessage($array->code,'131');
 
-            $dataController->retry($telerivet, $array->referrence);
+            $dataController->retry($array->referrence);
 
            // sleep(5);
 

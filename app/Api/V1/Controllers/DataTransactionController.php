@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\Telerivet;
+use App\Jobs\SendTelehostUssd;
 
 class DataTransactionController extends Controller
 {
@@ -67,7 +68,7 @@ class DataTransactionController extends Controller
     }
 
 
-    public function retry(Telerivet $telerivet, $referrence)
+    public function retry($referrence)
     {
 
         $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
@@ -76,33 +77,77 @@ class DataTransactionController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
         }
 
-       
-
         $dataBundle = DataProduct::whereBundle($transaction->bundle)->first();
 
+
+       
+
         $code =  str_replace('{{number}}', $transaction->number, $dataBundle->code);
+
+       
 
         
 
         switch (strtolower($transaction->network)) {
+
             case 'mtn':
+
+                $telerivet = new Telerivet;
+                $telehost = new Telehost;
 
                 $access_code = ['z8cfdf', 'zwb1ek', '5k9iep'];
 
                 $message_details = [
-                    'access_code' => $access_code[0],
+                    'access_code' => '4gxfue',
                     'code' => $code,
                     'number' => '131',
                     'referrence' => Str::random(15),
                 ];
 
-                $telerivet->sendMessage($code,'131');
+                //$telerivet->sendMessage($code,'131');
 
                 
-                //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
+                $response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
 
 
                 break;
+
+
+                case 'glo':
+
+                    $telehost = new Telehost;
+
+                    $message_details = [
+                        'access_code' => '2lerfb', //access_code[rand(0,1)],
+                        'ussd_code' => $code,
+                        'referrence' => $transaction->user_id."-".Str::random(15),
+                    ];
+    
+                    //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+    
+                    
+                   // $response = $telehost->sendMessage($message_details['access_code'], $message_details['ussd_code'], $message_details['number'], $message_details['referrence']);
+    
+    
+                    break; 
+
+
+                    case 'airtel':
+
+                        $message_details = [
+                            'access_code' => '2lerfb', //access_code[rand(0,1)],
+                            'ussd_code' => $code,
+                            'referrence' => $transaction->user_id."-".Str::random(15),
+                        ];
+                        
+                       // dd($message_details);
+                        //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+        
+                        
+                        //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
+        
+        
+                        break;        
 
             default:
                 # code...
