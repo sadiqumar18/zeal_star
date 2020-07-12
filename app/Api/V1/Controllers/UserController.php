@@ -84,6 +84,24 @@ class UserController extends Controller
     }
 
 
+    public function adminWalletransactions()
+    {
+       $transactions = Wallet::OrderBy('id','DESC')->paginate(15);
+
+       return response()->json(['status'=>'success','transactions'=>$transactions]);
+
+    }
+
+
+    public function userWalletransactions()
+    {
+       $transactions = auth()->user()->wallet()->orderBy('id','DESC')->paginate(15);
+
+       return response()->json(['status'=>'success','transactions'=>$transactions]);
+
+    }
+
+
     public function generateAccount(Request $request)
     {
 

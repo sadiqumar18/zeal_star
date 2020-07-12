@@ -82,6 +82,10 @@ $api->version('v1', function (Router $api) {
         
     });
 
+    $api->group(['prefix' => 'wallet', 'middleware' => ['jwt.auth']], function (Router $api) {
+        $api->get('/transactions', 'App\\Api\\V1\\Controllers\\UserController@userWalletransactions');
+    });
+
 
     $api->group(['prefix' => 'admin', 'middleware' => ['admin']], function (Router $api) {
 
@@ -105,6 +109,10 @@ $api->version('v1', function (Router $api) {
 
         $api->group(['prefix' => 'user', 'middleware' => ['jwt.auth']], function (Router $api) {
             $api->get('/list', 'App\\Api\\V1\\Controllers\\UserController@users');
+        });
+
+        $api->group(['prefix' => 'wallet', 'middleware' => ['jwt.auth']], function (Router $api) {
+            $api->get('/transactions', 'App\\Api\\V1\\Controllers\\UserController@adminWalletransactions');
         });
 
 

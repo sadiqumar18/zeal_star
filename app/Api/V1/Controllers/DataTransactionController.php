@@ -5,19 +5,20 @@
 namespace App\Api\V1\Controllers;
 
 use App\User;
+use App\Wallet;
 use Carbon\Carbon;
 use App\DataProduct;
 use App\DataTransaction;
 use App\Jobs\DataWebhook;
 use App\Services\Telehost;
+use App\Services\Telerivet;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Jobs\SendTelehostUssd;
 use App\Jobs\SendTelehostMessage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Services\Telerivet;
-use App\Jobs\SendTelehostUssd;
 
 class DataTransactionController extends Controller
 {
@@ -38,6 +39,19 @@ class DataTransactionController extends Controller
 
         $amount = $transaction->price;
         $new_user_balance = $transaction->user->balance + $amount;
+
+        $user = $transaction->user;
+
+       // dd($user);
+
+        $user->wallet()->save(new Wallet([
+            'referrence'=>"R-{$referrence}",
+            'amount'=>$amount,
+            'balance_before'=>$user->balance,
+            'balance_after'=>$new_user_balance,
+            'description'=>"credit"
+        ]));
+
 
         $transaction->user()->update(['balance' => $new_user_balance]);
 

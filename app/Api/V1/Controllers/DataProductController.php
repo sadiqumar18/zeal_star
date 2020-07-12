@@ -3,6 +3,7 @@
 namespace App\Api\V1\Controllers;
 
 use Auth;
+use App\Wallet;
 use App\DataProduct;
 use App\DataTransaction;
 use App\Services\Telehost;
@@ -139,7 +140,7 @@ class DataProductController extends Controller
         $new_balance = $user->balance - $dataPrice;
 
 
-        $user->update(['balance' => $new_balance]);
+      
 
         $transaction = $user->dataTransactions()->save(new DataTransaction([
             "number" => $number,
@@ -148,6 +149,16 @@ class DataProductController extends Controller
             "price" => $dataPrice,
             "bundle" => $bundle
         ]));
+
+        $user->wallet()->save(new Wallet([
+            'referrence'=>$referrence,
+            'amount'=>$dataPrice,
+            'balance_before'=>$user->balance,
+            'balance_after'=>$new_balance,
+            'description'=>"debit"
+        ]));
+
+        $user->update(['balance' => $new_balance]);
 
 
         return response()->json(['status' => 'success', 'data' => $transaction], 201);
