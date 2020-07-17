@@ -15,6 +15,8 @@ class AddUssdParamsField extends Migration
     {
         Schema::table('data_products', function (Blueprint $table) {
             $table->json('ussd_param')->after('code')->nullable();
+            $table->dropUnique('data_products_code_unique');
+            $table->boolean('is_suspended')->default(false);
         });
     }
 
@@ -27,6 +29,7 @@ class AddUssdParamsField extends Migration
     {
         Schema::table('data_products', function (Blueprint $table) {
             $table->dropColumn('ussd_param');
+            $table->dropColumn('is_suspended');
         });
     }
 }
