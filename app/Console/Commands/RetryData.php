@@ -17,7 +17,7 @@ class RetryData extends Command
      *
      * @var string
      */
-    protected $signature = 'retry:data {minutes}';
+    protected $signature = 'retry:data {minutes} {network}';
 
     /**
      * The console command description.
@@ -44,18 +44,17 @@ class RetryData extends Command
     public function handle(DataTransactionController $dataController, DataTransaction $dataTransaction,Telerivet $telerivet)
     {
         
-        // dd($this->argument('minutes'));
+        
 
+        $dt = $dataTransaction->whereStatus('processing')->where('network',$this->argument('network'))->limit(100)->orderBy('id','DESC')->get();
 
-        $dt = $dataTransaction->whereStatus('processing')->orderBy('id','DESC')->limit(10)->get();
-
-
+      
         //dd(DataTransaction::whereDate('created_at', Carbon::yesterday())->count());
 
 
         
 
-     sleep(2);        
+     sleep(1);        
 
 
 

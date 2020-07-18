@@ -85,6 +85,8 @@ class DataTransactionController extends Controller
     public function retry($referrence)
     {
 
+        sleep(3);
+
         $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
 
         if (is_null($transaction)) {
@@ -120,8 +122,10 @@ class DataTransactionController extends Controller
 
                 //$telerivet->sendMessage($code,'131');
 
+                $access_code = ($transaction->bundle == 'MTN-500MB')?'0ugh74':'4gxfue';
+
                 
-                $response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
+                $response = $telehost->sendMessage($access_code, $message_details['code'], $message_details['number'], $message_details['referrence']);
 
 
                 break;
@@ -137,7 +141,7 @@ class DataTransactionController extends Controller
                         'referrence' => $transaction->user_id."-".Str::random(15),
                     ];
     
-                    //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+                    SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
     
                     
                    // $response = $telehost->sendMessage($message_details['access_code'], $message_details['ussd_code'], $message_details['number'], $message_details['referrence']);
@@ -149,13 +153,13 @@ class DataTransactionController extends Controller
                     case 'airtel':
 
                         $message_details = [
-                            'access_code' => '2lerfb', //access_code[rand(0,1)],
+                            'access_code' => 'rujsvo', //access_code[rand(0,1)],
                             'ussd_code' => $code,
                             'referrence' => $transaction->user_id."-".Str::random(15),
                         ];
                         
                        // dd($message_details);
-                        //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+                        SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
         
                         
                         //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);

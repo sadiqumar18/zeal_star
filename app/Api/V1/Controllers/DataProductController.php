@@ -72,6 +72,12 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
+        if ($bundle == 'MTN-500MB') {
+            return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
+        }
+      
+       
+
         if ($dataPrice > $user->balance) {
             return response()->json(['status' => 'failed', 'message' => 'Insuficient balance!!'], 400);
         }
@@ -81,17 +87,21 @@ class DataProductController extends Controller
           switch (strtolower($network)) {
             case 'mtn':
 
+               
+
                 $access_code = ['z8cfdf', 'q76wx8'];
 
                 $message_details = [
-                    'access_code' => '4gxfue', //access_code[rand(0,1)],
+                    'access_code' => ($bundle == 'MTN-500MB')?'0ugh74':'4gxfue', //access_code[rand(0,1)],
                     'code' => $code,
                     'number' => '131',
                     'referrence' => $referrence,
                     // 'amount' => $dataBundle->price
                 ];
 
-                $telehost->sendMessage('4gxfue', $code, '131', $referrence);
+                $access_code = ($bundle == 'MTN-500MB')?'0ugh74':'4gxfue';
+
+                $telehost->sendMessage($access_code, $code, '131', $referrence);
 
                 //$telerivet->sendMessage($code, '131');
 
@@ -109,7 +119,7 @@ class DataProductController extends Controller
                     'referrence' => $referrence,
                 ];
 
-                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
 
                 break;
 
@@ -123,7 +133,7 @@ class DataProductController extends Controller
                     'referrence' => $referrence,
                 ];
 
-                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
                 
 
 

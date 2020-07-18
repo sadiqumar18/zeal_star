@@ -9,6 +9,7 @@ use App\Jobs\DataWebhook;
 use Illuminate\Http\Request;
 use Dingo\Api\Routing\Router;
 use Illuminate\Support\Facades\Artisan;
+use App\Api\V1\Controllers\DataTransactionController;
 
 /** @var Router $api */
 $api = app(Router::class);
@@ -124,10 +125,28 @@ $api->version('v1', function (Router $api) {
 
         // dd($request->minutes);
 
-        $theExitCode = Artisan::call("retry:data {$request->minutes}");
+        $theExitCode = Artisan::call("retry:data {$request->minutes} {$request->network}");
         $result = Artisan::output();
     });
 
+
+    $api->get('/data/reversemany', function (Request $request,DataTransactionController $dataController) {
+
+        $transactions =  DataTransaction::where('bundle','MTN-500MB')->where('status','processing')->get();
+        
+        $transactions->map(function($d) use($dataController){
+
+        
+
+            $dataController->reverseTransaction($d->referrence);
+
+        });
+
+         dd($transactions);
+ 
+ 
+     });
+ 
 
 
     $api->post('/data/telehost/webhook', function (Request $request) {
