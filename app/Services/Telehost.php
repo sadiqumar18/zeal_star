@@ -64,6 +64,33 @@ class Telehost
     }
 
 
+    public function sendMultipleUssd($access_code,$ussd_code,$params,$sim_port,$referrence)
+    {
+
+        $data = [
+            "access_code"=>$access_code,
+            "ref_code"=>$referrence,
+            "ussd_string"=>$ussd_code,
+            "sim_port"=>$sim_port,
+            "params"=>$params
+        ];
+
+
+        $response = $this->client->post('/api/multiple/ussd',['json'=>$data])->getBody();
+
+        $response = json_decode($response, true);
+
+
+        if ($response['status'] = !'success') {
+            return ['status' => 'failed'];
+        }
+
+
+        return ['status' => 'success'];
+
+    }
+
+
     public function sendUssd($access_code, $usssd_code, $referrence)
     {
         $params = [

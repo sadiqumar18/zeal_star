@@ -82,69 +82,96 @@ class DataProductController extends Controller
             return response()->json(['status' => 'failed', 'message' => 'Insuficient balance!!'], 400);
         }
 
-        $code = str_replace('{{number}}', $number, $dataBundle->code);
+        
 
-          switch (strtolower($network)) {
-            case 'mtn':
+         //removes hash sign
+         $remove_hash = explode('#',trim($dataBundle->code));
 
-               
+         //remove *
+         $collection = collect(explode('*',$remove_hash[0])); 
+ 
+         $ussd = $collection->splice(1);
+ 
+         //get ussd code
+         $ussd_string = "*{$ussd->get(0)}#";
+ 
+        $params = $ussd->splice(1)->map(function($key) use($number){
+         if($key == '{{number}}'){
+             return $number;
+         }else{
+             return $key;
+         }
+     });
+ 
 
-                $access_code = ['z8cfdf', 'q76wx8'];
-
-                $message_details = [
-                    'access_code' => ($bundle == 'MTN-500MB')?'0ugh74':'4gxfue', //access_code[rand(0,1)],
-                    'code' => $code,
-                    'number' => '131',
-                    'referrence' => $referrence,
-                    // 'amount' => $dataBundle->price
-                ];
-
-                $access_code = ($bundle == 'MTN-500MB')?'0ugh74':'4gxfue';
-
-                $telehost->sendMessage($access_code, $code, '131', $referrence);
-
-                //$telerivet->sendMessage($code, '131');
-
-                //SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
-
-                break;
-            case 'glo':
-
-
-               // return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
-
-                $message_details = [
-                    'access_code' => '2lerfb', //access_code[rand(0,1)],
-                    'ussd_code' => $code,
-                    'referrence' => $referrence,
-                ];
-
-                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
-
-                break;
-
-            case 'airtel':
-
-                
-                
-                $message_details = [
-                    'access_code' => 'rujsvo', //access_code[rand(0,1)],
-                    'ussd_code' => $code,
-                    'referrence' => $referrence,
-                ];
-
-                SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
-                
-
-
-            break;
-
-            default:
-                # code...
-                break;
-        }
-
-
+ 
+         $code = str_replace('{{number}}', $number, $dataBundle->code);
+ 
+           switch (strtolower($network)) {
+             case 'mtn':
+ 
+                 $access_code = ['z8cfdf', 'q76wx8'];
+ 
+                 $message_details = [
+                     'access_code' => '4gxfue', //access_code[rand(0,1)],
+                     'code' => $code,
+                     'number' => '131',
+                     'referrence' => $referrence,
+                     // 'amount' => $dataBundle->price
+                 ];
+ 
+                // $telehost->sendMultipleUssd('4gxfue','*461#',[3,2,'08023634895',9754],'1','testussds8');
+ 
+                 $telehost->sendMessage('4gxfue', $code, '131', $referrence);
+ 
+                 //$telerivet->sendMessage($code, '131');
+ 
+                 //SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
+ 
+                 break;
+             case 'glo':
+ 
+ 
+                // return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
+ 
+                 $message_details = [
+                     'access_code' => '2lerfb', //access_code[rand(0,1)],
+                     'ussd_code' => $code,
+                     'referrence' => $referrence,
+                 ];
+ 
+                 $telehost->sendMultipleUssd('2lerfb',$ussd_string,$params,'2',$referrence);
+ 
+ 
+ 
+                 //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+ 
+                 break;
+ 
+             case 'airtel':
+ 
+                 
+                 
+                 $message_details = [
+                     'access_code' => 'rujsvo', //access_code[rand(0,1)],
+                     'ussd_code' => $code,
+                     'referrence' => $referrence,
+                 ];
+ 
+                 $telehost->sendMultipleUssd('4gxfue',$ussd_string,$params,'1',$referrence);
+ 
+ 
+ 
+                 //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+                 
+ 
+ 
+             break;
+ 
+             default:
+                 # code...
+                 break;
+         }
 
 
         $new_balance = $user->balance - $dataPrice;
