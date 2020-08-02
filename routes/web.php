@@ -39,7 +39,6 @@ Route::get('/account/verify/webhook', function () {
 
 Route::get('test',function(Telehost $telehost){
 
-    
 
     //for ($i=0; $i<=5 ; $i++ ) { 
 
