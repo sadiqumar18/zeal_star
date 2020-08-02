@@ -134,4 +134,11 @@ class WalletController extends Controller
    
 
     }
+
+
+
+    public function fundWallet($referrence)
+    {
+        # code...
+    }
 }

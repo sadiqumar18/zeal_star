@@ -55,7 +55,7 @@ class Telehost
         $response = json_decode($response, true);
 
 
-        if ($response['status'] = !'success') {
+        if ($response['status'] != 'success') {
             return ['status' => 'failed'];
         }
 
@@ -72,16 +72,18 @@ class Telehost
             "ref_code"=>$referrence,
             "ussd_string"=>$ussd_code,
             "sim_port"=>$sim_port,
-            "params"=>$params
+            "params"=>$params->values()->all()
         ];
 
+  
+       // dd($data);
 
         $response = $this->client->post('/api/multiple/ussd',['json'=>$data])->getBody();
 
         $response = json_decode($response, true);
 
 
-        if ($response['status'] = !'success') {
+        if ($response['status'] != 'success') {
             return ['status' => 'failed'];
         }
 
@@ -104,12 +106,49 @@ class Telehost
         $response = json_decode($response, true);
 
 
-        if ($response['status'] = !'success') {
+        if ($response['status'] != 'success') {
             return ['status' => 'failed'];
         }
 
 
         return ['status' => 'success'];
+    }
+
+
+    public function retryUssd($referrence){
+
+
+        $response = $this->client->get("/api/retry-ussd/{$referrence}")->getBody();
+
+        $response = json_decode($response, true);
+
+
+        if ($response['status'] != 'success') {
+            return ['status' => 'failed'];
+        }
+
+
+        return ['status' => 'success'];
+
+
+    }
+
+    public function retryMsg($referrence){
+
+
+        $response = $this->client->get("/api/retry-sms/{$referrence}")->getBody();
+
+        $response = json_decode($response, true);
+
+
+        if ($response['status'] != 'success') {
+            return ['status' => 'failed'];
+        }
+
+
+        return ['status' => 'success'];
+
+
     }
 
 
