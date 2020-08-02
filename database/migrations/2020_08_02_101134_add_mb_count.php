@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddUssdParamsField extends Migration
+class AddMbCount extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,7 @@ class AddUssdParamsField extends Migration
     public function up()
     {
         Schema::table('data_products', function (Blueprint $table) {
-            //$table->json('ussd_param')->after('code')->nullable();
-            //$table->dropUnique('data_products_code_unique');
-            $table->boolean('is_suspended')->default(false);
+            $table->integer('megabytes')->nullable()->after('code');
         });
     }
 
@@ -28,8 +26,7 @@ class AddUssdParamsField extends Migration
     public function down()
     {
         Schema::table('data_products', function (Blueprint $table) {
-            //$table->dropColumn('ussd_param');
-            $table->dropColumn('is_suspended');
+            $table->dropColumn('megabytes');
         });
     }
 }

@@ -42,14 +42,14 @@ class DataTransactionController extends Controller
 
         $user = $transaction->user;
 
-       // dd($user);
+        // dd($user);
 
         $user->wallet()->save(new Wallet([
-            'referrence'=>"R-{$referrence}",
-            'amount'=>$amount,
-            'balance_before'=>$user->balance,
-            'balance_after'=>$new_user_balance,
-            'description'=>"credit"
+            'referrence' => "R-{$referrence}",
+            'amount' => $amount,
+            'balance_before' => $user->balance,
+            'balance_after' => $new_user_balance,
+            'description' => "credit"
         ]));
 
 
@@ -100,43 +100,43 @@ class DataTransactionController extends Controller
 
 
 
-        
+
         //removes hash sign
-        $remove_hash = explode('#',trim($dataBundle->code));
+        $remove_hash = explode('#', trim($dataBundle->code));
 
         //remove *
-        $collection = collect(explode('*',$remove_hash[0])); 
+        $collection = collect(explode('*', $remove_hash[0]));
 
         $ussd = $collection->splice(1);
 
         $number = $transaction->number;
 
-       
+
         //get ussd code
-       // $ussd_string = "*{$ussd->get(0)}#";
+        // $ussd_string = "*{$ussd->get(0)}#";
 
-       $params = $ussd->splice(1)->map(function($key) use($number){
-        if($key == '{{number}}'){
-            return $number;
-        }else{
-            return $key;
-        }
-    });
+        $params = $ussd->splice(1)->map(function ($key) use ($number) {
+            if ($key == '{{number}}') {
+                return $number;
+            } else {
+                return $key;
+            }
+        });
 
 
-       
+
 
         $code =  str_replace('{{number}}', $transaction->number, $dataBundle->code);
 
-       
 
-        
 
-       switch (strtolower($transaction->network)) {
+
+
+        switch (strtolower($transaction->network)) {
 
             case 'mtn':
 
-                
+
 
                 $access_code = ['z8cfdf', 'zwb1ek', '5k9iep'];
 
@@ -147,93 +147,93 @@ class DataTransactionController extends Controller
                     'referrence' => Str::random(15),
                 ];
 
-               
-               $check_gifting = ((strpos(strtolower($transaction->bundle), 'gbg') !== false) or  (strpos(strtolower($transaction->bundle), 'mbg') !== false));
 
-            
-            
+                $check_gifting = ((strpos(strtolower($transaction->bundle), 'gbg') !== false) or  (strpos(strtolower($transaction->bundle), 'mbg') !== false));
+
+
+
                 $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
 
 
 
 
-              
-                if($check_gifting){                    
-                    $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',Str::random(15));
-                }else {
+
+                if ($check_gifting) {
+                    $telehost->sendMultipleUssd('0ugh74', $ussd_string, $params->except(0), '1', Str::random(15));
+                } else {
                     $telehost->sendMessage('123abc', $code, '131', Str::random(15));
                 }
 
-    
+
                 break;
 
 
-                case 'glo':
+            case 'glo':
 
-                    $telehost = new Telehost;
+                $telehost = new Telehost;
 
-                    $message_details = [
-                        'access_code' => '2lerfb', //access_code[rand(0,1)],
-                        'ussd_code' => $code,
-                        'referrence' => $transaction->user_id."-".Str::random(15),
-                    ];
-    
-                   // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
-    
-                   $telehost->sendUssd('2lerfb', $code, $transaction->user_id."-".Str::random(15));
-                   // $response = $telehost->sendMessage($message_details['access_code'], $message_details['ussd_code'], $message_details['number'], $message_details['referrence']);
-    
-    
-                    break; 
+                $message_details = [
+                    'access_code' => '2lerfb', //access_code[rand(0,1)],
+                    'ussd_code' => $code,
+                    'referrence' => $transaction->user_id . "-" . Str::random(15),
+                ];
+
+                // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
+
+                $telehost->sendUssd('2lerfb', $code, $transaction->user_id . "-" . Str::random(15));
+                // $response = $telehost->sendMessage($message_details['access_code'], $message_details['ussd_code'], $message_details['number'], $message_details['referrence']);
 
 
-                    case 'airtel':
+                break;
 
 
-                        $referrence = $transaction->user_id."-".Str::random(15);
+            case 'airtel':
 
-                       /* $message_details = [
+
+                $referrence = $transaction->user_id . "-" . Str::random(15);
+
+                /* $message_details = [
                             'access_code' => 'rujsvo', //access_code[rand(0,1)],
                             'ussd_code' => $code,
                             'referrence' => ,
                         ];*/
 
-                       
-                       // dd($message_details);
-                       // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
-        
-                       $telehost->sendMultipleUssd('rujsvo',$ussd_string,$params,'1',$referrence);
- 
-                        
-                        //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
-        
-        
-                        break;
-                        
-                case 'etisalat':
 
-                    $message_details = [
-                        'access_code' => '1rrerv', //access_code[rand(0,1)],
-                        'ussd_code' => $code,
-                        'referrence' => $transaction->user_id."-".Str::random(15),
-                    ];
+                // dd($message_details);
+                // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
 
-                   // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
-                    
-                   $telehost->sendUssd('1rrerv', $code, $transaction->user_id."-".Str::random(15));
-                
+                $telehost->sendMultipleUssd('rujsvo', $ussd_string, $params, '1', $referrence);
+
+
+                //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
+
 
                 break;
-                    
-                    
+
+            case 'etisalat':
+
+                $message_details = [
+                    'access_code' => '1rrerv', //access_code[rand(0,1)],
+                    'ussd_code' => $code,
+                    'referrence' => $transaction->user_id . "-" . Str::random(15),
+                ];
+
+                // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+
+                $telehost->sendUssd('1rrerv', $code, $transaction->user_id . "-" . Str::random(15));
+
+
+                break;
+
+
 
             default:
                 # code...
                 break;
         }
 
-       /* if(strtolower($transaction->network) != 'mtn' ){
+        /* if(strtolower($transaction->network) != 'mtn' ){
             $response = $telehost->retryUssd($referrence);
         }else{
             $response = $telehost->retryMsg($referrence);
@@ -274,45 +274,40 @@ class DataTransactionController extends Controller
             'to' => 'required|date_format:Y/m/d'
         ]);
 
-        $totals = DB::table('data_transactions')
-            ->selectRaw('count(*) as total')
-            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'oneGB'")
-            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) * 2 as 'twoGB'")
-            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) * 3 as 'threeGB'")
-            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) * 5 as 'fiveGB'")
-            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) * 0.5 as 'five_hundred_MB'")
-            ->selectRaw("count(case when status = 'successful' then 1 end) as successful")
-            ->selectRaw("count(case when status = 'processing' then 1 end) as processing")
-            ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
+        $transactions = DB::table('data_transactions')
+            ->where('user_id', auth()->user()->id)
             ->whereDate('created_at', '>=', Carbon::create($request->from))
             ->whereDate('created_at', '<=', Carbon::create($request->to))
-            ->where('user_id', auth()->user()->id)
-            ->first();
+            ->get();
+
+        $total_transactions = $transactions->count();
+
+        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) {
+
+            return $carry + DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
+        });
 
 
-
-        $values = collect([
-            'onGB' => $totals->oneGB,
-            'twoGB' => $totals->twoGB,
-            'threeGB' => $totals->threeGB,
-            'fiveGB' => $totals->fiveGB,
-            'five_hundred_MB' => $totals->five_hundred_MB,
-        ]);
-
-        $sum = $values->sum();
-
-        $new_values = collect(
-            [
-                'total_transaction_count' => $totals->total,
-                'total_bundle_consumed' => $sum,
-                'processing' => $totals->processing,
-                'reversed' => $totals->reversed,
-                'successful' => $totals->successful,
-            ]
-        )->merge($values);
+        $glo = $this->getNetworkAnalysis('GLO', $transactions);
+        $mtn = $this->getNetworkAnalysis('MTN', $transactions);
+        $etisalat = $this->getNetworkAnalysis('ETISALAT', $transactions);
+        $airtel = $this->getNetworkAnalysis('Airtel', $transactions);
 
 
-        return response()->json(['analysis' => $new_values], 200);
+        return response()->json(['analysis' => [
+            'Total' => [
+                'Bundle(MB)' => $sum,
+                'Transactions' => $total_transactions,
+                'Successful' => $transactions->where('status', 'successful')->count(),
+                'Reversed' => $transactions->where('status', 'reversed')->count(),
+                'Processing' => $transactions->where('status', 'processing')->count(),
+            ],
+            'MTN' => $mtn,
+            'Etisalat' => $etisalat,
+            'AIRTEL' => $airtel,
+            'GLO' => $glo,
+
+        ]], 200);
     }
 
 
@@ -321,46 +316,83 @@ class DataTransactionController extends Controller
 
         $this->validate($request, [
             'from' => 'required|date_format:Y/m/d',
-            'to' => 'required|date_format:Y/m/d'
+            'to' => 'required|date_format:Y/m/d',
         ]);
 
 
-        $totals = DB::table('data_transactions')
-            ->selectRaw('count(*) as total')
-            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'oneGB'")
-            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) * 2 as 'twoGB'")
-            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) * 3 as 'threeGB'")
-            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) * 5 as 'fiveGB'")
-            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) * 0.5 as 'five_hundred_MB'")
-            ->selectRaw("count(case when status = 'successful' then 1 end) as successful")
-            ->selectRaw("count(case when status = 'processing' then 1 end) as processing")
-            ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
+        $transactions = DB::table('data_transactions')
             ->whereDate('created_at', '>=', Carbon::create($request->from))
             ->whereDate('created_at', '<=', Carbon::create($request->to))
-            ->first();
+            ->get();
 
-        $values = collect([
-            'onGB' => $totals->oneGB,
-            'twoGB' => $totals->twoGB,
-            'threeGB' => $totals->threeGB,
-            'fiveGB' => $totals->fiveGB,
-            'five_hundred_MB' => $totals->five_hundred_MB,
-        ]);
+        $total_transactions = $transactions->count();
 
-        $sum = $values->sum();
+        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) {
 
-        $new_values = collect(
-            [
-                'total_transaction_count' => $totals->total,
-                'total_bundle_consumed' => $sum,
-                'processing' => $totals->processing,
-                'reversed' => $totals->reversed,
-                'successful' => $totals->successful,
-            ]
-        )->merge($values);
+            return $carry + DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
+        });
 
 
-        return response()->json(['analysis' => $new_values], 200);
+        $glo = $this->getNetworkAnalysis('GLO', $transactions);
+        $mtn = $this->getNetworkAnalysis('MTN', $transactions);
+        $etisalat = $this->getNetworkAnalysis('ETISALAT', $transactions);
+        $airtel = $this->getNetworkAnalysis('Airtel', $transactions);
+
+
+
+        // dd($sum);
+
+
+
+
+
+        return response()->json(['analysis' => [
+            'Total' => [
+                'Bundle(MB)' => $sum,
+                'Transactions' => $total_transactions,
+                'Successful' => $transactions->where('status', 'successful')->count(),
+                'Reversed' => $transactions->where('status', 'reversed')->count(),
+                'Processing' => $transactions->where('status', 'processing')->count(),
+            ],
+            'MTN' => $mtn,
+            'Etisalat' => $etisalat,
+            'AIRTEL' => $airtel,
+            'GLO' => $glo,
+
+        ]], 200);
+    }
+
+
+    private function getNetworkAnalysis($network, $transactions)
+    {
+
+
+        $mtn_total_bundle = $this->getTotalBundle($transactions, $network, 'successful');
+        $mtn_total_succesful = $this->getNetworkBundle($transactions, $network, 'successful')->count();
+        $mtn_total_reversed = $this->getNetworkBundle($transactions, $network, 'reversed')->count();
+        $mtn_total_processing = $this->getNetworkBundle($transactions, $network, 'processing')->count();
+
+        return $network = [
+            'Bundle(MB)' => $mtn_total_bundle,
+            'Successful' => $mtn_total_succesful,
+            'Reversed' => $mtn_total_reversed,
+            'Processing' => $mtn_total_processing
+        ];
+    }
+
+
+    private function getTotalBundle($transactions, $network, $status)
+    {
+
+        return $transactions->where('network', $network)->where('status', $status)->reduce(function ($carry, $transaction) {
+            return $carry + DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
+        });
+    }
+
+
+    public function getNetworkBundle($transactions, $network, $status)
+    {
+        return $transactions->where('network', $network)->where('status', $status);
     }
 
 
@@ -369,49 +401,50 @@ class DataTransactionController extends Controller
         $this->validate($request, [
             'from' => 'required|date_format:Y/m/d',
             'to' => 'required|date_format:Y/m/d',
-            'email' => 'required|email|exists:users'
+            'user_id' => 'required'
         ]);
 
-        $user = User::whereEmail($request->email)->first();
+
+        $user = User::find($request->user_id);
+
+        if (is_null($user)) {
+            return response()->json(['status' => 'failed', 'message' => 'user not found']);
+        }
 
 
-        $totals = DB::table('data_transactions')
-            ->selectRaw('count(*) as total')
-            ->selectRaw("count(case when bundle = 'MTN-1GB' then 1 end) as 'oneGB'")
-            ->selectRaw("count(case when bundle = 'MTN-2GB' then 1 end) * 2 as 'twoGB'")
-            ->selectRaw("count(case when bundle = 'MTN-3GB' then 1 end) * 3 as 'threeGB'")
-            ->selectRaw("count(case when bundle = 'MTN-5GB' then 1 end) * 5 as 'fiveGB'")
-            ->selectRaw("count(case when bundle = 'MTN-500MB' then 1 end) * 0.5 as 'five_hundred_MB'")
-            ->selectRaw("count(case when status = 'successful' then 1 end) as successful")
-            ->selectRaw("count(case when status = 'processing' then 1 end) as processing")
-            ->selectRaw("count(case when status = 'reversed' then 1 end) as reversed")
+        $transactions = DB::table('data_transactions')
+            ->where('user_id', $user->id)
             ->whereDate('created_at', '>=', Carbon::create($request->from))
             ->whereDate('created_at', '<=', Carbon::create($request->to))
-            ->where('user_id', auth()->user()->id)
-            ->first();
+            ->get();
+
+        $total_transactions = $transactions->count();
+
+        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) {
+
+            return $carry + DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
+        });
 
 
-        $values = collect([
-            'onGB' => $totals->oneGB,
-            'twoGB' => $totals->twoGB,
-            'threeGB' => $totals->threeGB,
-            'fiveGB' => $totals->fiveGB,
-            'five_hundred_MB' => $totals->five_hundred_MB,
-        ]);
-
-        $sum = $values->sum();
-
-        $new_values = collect(
-            [
-                'total_transaction_count' => $totals->total,
-                'total_bundle_consumed' => $sum,
-                'processing' => $totals->processing,
-                'reversed' => $totals->reversed,
-                'successful' => $totals->successful,
-            ]
-        )->merge($values);
+        $glo = $this->getNetworkAnalysis('GLO', $transactions);
+        $mtn = $this->getNetworkAnalysis('MTN', $transactions);
+        $etisalat = $this->getNetworkAnalysis('ETISALAT', $transactions);
+        $airtel = $this->getNetworkAnalysis('Airtel', $transactions);
 
 
-        return response()->json(['analysis' => $new_values], 200);
+        return response()->json(['analysis' => [
+            'Total' => [
+                'Bundle(MB)' => $sum,
+                'Transactions' => $total_transactions,
+                'Successful' => $transactions->where('status', 'successful')->count(),
+                'Reversed' => $transactions->where('status', 'reversed')->count(),
+                'Processing' => $transactions->where('status', 'processing')->count(),
+            ],
+            'MTN' => $mtn,
+            'Etisalat' => $etisalat,
+            'AIRTEL' => $airtel,
+            'GLO' => $glo,
+
+        ]], 200);
     }
 }
