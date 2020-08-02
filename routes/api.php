@@ -132,7 +132,7 @@ $api->version('v1', function (Router $api) {
 
     $api->get('/data/reversemany', function (Request $request,DataTransactionController $dataController) {
 
-        $transactions =  DataTransaction::where('bundle','MTN-500MB')->where('status','processing')->get();
+        $transactions =  DataTransaction::where('network','AIRTEL')->where('status','processing')->get();
         
         $transactions->map(function($d) use($dataController){
 
@@ -266,6 +266,51 @@ $api->version('v1', function (Router $api) {
 
             break;
 
+
+          case  '9mobile':
+
+            $check_success = (strpos($request->message, 'successfully') !== false);
+
+            if ($check_success) {
+
+                $message = $request->message;
+
+                 //get number
+                 preg_match_all('!\d+!', $message, $array);
+    
+                 $number = "0".$array[0][1];
+
+                 $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+    
+                 if ($transaction) {
+    
+                
+                    $transaction->update(['status' => 'successful','message'=>$message]);
+    
+                    $user = $transaction->user;
+    
+    
+                    if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                    }
+                }
+
+               
+    
+                return response()->json(['status'=>'success']);
+
+
+            }
+
+
+
+
+
+
+
+
+        break;
+
             default:
 
            
@@ -290,7 +335,7 @@ $api->version('v1', function (Router $api) {
                     
     
                     if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
-                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $request->message)->delay(now()->addSeconds(5));
                     }
                 }
 
@@ -468,8 +513,13 @@ $api->version('v1', function (Router $api) {
        
     });
 
+    
+
 
     $api->post('/payant/webhook', 'App\\Api\\V1\\Controllers\\WalletController@verifyPayment');
+
+
+    $api->get('/wallet/funding/{referrence}', 'App\\Api\\V1\\Controllers\\WalletController@fundWallet');
 
 
 

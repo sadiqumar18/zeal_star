@@ -72,7 +72,7 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
-        if ($bundle == 'MTN-500MB') {
+        if (strtolower($network) == 'airtel' or ((strpos(strtolower($bundle), 'gbg') !== false) or  (strpos(strtolower($bundle), 'mbg') !== false))) {
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
         }
       
@@ -91,9 +91,10 @@ class DataProductController extends Controller
          $collection = collect(explode('*',$remove_hash[0])); 
  
          $ussd = $collection->splice(1);
+
+
  
-         //get ussd code
-         $ussd_string = "*{$ussd->get(0)}#";
+        
  
         $params = $ussd->splice(1)->map(function($key) use($number){
          if($key == '{{number}}'){
@@ -102,7 +103,8 @@ class DataProductController extends Controller
              return $key;
          }
      });
- 
+
+   
 
  
          $code = str_replace('{{number}}', $number, $dataBundle->code);
@@ -119,11 +121,22 @@ class DataProductController extends Controller
                      'referrence' => $referrence,
                      // 'amount' => $dataBundle->price
                  ];
- 
-                // $telehost->sendMultipleUssd('4gxfue','*461#',[3,2,'08023634895',9754],'1','testussds8');
- 
-                 $telehost->sendMessage('4gxfue', $code, '131', $referrence);
- 
+
+
+            
+
+                $check_gifting = ((strpos(strtolower($bundle), 'gbg') !== false) or  (strpos(strtolower($bundle), 'mbg') !== false));
+
+                
+                
+                    $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
+
+                if($check_gifting){
+                    $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',$referrence);
+                }else{
+                    $telehost->sendMessage('123abc', $code, '131', $referrence);
+                }
+
                  //$telerivet->sendMessage($code, '131');
  
                  //SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
@@ -140,7 +153,9 @@ class DataProductController extends Controller
                      'referrence' => $referrence,
                  ];
  
-                 $telehost->sendMultipleUssd('2lerfb',$ussd_string,$params,'2',$referrence);
+                 //$telehost->sendMultipleUssd('2lerfb',$ussd_string,$params,'2',$referrence);
+
+                 $telehost->sendUssd('2lerfb', $code, $referrence);
  
  
  
@@ -158,7 +173,7 @@ class DataProductController extends Controller
                      'referrence' => $referrence,
                  ];
  
-                 $telehost->sendMultipleUssd('4gxfue',$ussd_string,$params,'1',$referrence);
+                 $telehost->sendMultipleUssd('rujsvo',$ussd_string,$params,'1',$referrence);
  
  
  
@@ -167,6 +182,22 @@ class DataProductController extends Controller
  
  
              break;
+
+
+             case 'etisalat':
+
+                $message_details = [
+                    'access_code' => '1rrerv', //access_code[rand(0,1)],
+                    'ussd_code' => $code,
+                    'referrence' => $referrence,
+                ];
+
+                //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+
+                $telehost->sendUssd('1rrerv', $code, $referrence);
+
+
+            break;
  
              default:
                  # code...
@@ -184,7 +215,8 @@ class DataProductController extends Controller
             "referrence" => $referrence,
             "network" => $network,
             "price" => $dataPrice,
-            "bundle" => $bundle
+            "bundle" => $bundle,
+            "status"=>"processing"
         ]));
 
         $user->wallet()->save(new Wallet([

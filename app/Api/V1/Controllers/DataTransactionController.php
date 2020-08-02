@@ -85,6 +85,9 @@ class DataTransactionController extends Controller
     public function retry($referrence)
     {
 
+        $telerivet = new Telerivet;
+        $telehost = new Telehost;
+
         sleep(3);
 
         $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
@@ -96,6 +99,31 @@ class DataTransactionController extends Controller
         $dataBundle = DataProduct::whereBundle($transaction->bundle)->first();
 
 
+
+        
+        //removes hash sign
+        $remove_hash = explode('#',trim($dataBundle->code));
+
+        //remove *
+        $collection = collect(explode('*',$remove_hash[0])); 
+
+        $ussd = $collection->splice(1);
+
+        $number = $transaction->number;
+
+       
+        //get ussd code
+       // $ussd_string = "*{$ussd->get(0)}#";
+
+       $params = $ussd->splice(1)->map(function($key) use($number){
+        if($key == '{{number}}'){
+            return $number;
+        }else{
+            return $key;
+        }
+    });
+
+
        
 
         $code =  str_replace('{{number}}', $transaction->number, $dataBundle->code);
@@ -104,12 +132,11 @@ class DataTransactionController extends Controller
 
         
 
-        switch (strtolower($transaction->network)) {
+       switch (strtolower($transaction->network)) {
 
             case 'mtn':
 
-                $telerivet = new Telerivet;
-                $telehost = new Telehost;
+                
 
                 $access_code = ['z8cfdf', 'zwb1ek', '5k9iep'];
 
@@ -120,14 +147,25 @@ class DataTransactionController extends Controller
                     'referrence' => Str::random(15),
                 ];
 
-                //$telerivet->sendMessage($code,'131');
+               
+               $check_gifting = ((strpos(strtolower($transaction->bundle), 'gbg') !== false) or  (strpos(strtolower($transaction->bundle), 'mbg') !== false));
 
-                $access_code = ($transaction->bundle == 'MTN-500MB')?'0ugh74':'4gxfue';
+            
+            
+                $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
-                
-                $response = $telehost->sendMessage($access_code, $message_details['code'], $message_details['number'], $message_details['referrence']);
 
 
+
+
+              
+                if($check_gifting){                    
+                    $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',Str::random(15));
+                }else {
+                    $telehost->sendMessage('123abc', $code, '131', Str::random(15));
+                }
+
+    
                 break;
 
 
@@ -141,9 +179,9 @@ class DataTransactionController extends Controller
                         'referrence' => $transaction->user_id."-".Str::random(15),
                     ];
     
-                    SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
+                   // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
     
-                    
+                   $telehost->sendUssd('2lerfb', $code, $transaction->user_id."-".Str::random(15));
                    // $response = $telehost->sendMessage($message_details['access_code'], $message_details['ussd_code'], $message_details['number'], $message_details['referrence']);
     
     
@@ -152,28 +190,62 @@ class DataTransactionController extends Controller
 
                     case 'airtel':
 
-                        $message_details = [
+
+                        $referrence = $transaction->user_id."-".Str::random(15);
+
+                       /* $message_details = [
                             'access_code' => 'rujsvo', //access_code[rand(0,1)],
                             'ussd_code' => $code,
-                            'referrence' => $transaction->user_id."-".Str::random(15),
-                        ];
-                        
+                            'referrence' => ,
+                        ];*/
+
+                       
                        // dd($message_details);
-                        SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
+                       // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
         
+                       $telehost->sendMultipleUssd('rujsvo',$ussd_string,$params,'1',$referrence);
+ 
                         
                         //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
         
         
-                        break;        
+                        break;
+                        
+                case 'etisalat':
+
+                    $message_details = [
+                        'access_code' => '1rrerv', //access_code[rand(0,1)],
+                        'ussd_code' => $code,
+                        'referrence' => $transaction->user_id."-".Str::random(15),
+                    ];
+
+                   // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
+                    
+                   $telehost->sendUssd('1rrerv', $code, $transaction->user_id."-".Str::random(15));
+                
+
+                break;
+                    
+                    
 
             default:
                 # code...
                 break;
         }
 
+       /* if(strtolower($transaction->network) != 'mtn' ){
+            $response = $telehost->retryUssd($referrence);
+        }else{
+            $response = $telehost->retryMsg($referrence);
+        }
+        
 
-        return response()->json(['status' => 'success', 'data' => $transaction]);
+        if($response['status'] != 'success'){
+            return response()->json(['status' => 'failed', 'message' => 'unable to retry transaction']);
+        }*/
+
+
+        return response()->json(['status' => 'success', 'message' => 'Transaction successfull']);
     }
 
     public function success(Request $request)
