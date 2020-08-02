@@ -72,7 +72,7 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
-        if (strtolower($network) == 'airtel' or ((strpos(strtolower($bundle), 'gbg') !== false) or  (strpos(strtolower($bundle), 'mbg') !== false))) {
+        if (strtolower($network) == 'airtel') {
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
         }
       
