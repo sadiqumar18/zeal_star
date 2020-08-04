@@ -86,7 +86,7 @@ class UserController extends Controller
 
     public function adminWalletransactions()
     {
-       $transactions = Wallet::OrderBy('id','DESC')->paginate(15);
+       $transactions = Wallet::with('user')->OrderBy('id','DESC')->paginate(15);
 
        return response()->json(['status'=>'success','transactions'=>$transactions]);
 
@@ -96,6 +96,37 @@ class UserController extends Controller
     public function userWalletransactions()
     {
        $transactions = auth()->user()->wallet()->orderBy('id','DESC')->paginate(15);
+
+       return response()->json(['status'=>'success','transactions'=>$transactions]);
+
+    }
+
+
+    public function userWalleTransactionsSearch($needle)
+    {
+       $transactions = auth()->user()->wallet()
+                                ->where('description', $needle) 
+                                ->orWhere('referrence',$needle)                     
+                                ->orderBy('id','DESC')->paginate(15);
+        
+        if($transactions->isEmpty()){
+            return response()->json(['status'=>'failed','message'=>'No records found!!']);
+        }                              
+
+       return response()->json(['status'=>'success','transactions'=>$transactions]);
+
+    }
+
+
+    public function adminWalleTransactionsSearch($needle)
+    {
+       $transactions = Wallet::where('description', 'LIKE', "%{$needle}%") 
+                                ->orWhere('referrence', 'LIKE', "%{$needle}%")                      
+                                ->orderBy('id','DESC')->paginate(15);
+        
+        if($transactions->isEmpty()){
+            return response()->json(['status'=>'failed','message'=>'No records found!!']);
+        }                              
 
        return response()->json(['status'=>'success','transactions'=>$transactions]);
 

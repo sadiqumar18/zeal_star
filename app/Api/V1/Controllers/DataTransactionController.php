@@ -327,9 +327,13 @@ class DataTransactionController extends Controller
 
         $total_transactions = $transactions->count();
 
-        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) {
 
-            return $carry + DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
+        $bundles = DataProduct::all();
+
+       
+        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use($bundles){
+
+            return $carry + $bundles->where('bundle',$transaction->bundle)->first()->megabytes;
         });
 
 
@@ -373,7 +377,7 @@ class DataTransactionController extends Controller
         $mtn_total_processing = $this->getNetworkBundle($transactions, $network, 'processing')->count();
 
         return $network = [
-            'Bundle(MB)' => $mtn_total_bundle,
+            'Bundle(MB)' => is_null($mtn_total_bundle)?0:$mtn_total_bundle,
             'Successful' => $mtn_total_succesful,
             'Reversed' => $mtn_total_reversed,
             'Processing' => $mtn_total_processing
@@ -420,9 +424,12 @@ class DataTransactionController extends Controller
 
         $total_transactions = $transactions->count();
 
-        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) {
+        $bundles = DataProduct::all();
+        
 
-            return $carry + DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
+        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use($bundles) {
+
+            return $carry + $bundles->where('bundle',$transaction->bundle)->megabytes;
         });
 
 
@@ -447,4 +454,47 @@ class DataTransactionController extends Controller
 
         ]], 200);
     }
+
+
+    public function userTransactionSearch($needle)
+    {
+
+     
+        $transactions = auth()->user()->dataTransactions()
+                                   // DataTransaction::where('user_id',auth()->user()->id)
+                                    ->Where('referrence', $needle)
+                                    ->orWhere('number', $needle) 
+                                    
+                                    ->orderBy('id', 'DESC')->paginate(15);
+     
+        if($transactions->isEmpty()){
+            return response()->json(['status'=>'failed','message'=>'No records found!!']);
+        }                            
+
+        return response()->json($transactions, 200);
+    }
+
+
+    public function adminTransactionSearch($needle)
+    {
+
+        //switch()
+
+        $transactions =  DataTransaction::Where('referrence','like', "%{$needle}%")
+                                   ->orWhere('number', 'like', "%{$needle}%") 
+                                   ->orWhere('status','like', "%{$needle}%")
+                                   ->orderBy('id', 'DESC')->paginate(15);
+
+
+        if($transactions->isEmpty()){
+            return response()->json(['status'=>'failed','message'=>'No records found!!']);
+        }                            
+
+        return response()->json($transactions, 200);
+    }
+
+
+
+
+
 }
