@@ -102,12 +102,6 @@ class UserController extends Controller
     }
 
 
-<<<<<<< HEAD
-
-    public function vendOnline(Request $request)
-    {
-       dd($request->all());
-=======
     public function userWalleTransactionsSearch($needle)
     {
        $transactions = auth()->user()->wallet()
@@ -135,7 +129,6 @@ class UserController extends Controller
         }                              
 
        return response()->json(['status'=>'success','transactions'=>$transactions]);
->>>>>>> b4efcd6cf2caa120a4bae1a6f63e53f9e8505caa
 
     }
 
