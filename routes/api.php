@@ -71,6 +71,7 @@ $api->version('v1', function (Router $api) {
         $api->post('/vend', 'App\\Api\\V1\\Controllers\\DataProductController@purchase')->middleware('check_referrence');
         $api->get('/bundles', 'App\\Api\\V1\\Controllers\\DataProductController@index');
         $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataProductController@transactions');
+        $api->get('/transactions/search/{needle}', 'App\\Api\\V1\\Controllers\\DataTransactionController@userTransactionSearch');
         $api->get('/bundle/status/{referrence}', 'App\\Api\\V1\\Controllers\\DataTransactionController@status');
         $api->get('analysis', 'App\\Api\\V1\\Controllers\\DataTransactionController@analysis');
         $api->post('/vend/online', 'App\\Api\\V1\\Controllers\\DataTransactionController@vendOnline');
@@ -84,9 +85,10 @@ $api->version('v1', function (Router $api) {
         $api->post('/create/account','App\\Api\\V1\\Controllers\\UserController@generateAccount');
         
     });
-
+    
     $api->group(['prefix' => 'wallet', 'middleware' => ['jwt.auth']], function (Router $api) {
         $api->get('/transactions', 'App\\Api\\V1\\Controllers\\UserController@userWalletransactions');
+        $api->get('/transactions/search/{needle}', 'App\\Api\\V1\\Controllers\\UserController@userWalleTransactionsSearch');
     });
 
 
@@ -96,6 +98,7 @@ $api->version('v1', function (Router $api) {
 
         $api->group(['prefix' => 'data', 'middleware' => ['jwt.auth']], function (Router $api) {
             $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataController@adminTransactions');
+            $api->get('/transactions/search/{needle}', 'App\\Api\\V1\\Controllers\\DataTransactionController@adminTransactionSearch');
             $api->post('/bundle', 'App\\Api\\V1\\Controllers\\DataController@create');
             $api->post('/bundle/{bundle}', 'App\\Api\\V1\\Controllers\\DataController@update');
             $api->get('/bundle/reverse/{referrence}', 'App\\Api\\V1\\Controllers\\DataTransactionController@reverseTransaction');
@@ -116,6 +119,8 @@ $api->version('v1', function (Router $api) {
 
         $api->group(['prefix' => 'wallet', 'middleware' => ['jwt.auth']], function (Router $api) {
             $api->get('/transactions', 'App\\Api\\V1\\Controllers\\UserController@adminWalletransactions');
+            $api->get('/transactions/search/{needle}', 'App\\Api\\V1\\Controllers\\UserController@adminWalleTransactionsSearch');
+     
         });
 
 
