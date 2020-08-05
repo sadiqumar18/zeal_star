@@ -9,12 +9,14 @@ use App\Wallet;
 use Carbon\Carbon;
 use App\DataProduct;
 use App\DataTransaction;
+use App\Services\Payant;
 use App\Jobs\DataWebhook;
 use App\Services\Telehost;
 use App\Services\Telerivet;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Jobs\SendTelehostUssd;
+use App\OnlineDataTransaction;
 use App\Jobs\SendTelehostMessage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -62,6 +64,122 @@ class DataTransactionController extends Controller
         }
 
         return response()->json(['status' => 'success', 'data' => $transaction]);
+    }
+
+
+
+    public function vendOnline(Request $request, Payant $payant)
+    {
+        $this->validate($request, [
+            'network' => 'required|exists:data_products',
+            'bundle' => 'required|exists:data_products',
+            'number' => 'required|regex:/(0)[0-9]{10}/|size:11',
+        ]);
+
+        $network = $request->network;
+        $bundle = $request->bundle;
+        $number = $request->number;
+        
+        $user = auth()->user();
+
+        $dataBundle = DataProduct::where('bundle',$bundle)->first();
+
+        $dataPrice = $this->getDataPrice($user, $dataBundle);
+
+
+
+        //create invoice
+
+       $invoce_details = $user->getInvoicedata($dataPrice);
+
+
+       $invoice_response = $payant->createInvoice($invoce_details);
+
+       if($invoice_response['status'] == 'failed'){
+        return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
+       };
+
+
+       $invoice_referrence = $invoice_response['data']->reference_code;
+
+
+       $account_info_response = $payant->generateAccount($invoice_referrence);
+
+       if($account_info_response['status'] == 'failed'){
+        return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
+      };
+
+
+      $user->onlineDataTransactions()->save(new OnlineDataTransaction([
+            "number" => $number,
+            "referrence" => $invoice_referrence,
+            "network" => $network,
+            "price" => $account_info_response['amount'],
+            "bundle" => $bundle,
+            "status"=>"processing"
+    ]));
+      
+
+
+      return response()->json([
+        'status'=>'success',
+        'account_number'=>$account_info_response['account_number'],
+        'account_name'=>$account_info_response['account_name'],
+        'amount'=>$account_info_response['amount'],
+        'bank_name'=>$account_info_response['bank_name'],
+        'message'=>"Make a bank transfer to this account within 10 mins."
+        ]);
+
+
+
+
+
+
+
+
+        //generate account number
+
+
+
+        
+
+        
+
+
+
+
+    
+      
+        dd($request->all());
+
+
+
+    }
+
+
+
+    //get user bundle price
+
+
+    public function getDataPrice($user, $dataBundle)
+    {
+        switch ($user->package) {
+            case 'standard':
+                return $dataBundle->standard;
+                break;
+            case 'agent':
+                return  $dataBundle->agent;
+                break;
+            case 'vendor':
+                return $dataBundle->vendor;
+                break;
+            case 'merchant':
+                return $dataBundle->merchant;
+                break;
+            case 'reseller':
+                return $dataBundle->reseller;
+                break;
+        }
     }
 
 
@@ -373,7 +491,7 @@ class DataTransactionController extends Controller
         $mtn_total_processing = $this->getNetworkBundle($transactions, $network, 'processing')->count();
 
         return $network = [
-            'Bundle(MB)' => $mtn_total_bundle,
+            'Bundle(MB)' => is_null($mtn_total_bundle)?0:$mtn_total_bundle,
             'Successful' => $mtn_total_succesful,
             'Reversed' => $mtn_total_reversed,
             'Processing' => $mtn_total_processing

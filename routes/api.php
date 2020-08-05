@@ -73,6 +73,8 @@ $api->version('v1', function (Router $api) {
         $api->get('/transactions', 'App\\Api\\V1\\Controllers\\DataProductController@transactions');
         $api->get('/bundle/status/{referrence}', 'App\\Api\\V1\\Controllers\\DataTransactionController@status');
         $api->get('analysis', 'App\\Api\\V1\\Controllers\\DataTransactionController@analysis');
+        $api->post('/vend/online', 'App\\Api\\V1\\Controllers\\DataTransactionController@vendOnline');
+        
     });
 
 

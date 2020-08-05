@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -73,9 +74,54 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
+    public function onlineDataTransactions()
+    {
+        return $this->hasMany(OnlineDataTransaction::class);
+    }
+
+
     public function wallet()
     {
         return $this->hasMany(Wallet::class);
+    }
+
+
+    public function getInvoicedata($amount)
+    {
+        return [
+            "client"=>[
+                'first_name'=>$this->fullname,
+                'last_name'=>$this->fullname,
+                'email'=>$this->email,
+                'phone'=>"+234" . substr($this->number, 1, 12)
+            ],
+            'items'=>[
+                [
+                'item'=>'Zealvend account funding',
+                'description'=>'funding',
+                'unit_cost'=>"{$amount}",
+                'quantity'=>1
+                ]
+            ],
+            "due_date"=>Carbon::now()->format('d/m/Y'),
+            "fee_bearer"=>"client",
+            "split_details"=>[
+                "type"=>"percentage",
+                "fee_bearer"=>"client",
+                "receivers"=>[
+                    [
+                        "wallet_reference_code"=>"Jo4ZhR6WTj",
+                        "value"=>"95",
+                        "primary"=>"true"
+                    ],
+                    [
+                        "wallet_reference_code"=>"cRyFviDf6t",
+                        "value"=>"5",
+                        "primary"=>"false"
+                    ]
+                ]
+            ]
+        ];
     }
 
 

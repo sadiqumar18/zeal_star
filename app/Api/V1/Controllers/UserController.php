@@ -102,6 +102,14 @@ class UserController extends Controller
     }
 
 
+
+    public function vendOnline(Request $request)
+    {
+       dd($request->all());
+
+    }
+
+
     public function generateAccount(Request $request)
     {
 
