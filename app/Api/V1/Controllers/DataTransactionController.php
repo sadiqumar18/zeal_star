@@ -424,11 +424,14 @@ class DataTransactionController extends Controller
 
         $bundles = DataProduct::all();
 
+        $sum = $transactions->where('status', 'successful')->sum('megabytes');
 
-        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use ($bundles) {
+
+
+       /* $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use ($bundles) {
 
             return $carry + $bundles->where('bundle', $transaction->bundle)->first()->megabytes;
-        });
+        });*/
 
 
         $glo = $this->getNetworkAnalysis('GLO', $transactions);
