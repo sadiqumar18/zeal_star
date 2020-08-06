@@ -485,9 +485,7 @@ class DataTransactionController extends Controller
     private function getTotalBundle($transactions, $network, $status)
     {
 
-        return $transactions->where('network', $network)->where('status', $status)->reduce(function ($carry, $transaction) {
-            return $carry + DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
-        });
+        return $transactions->where('network', $network)->where('status', $status)->sum('megabytes');
     }
 
 
