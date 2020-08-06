@@ -79,10 +79,10 @@ class DataTransactionController extends Controller
         $network = $request->network;
         $bundle = $request->bundle;
         $number = $request->number;
-        
+
         $user = auth()->user();
 
-        $dataBundle = DataProduct::where('bundle',$bundle)->first();
+        $dataBundle = DataProduct::where('bundle', $bundle)->first();
 
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
@@ -90,70 +90,44 @@ class DataTransactionController extends Controller
 
         //create invoice
 
-       $invoce_details = $user->getInvoicedata($dataPrice);
+        $invoce_details = $user->getInvoicedata($dataPrice);
 
 
-       $invoice_response = $payant->createInvoice($invoce_details);
+        $invoice_response = $payant->createInvoice($invoce_details);
 
-       if($invoice_response['status'] == 'failed'){
-        return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
-       };
-
-
-       $invoice_referrence = $invoice_response['data']->reference_code;
+        if ($invoice_response['status'] == 'failed') {
+            return response()->json(['status' => 'error', 'message' => 'Unable to generate account number']);
+        };
 
 
-       $account_info_response = $payant->generateAccount($invoice_referrence);
-
-       if($account_info_response['status'] == 'failed'){
-        return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
-      };
+        $invoice_referrence = $invoice_response['data']->reference_code;
 
 
-      $user->onlineDataTransactions()->save(new OnlineDataTransaction([
+        $account_info_response = $payant->generateAccount($invoice_referrence);
+
+        if ($account_info_response['status'] == 'failed') {
+            return response()->json(['status' => 'error', 'message' => 'Unable to generate account number']);
+        };
+
+
+        $user->onlineDataTransactions()->save(new OnlineDataTransaction([
             "number" => $number,
             "referrence" => $invoice_referrence,
             "network" => $network,
             "price" => $account_info_response['amount'],
             "bundle" => $bundle,
-            "status"=>"processing"
-    ]));
-      
+            "status" => "processing"
+        ]));
 
 
-      return response()->json([
-        'status'=>'success',
-        'account_number'=>$account_info_response['account_number'],
-        'account_name'=>$account_info_response['account_name'],
-        'amount'=>$account_info_response['amount'],
-        'bank_name'=>$account_info_response['bank_name'],
-        'message'=>"Make a bank transfer to this account within 10 mins."
+        return response()->json([
+            'status' => 'success',
+            'account_number' => $account_info_response['account_number'],
+            'account_name' => $account_info_response['account_name'],
+            'amount' => $account_info_response['amount'],
+            'bank_name' => $account_info_response['bank_name'],
+            'message' => "Make a bank transfer to this account within 10 mins."
         ]);
-
-
-
-
-
-
-
-
-        //generate account number
-
-
-
-        
-
-        
-
-
-
-
-    
-      
-        dd($request->all());
-
-
-
     }
 
 
@@ -448,10 +422,10 @@ class DataTransactionController extends Controller
 
         $bundles = DataProduct::all();
 
-       
-        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use($bundles){
 
-            return $carry + $bundles->where('bundle',$transaction->bundle)->first()->megabytes;
+        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use ($bundles) {
+
+            return $carry + $bundles->where('bundle', $transaction->bundle)->first()->megabytes;
         });
 
 
@@ -495,7 +469,7 @@ class DataTransactionController extends Controller
         $mtn_total_processing = $this->getNetworkBundle($transactions, $network, 'processing')->count();
 
         return $network = [
-            'Bundle(MB)' => is_null($mtn_total_bundle)?0:$mtn_total_bundle,
+            'Bundle(MB)' => is_null($mtn_total_bundle) ? 0 : $mtn_total_bundle,
             'Successful' => $mtn_total_succesful,
             'Reversed' => $mtn_total_reversed,
             'Processing' => $mtn_total_processing
@@ -543,11 +517,11 @@ class DataTransactionController extends Controller
         $total_transactions = $transactions->count();
 
         $bundles = DataProduct::all();
-        
 
-        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use($bundles) {
 
-            return $carry + $bundles->where('bundle',$transaction->bundle)->megabytes;
+        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use ($bundles) {
+
+            return $carry + $bundles->where('bundle', $transaction->bundle)->megabytes;
         });
 
 
@@ -577,17 +551,17 @@ class DataTransactionController extends Controller
     public function userTransactionSearch($needle)
     {
 
-     
+
         $transactions = auth()->user()->dataTransactions()
-                                   // DataTransaction::where('user_id',auth()->user()->id)
-                                    ->Where('referrence', $needle)
-                                    ->orWhere('number', $needle) 
-                                    
-                                    ->orderBy('id', 'DESC')->paginate(15);
-     
-        if($transactions->isEmpty()){
-            return response()->json(['status'=>'failed','message'=>'No records found!!']);
-        }                            
+            // DataTransaction::where('user_id',auth()->user()->id)
+            ->Where('referrence', $needle)
+            ->orWhere('number', $needle)
+
+            ->orderBy('id', 'DESC')->paginate(15);
+
+        if ($transactions->isEmpty()) {
+            return response()->json(['status' => 'failed', 'message' => 'No records found!!']);
+        }
 
         return response()->json($transactions, 200);
     }
@@ -598,21 +572,16 @@ class DataTransactionController extends Controller
 
         //switch()
 
-        $transactions =  DataTransaction::Where('referrence','like', "%{$needle}%")
-                                   ->orWhere('number', 'like', "%{$needle}%") 
-                                   ->orWhere('status','like', "%{$needle}%")
-                                   ->orderBy('id', 'DESC')->paginate(15);
+        $transactions =  DataTransaction::Where('referrence', 'like', "%{$needle}%")
+            ->orWhere('number', 'like', "%{$needle}%")
+            ->orWhere('status', 'like', "%{$needle}%")
+            ->orderBy('id', 'DESC')->paginate(15);
 
 
-        if($transactions->isEmpty()){
-            return response()->json(['status'=>'failed','message'=>'No records found!!']);
-        }                            
+        if ($transactions->isEmpty()) {
+            return response()->json(['status' => 'failed', 'message' => 'No records found!!']);
+        }
 
         return response()->json($transactions, 200);
     }
-
-
-
-
-
 }
