@@ -216,6 +216,7 @@ class DataProductController extends Controller
             "network" => $network,
             "price" => $dataPrice,
             "bundle" => $bundle,
+            "megabytes"=> $dataBundle->megabytes,
             "status"=>"processing"
         ]));
 

@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
+use App\DataProduct;
 use App\User;
 use App\Wallet;
 use App\DataTransaction;
@@ -166,12 +167,15 @@ class WalletController extends Controller
             return ['status' => 'failed'];
         }
 
+        $bundle = DataProduct::where('bundle',$transaction->bundle)->first();
+
         $user->dataTransactions()->save(new DataTransaction([
             "number" => $transaction->number,
             "referrence" => $transaction->referrence,
             "network" => $transaction->network,
             "price" => $transaction->price,
             "bundle" => $transaction->bundle,
+            "megabytes" => $bundle->megabytes,
             "status" => "processing"
         ]));
 

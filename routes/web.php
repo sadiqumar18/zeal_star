@@ -1,5 +1,7 @@
 <?php
 
+use App\DataProduct;
+use App\DataTransaction;
 use Illuminate\Support\Facades\Route;
 use App\Services\Telehost;
 
@@ -40,38 +42,23 @@ Route::get('/account/verify/webhook', function () {
 Route::get('test',function(Telehost $telehost){
 
 
-    //for ($i=0; $i<=5 ; $i++ ) { 
+    $transactions = DataTransaction::where('megabytes',0)->limit(1000)
+    ->get();
 
+  //  dd(DataTransaction::find(2)->update(['megabytes'=>2000]));
+    
+    $sum =  $transactions->where('status', 'successful')->each(function ($transaction) {
+       
+       // var_dump($transaction);
+       // dd(DataProduct::where('bundle', $transaction->bundle)->first());
+        $meg = DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
+ 
+        DataTransaction::find($transaction->id)->update(['megabytes'=>$meg]);
 
-       // $telehost->sendMessage('e0ggyf', 'hello', '131', Str::Random(16));
+       
+        
 
-       // $telehost->sendMessage('l2305a', 'hello', '131', Str::Random(20));
-
-
-        //$telehost->sendUssd('e0ggyf', '*141#', Str::Random(20));
-
-        //sleep(2);
-
-       // $telehost->sendUssd('e0ggyf', '*140#', Str::Random(20));
-
-       // sleep(2);
-
-        //$telehost->sendUssd('0fejg2', '*605*2*2*08126208200*100*1551*1#', Str::Random(20));
-
-
-        $telehost->send();
-
-        //$telehost->sendUssd('nxt46c', '*456*1*4*1*2*08031940007*1*1551#', Str::Random(20));
-
-
-        //$telehost->sendUssd('l2305a', '*200#', Str::Random(20));
-
-
-
-
-
-  // }
-
+    });
 
 
 });
