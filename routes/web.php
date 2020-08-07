@@ -41,8 +41,8 @@ Route::get('/account/verify/webhook', function () {
 
 Route::get('test',function(Telehost $telehost){
 
-
-    $transactions = DataTransaction::where('megabytes',0)->limit(1000)
+    ini_set('max_execution_time', 0); 
+    $transactions = DataTransaction::where('megabytes',0)->orderBy('id','desc')->limit(20000)
     ->get();
 
   //  dd(DataTransaction::find(2)->update(['megabytes'=>2000]));

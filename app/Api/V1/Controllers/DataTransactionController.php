@@ -400,6 +400,7 @@ class DataTransactionController extends Controller
             'Etisalat' => $etisalat,
             'AIRTEL' => $airtel,
             'GLO' => $glo,
+            'user'=>auth()->user()
 
         ]], 200);
     }
@@ -422,8 +423,7 @@ class DataTransactionController extends Controller
         $total_transactions = $transactions->count();
 
 
-        $bundles = DataProduct::all();
-
+       
         $sum = $transactions->where('status', 'successful')->sum('megabytes');
 
 
@@ -519,13 +519,8 @@ class DataTransactionController extends Controller
 
         $total_transactions = $transactions->count();
 
-        $bundles = DataProduct::all();
-
-
-        $sum =  $transactions->where('status', 'successful')->reduce(function ($carry, $transaction) use ($bundles) {
-
-            return $carry + $bundles->where('bundle', $transaction->bundle)->megabytes;
-        });
+       
+        $sum = $transactions->where('status', 'successful')->sum('megabytes');
 
 
         $glo = $this->getNetworkAnalysis('GLO', $transactions);
