@@ -25,7 +25,7 @@ class DataProductController extends Controller
             'network' => 'required|exists:data_products',
         ]);
 
-        $bundles = DataProduct::whereNetwork($request->network)->get();
+        $bundles = DataProduct::whereNetwork($request->network)->where('is_suspended',0)->get();
 
         $user_package = auth()->user()->package;
 
@@ -72,7 +72,7 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
-        if (strtolower($network) == 'airtel') {
+        if (strtolower($network) == 'airtel' or $dataBundle->is_suspended == 1) {
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
         }
       

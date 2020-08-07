@@ -263,8 +263,7 @@ class DataTransactionController extends Controller
 
             case 'glo':
 
-                $telehost = new Telehost;
-
+              
                 $message_details = [
                     'access_code' => '2lerfb', //access_code[rand(0,1)],
                     'ussd_code' => $code,
