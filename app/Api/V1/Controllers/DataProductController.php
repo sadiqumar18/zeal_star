@@ -72,7 +72,7 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
-        if (strtolower($network) == 'airtel') {
+        if ($dataBundle->is_suspended == 1) {
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
         }
       
@@ -98,13 +98,14 @@ class DataProductController extends Controller
  
         $params = $ussd->splice(1)->map(function($key) use($number){
          if($key == '{{number}}'){
-             return $number;
+             return "$number";
          }else{
              return $key;
          }
      });
 
    
+         $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
  
          $code = str_replace('{{number}}', $number, $dataBundle->code);
@@ -173,9 +174,11 @@ class DataProductController extends Controller
                      'referrence' => $referrence,
                  ];
  
-                 $telehost->sendMultipleUssd('rujsvo',$ussd_string,$params,'1',$referrence);
+                 $telehost->sendMultipleUssd('0j9scw',$ussd_string,collect($params->except(0)),'1',$referrence);
  
+                //$telehost->sendUssd('0j9scw', $code, $referrence);
  
+              
  
                  //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
                  

@@ -217,6 +217,10 @@ class DataTransactionController extends Controller
 
 
 
+        $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
+
+
+
 
         $code =  str_replace('{{number}}', $transaction->number, $dataBundle->code);
 
@@ -294,8 +298,10 @@ class DataTransactionController extends Controller
                 // dd($message_details);
                 // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
 
-                $telehost->sendMultipleUssd('rujsvo', $ussd_string, $params, '1', $referrence);
+                $telehost->sendMultipleUssd('0j9scw', $ussd_string, collect($params->except(0)), '1', $referrence);
 
+               // $telehost->sendUssd('0j9scw', $code, $referrence);
+ 
 
                 //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);
 
