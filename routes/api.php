@@ -165,14 +165,15 @@ $api->version('v1', function (Router $api) {
 
         //dd($request->all());
 
+        $check_success = (strpos($request->message, 'successfully') !== false);
+
+
 
         switch($request->ref_code){
 
             case '131':
 
-                $check_success = (strpos($request->message, 'successfully') !== false);
-
-                if ($check_success) {
+                  if ($check_success) {
 
                     $message = $request->message;
         
@@ -230,10 +231,7 @@ $api->version('v1', function (Router $api) {
 
             case '127':
 
-                $check_success = (strpos($request->message, 'successfully') !== false);
-
-                
-
+               
                 if ($check_success) {
 
                     $message = $request->message;
@@ -276,8 +274,7 @@ $api->version('v1', function (Router $api) {
 
           case  '9mobile':
 
-            $check_success = (strpos($request->message, 'successfully') !== false);
-
+           
             if ($check_success) {
 
                 $message = $request->message;
@@ -318,7 +315,47 @@ $api->version('v1', function (Router $api) {
 
         break;
 
-            default:
+
+        case 'AirtelERC':
+
+            $check_success = (strpos($request->message, 'successful') !== false);
+
+
+            if($check_success){
+
+            $message = $request->message;
+
+            //get number
+            preg_match_all('!\d+!', $message, $array);
+            
+            $number = $array[0][5];
+
+            $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+
+            if ($transaction) {
+
+           
+               $transaction->update(['status' => 'successful','message'=>$message]);
+
+               $user = $transaction->user;
+
+
+               if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                   DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+               }
+
+               return response()->json(['status'=>'success']);
+           }
+
+
+        }
+        
+    
+    break; 
+
+
+
+    default:
 
            
 
