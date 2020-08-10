@@ -330,6 +330,13 @@ $api->version('v1', function (Router $api) {
 
                     $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
 
+                    if(is_null($transaction)){
+                        $transaction = AirtimeTransaction::whereNumber($number)->whereStatus('processing')->first();
+                    }
+
+
+
+                    
                     if ($transaction) {
 
 
