@@ -79,6 +79,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(OnlineDataTransaction::class);
     }
 
+    public function airtimeTransactions()
+    {
+        return $this->hasMany(AirtimeTransaction::class);
+    }
+
 
     public function wallet()
     {

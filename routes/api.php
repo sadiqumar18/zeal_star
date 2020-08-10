@@ -1,7 +1,7 @@
 <?php
 
 
-ini_set('max_execution_time', 0); 
+ini_set('max_execution_time', 0);
 
 use App\Wallet;
 use App\DataTransaction;
@@ -75,17 +75,19 @@ $api->version('v1', function (Router $api) {
         $api->get('/bundle/status/{referrence}', 'App\\Api\\V1\\Controllers\\DataTransactionController@status');
         $api->get('analysis', 'App\\Api\\V1\\Controllers\\DataTransactionController@analysis');
         $api->post('/vend/online', 'App\\Api\\V1\\Controllers\\DataTransactionController@vendOnline');
-        
+    });
+
+    $api->group(['prefix' => 'airtime', 'middleware' => ['jwt.auth']], function (Router $api) {
+        $api->post('/topup', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@purchase')->middleware('check_referrence');
     });
 
 
     $api->group(['prefix' => 'user', 'middleware' => ['jwt.auth']], function (Router $api) {
 
         $api->get('/profile', 'App\\Api\\V1\\Controllers\\UserController@profile');
-        $api->post('/create/account','App\\Api\\V1\\Controllers\\UserController@generateAccount');
-        
+        $api->post('/create/account', 'App\\Api\\V1\\Controllers\\UserController@generateAccount');
     });
-    
+
     $api->group(['prefix' => 'wallet', 'middleware' => ['jwt.auth']], function (Router $api) {
         $api->get('/transactions', 'App\\Api\\V1\\Controllers\\UserController@userWalletransactions');
         $api->get('/transactions/search/{needle}', 'App\\Api\\V1\\Controllers\\UserController@userWalleTransactionsSearch');
@@ -120,11 +122,7 @@ $api->version('v1', function (Router $api) {
         $api->group(['prefix' => 'wallet', 'middleware' => ['jwt.auth']], function (Router $api) {
             $api->get('/transactions', 'App\\Api\\V1\\Controllers\\UserController@adminWalletransactions');
             $api->get('/transactions/search/{needle}', 'App\\Api\\V1\\Controllers\\UserController@adminWalleTransactionsSearch');
-     
         });
-
-
-
     });
 
 
@@ -137,23 +135,20 @@ $api->version('v1', function (Router $api) {
     });
 
 
-    $api->get('/data/reversemany', function (Request $request,DataTransactionController $dataController) {
+    $api->get('/data/reversemany', function (Request $request, DataTransactionController $dataController) {
 
-        $transactions =  DataTransaction::where('network','AIRTEL')->where('status','processing')->get();
-        
-        $transactions->map(function($d) use($dataController){
+        $transactions =  DataTransaction::where('network', 'AIRTEL')->where('status', 'processing')->get();
 
-        
+        $transactions->map(function ($d) use ($dataController) {
+
+
 
             $dataController->reverseTransaction($d->referrence);
-
         });
 
-         dd($transactions);
- 
- 
-     });
- 
+        dd($transactions);
+    });
+
 
 
     $api->post('/data/telehost/webhook', function (Request $request) {
@@ -169,23 +164,23 @@ $api->version('v1', function (Router $api) {
 
 
 
-        switch($request->ref_code){
+        switch ($request->ref_code) {
 
             case '131':
 
-                  if ($check_success) {
+                if ($check_success) {
 
                     $message = $request->message;
-        
+
                     //get number
                     preg_match_all('!\d+!', $message, $array);
-        
+
                     $number = "0" . substr($array[0][1], 3, 12);
-        
+
                     $bundle = explode(' ', $message)[4];
-        
-        
-        
+
+
+
                     switch ($bundle) {
                         case '500MB':
                             $bundle = 'MTN-500MB';
@@ -203,199 +198,223 @@ $api->version('v1', function (Router $api) {
                             $bundle = 'MTN-5GB';
                             break;
                     }
-        
+
                     $transaction = DataTransaction::whereNumber($number)->whereBundle($bundle)->whereStatus('processing')->first();
-        
-                   // return response()->json(['status'=>'success']);
-                    
-        
+
+                    // return response()->json(['status'=>'success']);
+
+
                     if ($transaction) {
-        
-                        
-        
-                        $transaction->update(['status' => 'successful','message'=>$message]);
-        
+
+
+
+                        $transaction->update(['status' => 'successful', 'message' => $message]);
+
                         $user = $transaction->user;
-        
-        
+
+
                         if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
                             DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
                         }
                     }
-        
-                    return response()->json(['status'=>'success']);
-                } 
-            break;
-            
-            
+
+                    return response()->json(['status' => 'success']);
+                }
+                break;
+
+
 
             case '127':
 
-               
+
                 if ($check_success) {
 
                     $message = $request->message;
 
-                     //get number
-                     preg_match_all('!\d+!', $message, $array);
-        
-                     $number = "0" . substr($array[0][1], 3, 12);
+                    //get number
+                    preg_match_all('!\d+!', $message, $array);
 
-                     
+                    $number = "0" . substr($array[0][1], 3, 12);
 
 
-                     $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
-        
-                     if ($transaction) {
-        
-                    
-                        $transaction->update(['status' => 'successful','message'=>$message]);
-        
+
+
+                    $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+
+                    if ($transaction) {
+
+
+                        $transaction->update(['status' => 'successful', 'message' => $message]);
+
                         $user = $transaction->user;
-        
-                        \Log::info(empty($user->webhook_url));
-        
+
+
+
                         if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
                             DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
                         }
                     }
 
-                   
-        
-                    return response()->json(['status'=>'success']);
 
 
+                    return response()->json(['status' => 'success']);
                 }
 
 
 
-            break;
+                break;
 
 
-          case  '9mobile':
+            case  '9mobile':
 
-           
-            if ($check_success) {
+
+                if ($check_success) {
+
+                    $message = $request->message;
+
+                    //get number
+                    preg_match_all('!\d+!', $message, $array);
+
+                    $number = "0" . $array[0][1];
+
+                    $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+
+                    if ($transaction) {
+
+
+                        $transaction->update(['status' => 'successful', 'message' => $message]);
+
+                        $user = $transaction->user;
+
+
+                        if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                            DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                        }
+                    }
+
+
+
+                    return response()->json(['status' => 'success']);
+                }
+
+                break;
+
+
+            case 'AirtelERC':
+
+                $check_success = (strpos($request->message, 'successful') !== false);
+
+
+                if ($check_success) {
+
+                    $message = $request->message;
+
+
+
+                    //get number
+                    preg_match_all('!\d+!', $message, $array);
+
+
+                    $number = explode(' ', $message)[8];
+
+                    //dd($number);
+
+                    $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+
+                    if ($transaction) {
+
+
+                        $transaction->update(['status' => 'successful', 'message' => $message]);
+
+                        $user = $transaction->user;
+
+
+                        if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                            DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                        }
+
+                        return response()->json(['status' => 'success']);
+                    }
+                }
+
+
+                break;
+
+
+            case 'MTN Topit':
+
 
                 $message = $request->message;
 
-                 //get number
-                 preg_match_all('!\d+!', $message, $array);
-    
-                 $number = "0".$array[0][1];
 
-                 $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
-    
-                 if ($transaction) {
-    
-                
-                    $transaction->update(['status' => 'successful','message'=>$message]);
-    
+                //get number
+                $number = explode(' ', $message);
+
+
+                $number = "0" . substr($number[13], 3, 12);
+
+
+                $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+
+                if ($transaction) {
+
+
+                    $transaction->update(['status' => 'successful', 'message' => $message]);
+
                     $user = $transaction->user;
-    
-    
+
+
                     if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
                         DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
                     }
+
+                    return response()->json(['status' => 'success']);
                 }
 
-               
-    
-                return response()->json(['status'=>'success']);
-
-
-            }
 
 
 
 
+                break;
 
 
 
-
-        break;
-
-
-        case 'AirtelERC':
-
-            $check_success = (strpos($request->message, 'successful') !== false);
+            default:
 
 
-            if($check_success){
+                $airtel_flag = (strpos($request->message, 'under process') !== false);
 
-            $message = $request->message;
-
-            
-
-            //get number
-            preg_match_all('!\d+!', $message, $array);
-
-             
-            $number = explode(' ',$message)[8];
-
-            //dd($number);
-
-            $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
-
-            if ($transaction) {
-
-           
-               $transaction->update(['status' => 'successful','message'=>$message]);
-
-               $user = $transaction->user;
-
-
-               if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
-                   DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
-               }
-
-               return response()->json(['status'=>'success']);
-           }
-
-
-        }
-        
-    
-    break; 
+                $other_flag = (strpos($request->message, 'successfully') !== false);
 
 
 
-    default:
+                if ($other_flag or $airtel_flag) {
 
-           
-            $airtel_flag = (strpos($request->message, 'under process') !== false);
 
-            $other_flag = (strpos($request->message, 'successfully') !== false);
+                    $transaction = DataTransaction::where('referrence', $request->ref_code)->whereStatus('processing')->first();
 
-          
-           
-            if ($other_flag or $airtel_flag) {
+                    if ($transaction) {
 
-              
-                $transaction = DataTransaction::where('referrence',$request->ref_code)->whereStatus('processing')->first();
-    
-                 if ($transaction) {
 
-                   
-                
-                    $transaction->update(['status' => 'successful','message'=>$request->message]);
-    
-                    $user = $transaction->user;
-    
-                    
-    
-                    if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
-                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $request->message)->delay(now()->addSeconds(5));
+
+                        $transaction->update(['status' => 'successful', 'message' => $request->message]);
+
+                        $user = $transaction->user;
+
+
+
+                        if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                            DataWebhook::dispatch($user->webhook_url, $transaction->id, $request->message)->delay(now()->addSeconds(5));
+                        }
                     }
-                }
 
 
 
 
 
-               
 
-            /*    $message = $request->message;
+
+                    /*    $message = $request->message;
 
                  //get number
                  preg_match_all('!\d+!', $message, $array);
@@ -458,14 +477,11 @@ $api->version('v1', function (Router $api) {
 
             }*/
 
-               
-    
-                return response()->json(['status'=>'success']);
 
-    }
 
-}
-  
+                    return response()->json(['status' => 'success']);
+                }
+        }
     });
 
 
@@ -481,7 +497,7 @@ $api->version('v1', function (Router $api) {
         //dd($request->all());
 
 
-        
+
         $check_success = (strpos($request->content, 'successfully') !== false);
 
 
@@ -518,11 +534,11 @@ $api->version('v1', function (Router $api) {
 
             $transaction = DataTransaction::whereNumber($number)->whereBundle($bundle)->whereStatus('processing')->first();
 
-            
+
 
             if ($transaction) {
 
-                $transaction->update(['status' => 'successful','message'=>$message]);
+                $transaction->update(['status' => 'successful', 'message' => $message]);
 
                 $user = $transaction->user;
 
@@ -531,7 +547,7 @@ $api->version('v1', function (Router $api) {
                 }
             }
 
-            return response()->json(['status'=>'success']);
+            return response()->json(['status' => 'success']);
         }
     });
 
@@ -540,44 +556,27 @@ $api->version('v1', function (Router $api) {
 
     $api->get('/payant/webhook', function (Request $request) {
 
-        if($request->type == 'subscribe' and $request->verify_token == '3pCOSN3C0wUkA1EJQzjAWDtaLIE0HLLFdGkQJbtf9FwymrBl0x'){
+        if ($request->type == 'subscribe' and $request->verify_token == '3pCOSN3C0wUkA1EJQzjAWDtaLIE0HLLFdGkQJbtf9FwymrBl0x') {
 
 
-            return response()->json($request->challenge,200);
-
-
+            return response()->json($request->challenge, 200);
         }
-
     });
 
 
 
     $api->get('/device/status/{device_id}', function (Request $request) {
-
-       
     });
 
 
     $api->post('/device/status', function (Request $request) {
-
-       
     });
 
-    
+
 
 
     $api->post('/payant/webhook', 'App\\Api\\V1\\Controllers\\WalletController@verifyPayment');
 
 
     $api->get('/wallet/funding/{referrence}', 'App\\Api\\V1\\Controllers\\WalletController@fundWallet');
-
-
-
-
-  
-  
-
-
-
-
 });
