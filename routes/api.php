@@ -325,10 +325,15 @@ $api->version('v1', function (Router $api) {
 
             $message = $request->message;
 
+            
+
             //get number
             preg_match_all('!\d+!', $message, $array);
-            
-            $number = $array[0][5];
+
+             
+            $number = explode(' ',$message)[8];
+
+            //dd($number);
 
             $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
 
@@ -358,14 +363,15 @@ $api->version('v1', function (Router $api) {
     default:
 
            
+            $airtel_flag = (strpos($request->message, 'under process') !== false);
 
-            $check_success = (strpos($request->message, 'successfully') !== false);
+            $other_flag = (strpos($request->message, 'successfully') !== false);
 
+          
            
-            if ($check_success) {
+            if ($other_flag or $airtel_flag) {
 
               
-
                 $transaction = DataTransaction::where('referrence',$request->ref_code)->whereStatus('processing')->first();
     
                  if ($transaction) {

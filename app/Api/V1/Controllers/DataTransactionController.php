@@ -256,7 +256,7 @@ class DataTransactionController extends Controller
 
 
                 if ($check_gifting) {
-                    $telehost->sendMultipleUssd('0ugh74', $ussd_string, $params->except(0), '1', Str::random(15));
+                    $telehost->sendMultipleUssd('0ugh74', $ussd_string, collect($params->except(0)), '1', Str::random(15));
                 } else {
                     $telehost->sendMessage('123abc', $code, '131', Str::random(15));
                 }
@@ -390,7 +390,7 @@ class DataTransactionController extends Controller
         $glo = $this->getNetworkAnalysis('GLO', $transactions);
         $mtn = $this->getNetworkAnalysis('MTN', $transactions);
         $etisalat = $this->getNetworkAnalysis('ETISALAT', $transactions);
-        $airtel = $this->getNetworkAnalysis('Airtel', $transactions);
+        $airtel = $this->getNetworkAnalysis('AIRTEL', $transactions);
 
 
         return response()->json(['analysis' => [
@@ -442,7 +442,7 @@ class DataTransactionController extends Controller
         $glo = $this->getNetworkAnalysis('GLO', $transactions);
         $mtn = $this->getNetworkAnalysis('MTN', $transactions);
         $etisalat = $this->getNetworkAnalysis('ETISALAT', $transactions);
-        $airtel = $this->getNetworkAnalysis('Airtel', $transactions);
+        $airtel = $this->getNetworkAnalysis('AIRTEL', $transactions);
 
 
 
@@ -531,7 +531,7 @@ class DataTransactionController extends Controller
         $glo = $this->getNetworkAnalysis('GLO', $transactions);
         $mtn = $this->getNetworkAnalysis('MTN', $transactions);
         $etisalat = $this->getNetworkAnalysis('ETISALAT', $transactions);
-        $airtel = $this->getNetworkAnalysis('Airtel', $transactions);
+        $airtel = $this->getNetworkAnalysis('AIRTEL', $transactions);
 
 
         return response()->json(['analysis' => [
