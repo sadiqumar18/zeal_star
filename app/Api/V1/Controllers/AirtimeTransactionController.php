@@ -46,7 +46,10 @@ class AirtimeTransactionController extends Controller
 
         $airtime_product = AirtimeProduct::where('network', $network)->first();
 
+       
         $amount = $amount  - ($amount * $this->getAirtimePercentage($user, $airtime_product));
+
+        dd($amount);
 
 
         if ($amount > $user->balance) {
@@ -102,6 +105,7 @@ class AirtimeTransactionController extends Controller
             "referrence" => $referrence,
             "network" => $network,
             "amount" => $amount,
+            "status" => 'successful'
         ]));
 
         $user->wallet()->save(new Wallet([

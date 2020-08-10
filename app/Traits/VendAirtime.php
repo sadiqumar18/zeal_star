@@ -42,19 +42,19 @@ trait VendAirtime {
     {
         switch ($user->package) {
             case 'standard':
-                return $airtime_product->standard;
+                return $airtime_product->standard / 100;
                 break;
             case 'agent':
-                return  $airtime_product->agent;
+                return  $airtime_product->agent / 100;
                 break;
             case 'vendor':
-                return $airtime_product->vendor;
+                return $airtime_product->vendor / 100;
                 break;
             case 'merchant':
-                return $airtime_product->merchant;
+                return $airtime_product->merchant / 100;
                 break;
             case 'reseller':
-                return $airtime_product->reseller;
+                return $airtime_product->reseller / 100;
                 break;
         }
     }
