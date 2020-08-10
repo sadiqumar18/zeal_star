@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
+use App\AirtimeProduct;
 use App\Wallet;
 use App\Jobs\DataWebhook;
 use App\Services\Telehost;
@@ -27,10 +28,10 @@ class AirtimeTransactionController extends Controller
 
 
 
-    public function purchase(Request $request,Telehost $telehost)
+    public function purchase(Request $request, Telehost $telehost)
     {
         $this->validate($request, [
-            'network' => 'required|exists:data_products',
+            'network' => 'required|exists:airtime_products',
             'number' => 'required|regex:/(0)[0-9]{10}/|size:11',
             'amount' => 'required|numeric|regex:/[0-9]/|min:50|max:5000',
             'referrence' => 'required|unique:data_transactions'
@@ -43,45 +44,49 @@ class AirtimeTransactionController extends Controller
         $referrence = $request->referrence;
         $user = auth()->user();
 
+        $airtime_product = AirtimeProduct::where('network', $network)->first();
+
+        $amount = $amount  - ($amount * $this->getAirtimePercentage($user, $airtime_product));
 
 
         if ($amount > $user->balance) {
             return response()->json(['status' => 'failed', 'message' => 'Insuficient balance!!'], 400);
         }
 
+        if ($airtime_product->is_available == 1) {
+            return response()->json(['status' => 'failed', 'message' => 'Service Unavailable'], 400);
+        }
 
-        
-        
         switch ($network) {
 
             case 'MTN':
-               
+
                 $ussd_code = "*456*1*2*{$amount}*{$number}*1*3539#";
 
-                $telehost->sendUssd('0ugh74',$ussd_code,$referrence);
-                
+                $telehost->sendUssd('0ugh74', $ussd_code, $referrence);
+
                 break;
             case 'AIRTEL':
-               
+
                 $ussd_code = "*605*2*1*{{number}}*{{amount}}*8084#";
 
                 $ussd_params = $this->getUssd($ussd_code);
 
-                $params = $this->getParams($ussd_params,$number,$amount);
+                $params = $this->getParams($ussd_params, $number, $amount);
 
-               
-               $telehost->sendMultipleUssd('0j9scw',"*{$ussd_params->get(0)}#",$params,1,$referrence);
-               
 
-                break; 
-                
-                
+                $telehost->sendMultipleUssd('0j9scw', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
+
+
+                break;
+
+
             case 'GLO':
                 # code...
                 break;
             case 'ETISALAT':
                 # code...
-                break;        
+                break;
             default:
                 # code...
                 break;
@@ -100,19 +105,17 @@ class AirtimeTransactionController extends Controller
         ]));
 
         $user->wallet()->save(new Wallet([
-            'referrence'=>$referrence,
-            'amount'=>$amount,
-            'balance_before'=>$user->balance,
-            'balance_after'=>$new_balance,
-            'description'=>"debit"
+            'referrence' => $referrence,
+            'amount' => $amount,
+            'balance_before' => $user->balance,
+            'balance_after' => $new_balance,
+            'description' => "debit"
         ]));
 
         $user->update(['balance' => $new_balance]);
 
 
         return response()->json(['status' => 'success', 'data' => $transaction], 201);
-
-        
     }
 
 
@@ -154,7 +157,4 @@ class AirtimeTransactionController extends Controller
 
         return response()->json(['status' => 'success', 'data' => $transaction]);
     }
-
-
-
 }

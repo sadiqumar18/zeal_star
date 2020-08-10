@@ -38,6 +38,27 @@ trait VendAirtime {
    
     }
 
+    public function getAirtimePercentage($user, $airtime_product)
+    {
+        switch ($user->package) {
+            case 'standard':
+                return $airtime_product->standard;
+                break;
+            case 'agent':
+                return  $airtime_product->agent;
+                break;
+            case 'vendor':
+                return $airtime_product->vendor;
+                break;
+            case 'merchant':
+                return $airtime_product->merchant;
+                break;
+            case 'reseller':
+                return $airtime_product->reseller;
+                break;
+        }
+    }
+
 
 
 }
