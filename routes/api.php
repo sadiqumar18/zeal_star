@@ -364,10 +364,10 @@ $api->version('v1', function (Router $api) {
 
 
                 //get number
-                $number = explode(' ', $message);
+                $number = explode('To:', $message);
 
 
-                $number = "0" . substr($number[13], 3, 12);
+                $number = "0" . substr($number[1], 4, 12);
 
 
                 $transaction = AirtimeTransaction::whereNumber($number)->whereStatus('processing')->first();

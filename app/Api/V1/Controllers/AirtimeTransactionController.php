@@ -56,7 +56,7 @@ class AirtimeTransactionController extends Controller
 
             case 'MTN':
                
-                $ussd_code = "*456*1*2*{$amount}*{$number}*1*8084#";
+                $ussd_code = "*456*1*2*{$amount}*{$number}*1*3539#";
 
                 $telehost->sendUssd('0ugh74',$ussd_code,$referrence);
                 
