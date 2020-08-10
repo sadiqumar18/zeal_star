@@ -3,6 +3,7 @@
 namespace App\Api\V1\Controllers;
 
 use App\Wallet;
+use App\Jobs\DataWebhook;
 use App\Services\Telehost;
 use App\AirtimeTransaction;
 use App\Traits\VendAirtime;
@@ -112,6 +113,46 @@ class AirtimeTransactionController extends Controller
         return response()->json(['status' => 'success', 'data' => $transaction], 201);
 
         
+    }
+
+
+    public function reverseTransaction($referrence)
+    {
+        $transaction = AirtimeTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
+
+        if (is_null($transaction)) {
+            return response()->json(['status' => 'error', 'message' => 'Transaction not found or sucessfull already'], 404);
+        }
+
+        if ($transaction->status == 'reversed' or $transaction->status == 'sucessfull') {
+            return response()->json(['status' => 'error', 'message' => 'Transaction reversed or sucessfull already'], 200);
+        }
+
+        $amount = $transaction->amount;
+        $new_user_balance = $transaction->user->balance + $amount;
+
+        $user = $transaction->user;
+
+        // dd($user);
+
+        $user->wallet()->save(new Wallet([
+            'referrence' => "R-{$referrence}",
+            'amount' => $amount,
+            'balance_before' => $user->balance,
+            'balance_after' => $new_user_balance,
+            'description' => "credit"
+        ]));
+
+
+        $transaction->user()->update(['balance' => $new_user_balance]);
+
+        $transaction->update(['status' => 'reversed']);
+
+        if ($transaction->user->webhook_url) {
+            DataWebhook::dispatch($transaction->user->webhook_url, $transaction->id)->delay(now()->addSeconds(5));
+        }
+
+        return response()->json(['status' => 'success', 'data' => $transaction]);
     }
 
 

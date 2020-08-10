@@ -3,6 +3,7 @@
 
 ini_set('max_execution_time', 0);
 
+use App\AirtimeTransaction;
 use App\Wallet;
 use App\DataTransaction;
 use App\Jobs\DataWebhook;
@@ -108,6 +109,14 @@ $api->version('v1', function (Router $api) {
             $api->get('/bundle/success/{referrence}', 'App\\Api\\V1\\Controllers\\DataTransactionController@success');
             $api->get('/analysis', 'App\\Api\\V1\\Controllers\\DataTransactionController@analysisAdmin');
             $api->get('/analysis/user', 'App\\Api\\V1\\Controllers\\DataTransactionController@analysisByUser');
+        });
+
+
+        $api->group(['prefix'=>'airtime','middleware' => ['jwt.auth']], function (Router $api) {
+
+            $api->get('/reverse/{referrence}', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@reverseTransaction');
+        
+
         });
 
 
@@ -354,7 +363,7 @@ $api->version('v1', function (Router $api) {
                 $number = "0" . substr($number[13], 3, 12);
 
 
-                $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
+                $transaction = AirtimeTransaction::whereNumber($number)->whereStatus('processing')->first();
 
                 if ($transaction) {
 

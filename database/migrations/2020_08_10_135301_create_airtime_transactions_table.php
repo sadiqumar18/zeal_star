@@ -20,6 +20,7 @@ class CreateAirtimeTransactionsTable extends Migration
             $table->string('referrence')->unique();
             $table->string('network', 13);
             $table->decimal('amount')->default(0);
+            $table->string('message')->nullable();
             $table->string('status')->default('processing');
             $table->foreign('user_id')
                 ->references('id')->on('users')
