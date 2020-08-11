@@ -80,6 +80,7 @@ $api->version('v1', function (Router $api) {
 
     $api->group(['prefix' => 'airtime', 'middleware' => ['jwt.auth']], function (Router $api) {
         $api->post('/topup', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@purchase')->middleware('check_referrence');
+        $api->get('/topup/status/{referrence}', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@status');
     });
 
 
@@ -331,7 +332,7 @@ $api->version('v1', function (Router $api) {
                     $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
 
                     if(is_null($transaction)){
-                        $transaction = AirtimeTransaction::whereNumber($number)->whereStatus('processing')->first();
+                        $transaction = AirtimeTransaction::whereNumber($number)->orderBy('id','DESC')->first();
                     }
 
 
@@ -370,7 +371,7 @@ $api->version('v1', function (Router $api) {
                 $number = "0" . substr($number[1], 4, 12);
 
 
-                $transaction = AirtimeTransaction::whereNumber($number)->whereStatus('processing')->first();
+                $transaction = AirtimeTransaction::whereNumber($number)->orderBy('id','DESC')->first();
 
                 if ($transaction) {
 

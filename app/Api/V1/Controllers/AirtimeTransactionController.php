@@ -4,7 +4,7 @@ namespace App\Api\V1\Controllers;
 
 use App\AirtimeProduct;
 use App\Wallet;
-use App\Jobs\DataWebhook;
+use App\Jobs\AirtimeWebhook;
 use App\Services\Telehost;
 use App\AirtimeTransaction;
 use App\Traits\VendAirtime;
@@ -47,12 +47,11 @@ class AirtimeTransactionController extends Controller
         $airtime_product = AirtimeProduct::where('network', $network)->first();
 
        
-        $amount = $amount  - ($amount * $this->getAirtimePercentage($user, $airtime_product));
+        $discount = $amount  - ($amount * $this->getAirtimePercentage($user, $airtime_product));
 
-        dd($amount);
+       
 
-
-        if ($amount > $user->balance) {
+        if ($discount > $user->balance) {
             return response()->json(['status' => 'failed', 'message' => 'Insuficient balance!!'], 400);
         }
 
@@ -96,7 +95,7 @@ class AirtimeTransactionController extends Controller
         }
 
 
-        $new_balance = $user->balance - $amount;
+        $new_balance = $user->balance - $discount;
 
 
 
@@ -104,13 +103,13 @@ class AirtimeTransactionController extends Controller
             "number" => $number,
             "referrence" => $referrence,
             "network" => $network,
-            "amount" => $amount,
+            "amount" => $discount,
             "status" => 'successful'
         ]));
 
         $user->wallet()->save(new Wallet([
             'referrence' => $referrence,
-            'amount' => $amount,
+            'amount' => $discount,
             'balance_before' => $user->balance,
             'balance_after' => $new_balance,
             'description' => "debit"
@@ -156,9 +155,51 @@ class AirtimeTransactionController extends Controller
         $transaction->update(['status' => 'reversed']);
 
         if ($transaction->user->webhook_url) {
-            DataWebhook::dispatch($transaction->user->webhook_url, $transaction->id)->delay(now()->addSeconds(5));
+            AirtimeWebhook::dispatch($transaction->user->webhook_url, $transaction->id)->delay(now()->addSeconds(5));
         }
 
         return response()->json(['status' => 'success', 'data' => $transaction]);
     }
+
+
+
+
+
+
+
+
+    public function status($referrence)
+    {
+        $transaction = AirtimeTransaction::whereReferrence($referrence)->first();
+
+
+        if (is_null($transaction)) {
+            return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
+        }
+
+        if ($transaction->user_id != auth()->user()->id) {
+            return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
+        }
+
+        return response()->json(['status' => 'success', 'data' => $transaction]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
