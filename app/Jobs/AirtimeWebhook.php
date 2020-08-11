@@ -5,6 +5,7 @@ namespace App\Jobs;
 use GuzzleHttp\Client;
 use App\DataTransaction;
 use App\Services\Telehost;
+use App\AirtimeTransaction;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
@@ -43,13 +44,13 @@ class AirtimeWebhook implements ShouldQueue
      *
      * @return void
      */
-    public function handle(Client $client, AirtimeTransction $airtimeTransaction)
+    public function handle(Client $client, AirtimeTransaction $airtimeTransaction)
     {
 
         $client->post($this->url, [
             'timeout' => 15,
             'json' => [
-                'data' => AirtimeTransction::select('number', 'amount', 'referrence', 'price', 'status', 'updated_at')->where('id', $this->id)->first(),
+                'data' => $airtimeTransaction->select('number', 'amount', 'referrence', 'price', 'status', 'updated_at')->where('id', $this->id)->first(),
                 'message' => ($this->message)?$this->message:""
             ]
         ]);
