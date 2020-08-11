@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Dingo\Api\Routing\Router;
 use Illuminate\Support\Facades\Artisan;
 use App\Api\V1\Controllers\DataTransactionController;
+use App\Jobs\AirtimeWebhook;
 
 /** @var Router $api */
 $api = app(Router::class);
@@ -332,7 +333,25 @@ $api->version('v1', function (Router $api) {
                     $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
 
                     if(is_null($transaction)){
+
+                        //check if transaction is airtime transaction
                         $transaction = AirtimeTransaction::whereNumber($number)->orderBy('id','DESC')->first();
+                   
+                        if ($transaction) {
+
+
+                            $transaction->update(['status' => 'successful', 'message' => $message]);
+    
+                            $user = $transaction->user;
+    
+    
+                            if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                                AirtimeWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                            }
+    
+                            return response()->json(['status' => 'success']);
+                        }
+                   
                     }
 
 
@@ -382,7 +401,7 @@ $api->version('v1', function (Router $api) {
 
 
                     if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
-                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+                        AirtimeWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
                     }
 
                     return response()->json(['status' => 'success']);
@@ -410,6 +429,36 @@ $api->version('v1', function (Router $api) {
 
                     $transaction = DataTransaction::where('referrence', $request->ref_code)->whereStatus('processing')->first();
 
+
+                    if(is_null($transaction)){
+
+                        $transaction = AirtimeTransaction::where('referrence', $request->ref_code)->first();
+
+                        if($transaction) {
+
+
+
+                            $transaction->update(['status' => 'successful', 'message' => $request->message]);
+    
+                            $user = $transaction->user;
+    
+    
+    
+                            if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
+                                AirtimeWebhook::dispatch($user->webhook_url, $transaction->id, $request->message)->delay(now()->addSeconds(5));
+                            }
+
+                            return response()->json(['status' => 'success']);
+
+
+
+                        }
+
+
+                    }
+
+
+
                     if ($transaction) {
 
 
@@ -429,70 +478,6 @@ $api->version('v1', function (Router $api) {
 
 
 
-
-
-                    /*    $message = $request->message;
-
-                 //get number
-                 preg_match_all('!\d+!', $message, $array);
-
-              
-                
-
-                 if((strpos($request->message, '234')) != false){
-
-                   
-                 $number = "0" . substr($array[0][1], 3, 12);
-
-
-                 $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
-    
-                 if ($transaction) {
-    
-                
-                    $transaction->update(['status' => 'successful','message'=>$message]);
-    
-                    $user = $transaction->user;
-    
-                    \Log::info(empty($user->webhook_url));
-    
-                    if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
-                        DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
-                    }
-                }
-
-
-            }else{
-
-              
-                $number = $array[0][1];
-
-               
-
-
-                $transaction = DataTransaction::whereNumber($number)->whereStatus('processing')->first();
-   
-                if ($transaction) {
-   
-               
-                   $transaction->update(['status' => 'successful','message'=>$message]);
-
-                 
-   
-                   $user = $transaction->user;
-   
-                   \Log::info(empty($user->webhook_url));
-   
-                   if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
-                       DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
-                   }
-               }
-
-
-
-
-
-            }*/
 
 
 
