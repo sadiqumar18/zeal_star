@@ -159,7 +159,7 @@ class WebhookController extends Controller
 
                 $airtel_flag = (strpos($request->message, 'under process') !== false);
 
-               // $airtel_flag2 = (strpos($request->message, 'Your request to recharge') !== false);
+                $airtel_flag2 = (strpos($request->message, 'Your request to recharge') !== false);
 
                 $topup_flag =  (strpos($request->message, 'topped up') !== false);
 
@@ -183,6 +183,11 @@ class WebhookController extends Controller
                 return response()->json(['status' => 'success']);
 
                 }
+
+               if ((strpos($request->message, 'SENT') !== false)
+               ) {
+                return response()->json(['status' => 'success']);
+               }
 
                 $this->ussdTransaction($request,$message);
 
