@@ -42,8 +42,11 @@ class WebhookController extends Controller
                $exploded_message = explode(' ', $message);  //preg_match_all('!\d+!', $message, $array);
 
               
-                $number = "0" . substr($exploded_message[7], 3, 12);
+                //get number
+                preg_match_all('!\d+!', $message, $array);
 
+                $number = "0" . substr($array[0][1], 3, 12);
+                
                 $bundle = $exploded_message[4];
 
                
