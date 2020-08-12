@@ -162,10 +162,10 @@ $api->version('v1', function (Router $api) {
 
 
 
-    $api->post('/data/telehost/webhook', function (Request $request) {
+    $api->post('/data/telehost/webhook', 'App\\Api\\V1\\Controllers\\WebhookController@telehostWebhook');
 
 
-        //successfully
+     /*   //successfully
 
         //$message = $request->message;
 
@@ -418,8 +418,8 @@ $api->version('v1', function (Router $api) {
             default:
 
 
-                $airtel_flag = (strpos($request->message, 'under process') !== false);
-
+               $airtel_flag = (strpos($request->message, 'under process') !== false);
+ 
                 $other_flag = (strpos($request->message, 'successfully') !== false);
 
 
@@ -484,7 +484,7 @@ $api->version('v1', function (Router $api) {
                     return response()->json(['status' => 'success']);
                 }
         }
-    });
+    });*/
 
 
 

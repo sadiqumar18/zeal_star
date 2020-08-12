@@ -50,7 +50,7 @@ class AirtimeWebhook implements ShouldQueue
         $client->post($this->url, [
             'timeout' => 15,
             'json' => [
-                'data' => $airtimeTransaction->select('number', 'amount', 'referrence', 'price', 'status', 'updated_at')->where('id', $this->id)->first(),
+                'data' => $airtimeTransaction->select('number', 'referrence', 'amount', 'status', 'updated_at')->where('id', $this->id)->first(),
                 'message' => ($this->message)?$this->message:""
             ]
         ]);
