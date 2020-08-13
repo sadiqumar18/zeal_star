@@ -81,6 +81,7 @@ $api->version('v1', function (Router $api) {
 
     $api->group(['prefix' => 'airtime', 'middleware' => ['jwt.auth']], function (Router $api) {
         $api->post('/topup', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@purchase')->middleware('check_referrence');
+        $api->get('/topup/transactions', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@transactions');
         $api->get('/topup/status/{referrence}', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@status');
     });
 

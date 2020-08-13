@@ -162,6 +162,15 @@ class AirtimeTransactionController extends Controller
     }
 
 
+    public function transactions()
+    {
+        $transactions = auth()->user()->airtimeTransactions()->orderBy('id', 'DESC')->paginate(15);
+
+        return response()->json($transactions, 200);
+    }
+
+
+
 
 
 
