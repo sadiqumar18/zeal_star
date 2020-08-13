@@ -46,7 +46,7 @@ class RetryData extends Command
         
         
 
-        $dt = $dataTransaction->whereStatus('processing')->where('network',$this->argument('network'))->limit(25)->orderBy('id','ASC')->get();
+        $dt = $dataTransaction->whereStatus('processing')->where('network',$this->argument('network'))->limit(50)->orderBy('id','ASC')->get();
 
       
         //dd(DataTransaction::whereDate('created_at', Carbon::yesterday())->count());

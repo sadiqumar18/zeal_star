@@ -125,6 +125,7 @@ class WebhookController extends Controller
 
            
             if (is_null($transaction)) {
+
                $airtime_transaction = AirtimeTransaction::whereNumber($number)->where('network','AIRTEL')->orderBy('id','DESC')->first();
               
                $this->updateAirtimeAndSendWebhook($airtime_transaction,$message);
@@ -166,6 +167,11 @@ class WebhookController extends Controller
 
                 $topup_flag =  (strpos($request->message, 'topped up') !== false);
 
+                if ((strpos($request->message, 'SENT') !== false)
+                ) {
+                 return response()->json(['status' => 'success']);
+                }
+
                 if ($check_successfully) {
                     $this->ussdTransaction($request,$message);
 
@@ -187,14 +193,13 @@ class WebhookController extends Controller
 
                 }
 
-               if ((strpos($request->message, 'SENT') !== false)
-               ) {
-                return response()->json(['status' => 'success']);
-               }
+              
 
                 $this->ussdTransaction($request,$message);
 
                 return response()->json(['status' => 'success']);
+
+                
 
             break;
 
