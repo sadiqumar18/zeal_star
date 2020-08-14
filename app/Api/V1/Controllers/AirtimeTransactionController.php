@@ -104,6 +104,7 @@ class AirtimeTransactionController extends Controller
             "referrence" => $referrence,
             "network" => $network,
             "amount" => $discount,
+           
             "status" => 'successful'
         ]));
 

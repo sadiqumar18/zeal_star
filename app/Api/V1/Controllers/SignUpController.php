@@ -17,7 +17,7 @@ class SignUpController extends Controller
 
 
 
-        $user = new User($request->all());
+        $user = new User($request->except('balance'));
         if (!$user->save()) {
             throw new HttpException(500);
         }

@@ -128,7 +128,7 @@ class WebhookController extends Controller
 
             $number = $exploded_message[8];
 
-            $transaction = DataTransaction::whereNumber($number)->where('status','processing')->where('network','AIRTEL')->orderBy('id','DESC')->first();
+            $transaction = DataTransaction::whereNumber($number)->where('status','processing')->orwhere('status','successful')->where('network','AIRTEL')->orderBy('id','DESC')->first();
 
            
             if (is_null($transaction)) {
