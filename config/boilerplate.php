@@ -1,5 +1,7 @@
 <?php
 
+use App\User;
+
 return [
 
     // these options are related to the sign-up procedure
@@ -15,7 +17,13 @@ return [
             'email' => 'required|email|unique:users',
             'number' => 'required|unique:users',
             'password' => 'required',
-            'webhook_url'=>'url'
+            'webhook_url'=>'url',
+            'referrer'=>  function ($attribute, $value, $fail) {
+                 $user = User::where('number',$value)->first();
+                if (is_null($user)) {
+                    $fail("Invalid {$attribute}" );
+                }
+            }
         ]
     ],
 
