@@ -28,6 +28,13 @@ class WebhookController extends Controller
 
         $check_successful = (strpos($request->message, 'successful') !== false);
 
+        $check_etisalat_failed = (strpos($request->message, 'Sorry Operation failed') !== false);
+
+
+        if ( $check_etisalat_failed) {
+            return response()->json(['status' => 'success']);
+        }
+
     
 
         switch ($ref_code) {
