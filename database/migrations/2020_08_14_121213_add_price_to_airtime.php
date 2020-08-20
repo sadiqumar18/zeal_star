@@ -14,7 +14,7 @@ class AddPriceToAirtime extends Migration
     public function up()
     {
         Schema::table('airtime_transactions', function (Blueprint $table) {
-            $table->decimal('price',20,4)->default(0)->after('amount');
+            $table->decimal('price',8,5)->default(0)->after('amount');
         });
     }
 
