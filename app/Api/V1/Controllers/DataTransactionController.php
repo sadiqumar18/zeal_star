@@ -298,9 +298,9 @@ class DataTransactionController extends Controller
                 // dd($message_details);
                 // SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(10));
 
-                $telehost->sendMultipleUssd('0j9scw', $ussd_string, collect($params->except(0)), '1', $referrence);
+               // $telehost->sendMultipleUssd('0j9scw', $ussd_string, collect($params->except(0)), '1', $referrence);
 
-               // $telehost->sendUssd('0j9scw', $code, $referrence);
+                $telehost->sendUssd('0j9scw', $code, $referrence);
  
 
                 //$response = $telehost->sendMessage($message_details['access_code'], $message_details['code'], $message_details['number'], $message_details['referrence']);

@@ -30,8 +30,14 @@ class WebhookController extends Controller
 
         $check_etisalat_failed = (strpos($request->message, 'Sorry Operation failed') !== false);
 
+        $check_airtel_failed = (strpos($request->message, 'cannot be processed') !== false);
 
-        if ( $check_etisalat_failed) {
+        $check_etisalat_wait = (strpos($request->message,'please wait for a confirmation SMS thank you') !==false);
+
+        
+
+
+        if ( $check_etisalat_failed or $check_airtel_failed or $check_etisalat_wait) {
             return response()->json(['status' => 'success']);
         }
 

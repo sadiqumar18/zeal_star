@@ -40,7 +40,7 @@ class AirtimeTransactionController extends Controller
 
         $network = strtoupper($request->network);
         $number = $request->number;
-        $amount = (int)ceil($request->amount);
+        $amount = (int)$request->amount;
         $referrence = $request->referrence;
         $user = auth()->user();
 
@@ -104,7 +104,7 @@ class AirtimeTransactionController extends Controller
             "referrence" => $referrence,
             "network" => $network,
             "amount" => $discount,
-           
+            "price" => $amount,
             "status" => 'successful'
         ]));
 
