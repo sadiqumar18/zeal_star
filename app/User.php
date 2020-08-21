@@ -19,7 +19,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'fullname', 'email','number', 'password','pin','webhook_url','api_key','balance'
+        'fullname', 'email','number', 'password','pin','webhook_url','api_key','balance','referrer'
     ];
 
    
@@ -88,6 +88,12 @@ class User extends Authenticatable implements JWTSubject
     public function wallet()
     {
         return $this->hasMany(Wallet::class);
+    }
+
+    public function referrer()
+    {
+
+       return $this->where('number',$this->referrer)->first();
     }
 
 
