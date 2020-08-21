@@ -72,7 +72,7 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
-        if ($dataBundle->is_suspended == 1) {
+        if ($dataBundle->is_suspended == 1 ) {
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
         }
       
@@ -135,6 +135,7 @@ class DataProductController extends Controller
                 if($check_gifting){
                     $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',$referrence);
                 }else{
+                    
                     $telehost->sendMessage('123abc', $code, '131', $referrence);
                 }
 
@@ -174,9 +175,9 @@ class DataProductController extends Controller
                      'referrence' => $referrence,
                  ];
  
-                 $telehost->sendMultipleUssd('0j9scw',$ussd_string,collect($params->except(0)),'1',$referrence);
+                // $telehost->sendMultipleUssd('0j9scw',$ussd_string,collect($params->except(0)),'1',$referrence);
  
-                //$telehost->sendUssd('0j9scw', $code, $referrence);
+                $telehost->sendUssd('0j9scw', $code, $referrence);
  
               
  

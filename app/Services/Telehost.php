@@ -75,7 +75,7 @@ class Telehost
             "params"=>$params->values()->all()
         ];
 
-  
+       
        // dd($data);
 
         $response = $this->client->post('/api/multiple/ussd',['json'=>$data])->getBody();
