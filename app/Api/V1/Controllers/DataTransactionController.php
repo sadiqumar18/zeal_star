@@ -21,9 +21,11 @@ use App\Jobs\SendTelehostMessage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Traits\VendData;
 
 class DataTransactionController extends Controller
 {
+    use VendData;
 
 
 
@@ -187,6 +189,13 @@ class DataTransactionController extends Controller
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
         }
+
+
+        $this->vend($transaction,true);
+
+        
+
+
 
         $dataBundle = DataProduct::whereBundle($transaction->bundle)->first();
 

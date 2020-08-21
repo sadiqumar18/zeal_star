@@ -31,7 +31,8 @@ class Telehost
             'timeout'  => 120,
             'headers'  => [
                 'Authorization' => "{$api_key}",
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
+                'charset'=>'utf-8'
             ]
         ]);
     }
@@ -76,7 +77,7 @@ class Telehost
         ];
 
        
-       // dd($data);
+      
 
         $response = $this->client->post('/api/multiple/ussd',['json'=>$data])->getBody();
 
@@ -89,6 +90,48 @@ class Telehost
 
 
         return ['status' => 'success'];
+
+    }
+
+    public function sendMultipleUssdCurl($access_code,$ussd_code,$params,$sim_port,$referrence)
+    {
+       
+
+                $api_key = env('TELEHOST_API');
+
+                $data = [
+                    "access_code"=>$access_code,
+                    "ref_code"=>$referrence,
+                    "ussd_string"=>$ussd_code,
+                    "sim_port"=>$sim_port,
+                    "params"=>$params->values()->all()
+                ];
+        
+                dd(json_encode($data));
+               
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://dev.telehost.ng/api/multiple/ussd",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS =>json_encode($data),
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: {$api_key}",
+                "Content-Type: application/json"
+            ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            echo $response;
+
 
     }
 

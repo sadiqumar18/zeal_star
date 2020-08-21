@@ -13,9 +13,12 @@ use App\Jobs\SendTelehostUssd;
 use App\Jobs\SendTelehostMessage;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Traits\VendData;
 
 class DataProductController extends Controller
 {
+
+    use VendData;
 
 
     public function index(Request $request)
@@ -47,7 +50,7 @@ class DataProductController extends Controller
 
 
 
-    public function purchase(Request $request, Telehost $telehost, Telerivet $telerivet)
+    public function purchase(Request $request)
     {
 
 
@@ -84,132 +87,9 @@ class DataProductController extends Controller
 
         
 
-         //removes hash sign
-         $remove_hash = explode('#',trim($dataBundle->code));
-
-         //remove *
-         $collection = collect(explode('*',$remove_hash[0])); 
- 
-         $ussd = $collection->splice(1);
-
-
- 
-        
- 
-        $params = $ussd->splice(1)->map(function($key) use($number){
-         if($key == '{{number}}'){
-             return "$number";
-         }else{
-             return $key;
-         }
-     });
-
-   
-         $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
-
- 
-         $code = str_replace('{{number}}', $number, $dataBundle->code);
- 
-           switch (strtolower($network)) {
-             case 'mtn':
- 
-                 $access_code = ['z8cfdf', 'q76wx8'];
- 
-                 $message_details = [
-                     'access_code' => '4gxfue', //access_code[rand(0,1)],
-                     'code' => $code,
-                     'number' => '131',
-                     'referrence' => $referrence,
-                     // 'amount' => $dataBundle->price
-                 ];
-
-
-            
-
-                $check_gifting = ((strpos(strtolower($bundle), 'gbg') !== false) or  (strpos(strtolower($bundle), 'mbg') !== false));
-
-                
-                
-                    $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
-
-                if($check_gifting){
-                    $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',$referrence);
-                }else{
-                    
-                    $telehost->sendMessage('123abc', $code, '131', $referrence);
-                }
-
-                 //$telerivet->sendMessage($code, '131');
- 
-                 //SendTelehostMessage::dispatch($message_details)->delay(now()->addSeconds(5));
- 
-                 break;
-             case 'glo':
- 
- 
-                // return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
- 
-                 $message_details = [
-                     'access_code' => '2lerfb', //access_code[rand(0,1)],
-                     'ussd_code' => $code,
-                     'referrence' => $referrence,
-                 ];
- 
-                 //$telehost->sendMultipleUssd('2lerfb',$ussd_string,$params,'2',$referrence);
-
-                 $telehost->sendUssd('2lerfb', $code, $referrence);
- 
- 
- 
-                 //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
- 
-                 break;
- 
-             case 'airtel':
- 
-                 
-                 
-                 $message_details = [
-                     'access_code' => 'rujsvo', //access_code[rand(0,1)],
-                     'ussd_code' => $code,
-                     'referrence' => $referrence,
-                 ];
- 
-                // $telehost->sendMultipleUssd('0j9scw',$ussd_string,collect($params->except(0)),'1',$referrence);
- 
-                $telehost->sendUssd('0j9scw', $code, $referrence);
- 
-              
- 
-                 //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
-                 
- 
- 
-             break;
-
-
-             case 'etisalat':
-
-                $message_details = [
-                    'access_code' => '1rrerv', //access_code[rand(0,1)],
-                    'ussd_code' => $code,
-                    'referrence' => $referrence,
-                ];
-
-                //SendTelehostUssd::dispatch($message_details)->delay(now()->addSeconds(5));
-
-                $telehost->sendUssd('1rrerv', $code, $referrence);
-
-
-            break;
- 
-             default:
-                 # code...
-                 break;
-         }
-
-
         $new_balance = $user->balance - $dataPrice;
+
+        $user->update(['balance' => $new_balance]);
 
 
       
@@ -224,6 +104,7 @@ class DataProductController extends Controller
             "status"=>"processing"
         ]));
 
+       
         $user->wallet()->save(new Wallet([
             'referrence'=>$referrence,
             'amount'=>$dataPrice,
@@ -232,7 +113,11 @@ class DataProductController extends Controller
             'description'=>"debit"
         ]));
 
-        $user->update(['balance' => $new_balance]);
+
+       // $this->vend($transaction);
+
+
+       
 
 
         return response()->json(['status' => 'success', 'data' => $transaction], 201);

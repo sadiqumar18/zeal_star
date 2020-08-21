@@ -4,10 +4,11 @@ namespace App\Traits;
 
 use App\DataProduct;
 use App\Services\Telehost;
+use Illuminate\Support\Str;
 
 trait VendData {
  
-    public function vend($transaction) {
+    public function vend($transaction, $retry = null) {
 
         $telehost = new Telehost;
 
@@ -15,7 +16,13 @@ trait VendData {
         $bundle = $transaction->bundle;
         $network = $transaction->network;
         $number = $transaction->number;
-        $referrence = $transaction->referrence;
+        
+
+        $random_prefix = Str::random(3);
+
+        $referrence = ($retry)?"R{$random_prefix}-{$transaction->referrence}":$transaction->referrence;
+
+       
 
         $dataBundle = DataProduct::where('bundle',$bundle)->first();
 
@@ -25,8 +32,6 @@ trait VendData {
 
         $params = $this->getParams($ussd,$number);
 
-
-        $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
         $code = str_replace('{{number}}', $number, $dataBundle->code);
 
@@ -41,12 +46,24 @@ trait VendData {
 
            $check_gifting = ((strpos(strtolower($bundle), 'gbg') !== false) or  (strpos(strtolower($bundle), 'mbg') !== false));
 
-           $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
             if($check_gifting){
-               $response =  $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',$referrence);
+
+                $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
+
+                $response =  $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',$referrence);
+
             }else{
-              $response =   $telehost->sendMessage('123abc', $code, '131', $referrence);
+
+                $ussd_string = "*461*3#";
+
+                $conver_to_array = $params->except(0)->toArray();
+
+               // dd($conver_to_array);$telehost->sendMessage('123abc', $code, '131', $referrence);
+               
+                $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
+
+             
             }
 
                
@@ -102,7 +119,7 @@ trait VendData {
     {
       return $ussd->splice(1)->map(function($key) use($number){
             if($key == '{{number}}'){
-                return $number;
+                return "{$number}";
             }else{
                 return $key;
             }
