@@ -34,10 +34,11 @@ class WebhookController extends Controller
 
         $check_etisalat_wait = (strpos($request->message,'please wait for a confirmation SMS thank you') !==false);
 
+        $check_ussd_time_out = (strpos($request->message,'Ussd timeout occurred!') !== false);
         
 
 
-        if ( $check_etisalat_failed or $check_airtel_failed or $check_etisalat_wait) {
+        if ( $check_etisalat_failed or $check_airtel_failed or $check_etisalat_wait or $check_ussd_time_out) {
             return response()->json(['status' => 'success']);
         }
 
@@ -134,7 +135,7 @@ class WebhookController extends Controller
 
             $number = $exploded_message[8];
 
-            $transaction = DataTransaction::whereNumber($number)->where('status','processing')->orwhere('status','successful')->where('network','AIRTEL')->orderBy('id','DESC')->first();
+            $transaction = DataTransaction::whereNumber($number)->where('status','processing')->where('network','AIRTEL')->orderBy('id','DESC')->first();
 
            
             if (is_null($transaction)) {

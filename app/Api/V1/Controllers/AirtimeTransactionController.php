@@ -70,14 +70,15 @@ class AirtimeTransactionController extends Controller
                 break;
             case 'AIRTEL':
 
-                $ussd_code = "*605*2*1*{{number}}*{{amount}}*8084#";
+                $ussd_code = "*605*2*1*{$number}*{$amount}*8084#";
 
                 $ussd_params = $this->getUssd($ussd_code);
 
                 $params = $this->getParams($ussd_params, $number, $amount);
 
+                $telehost->sendUssd('0j9scw', $ussd_code, $referrence);
 
-                $telehost->sendMultipleUssd('0j9scw', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
+               // $telehost->sendMultipleUssd('0j9scw', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
 
 
                 break;
@@ -125,13 +126,13 @@ class AirtimeTransactionController extends Controller
 
     public function reverseTransaction($referrence)
     {
-        $transaction = AirtimeTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
+        $transaction = AirtimeTransaction::whereReferrence($referrence)->first();//whereStatus('processing')->first();
 
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found or sucessfull already'], 404);
         }
 
-        if ($transaction->status == 'reversed' or $transaction->status == 'sucessfull') {
+        if ($transaction->status == 'reversed' or $transaction->status == 'sucessful') {
             return response()->json(['status' => 'error', 'message' => 'Transaction reversed or sucessfull already'], 200);
         }
 

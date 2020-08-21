@@ -135,6 +135,7 @@ class DataProductController extends Controller
                 if($check_gifting){
                     $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',$referrence);
                 }else{
+                    
                     $telehost->sendMessage('123abc', $code, '131', $referrence);
                 }
 
