@@ -5,12 +5,14 @@ namespace App\Traits;
 use App\DataProduct;
 use App\Services\Telehost;
 use Illuminate\Support\Str;
+use App\Services\Telerivet;
 
 trait VendData {
  
     public function vend($transaction, $retry = null) {
 
         $telehost = new Telehost;
+        $telerivet = new Telerivet;
 
 
         $bundle = $transaction->bundle;
@@ -59,7 +61,9 @@ trait VendData {
 
                 $conver_to_array = $params->except(0)->toArray();
 
-               // dd($conver_to_array);$telehost->sendMessage('123abc', $code, '131', $referrence);
+               //$telehost->sendMessage('123abc', $code, '131', $referrence);
+
+              // $telerivet->sendMessage($code,131);
                
                 $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
 

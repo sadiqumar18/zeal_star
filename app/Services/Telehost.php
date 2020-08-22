@@ -31,8 +31,7 @@ class Telehost
             'timeout'  => 120,
             'headers'  => [
                 'Authorization' => "{$api_key}",
-                'Content-Type' => 'application/json',
-                'charset'=>'utf-8'
+                'Content-Type' => 'application/json'
             ]
         ]);
     }
@@ -55,6 +54,7 @@ class Telehost
 
         $response = json_decode($response, true);
 
+      
 
         if ($response['status'] != 'success') {
             return ['status' => 'failed'];

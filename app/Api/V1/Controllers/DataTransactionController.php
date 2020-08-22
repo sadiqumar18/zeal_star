@@ -182,7 +182,7 @@ class DataTransactionController extends Controller
         $telerivet = new Telerivet;
         $telehost = new Telehost;
 
-        sleep(3);
+        
 
         $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
 
@@ -190,14 +190,16 @@ class DataTransactionController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
         }
 
+       
 
         $this->vend($transaction,true);
 
         
+        return response()->json(['status' => 'success', 'message' => 'Transaction successfull']);
 
+        dd($transaction);
 
-
-        $dataBundle = DataProduct::whereBundle($transaction->bundle)->first();
+       /* $dataBundle = DataProduct::whereBundle($transaction->bundle)->first();
 
 
 
@@ -301,7 +303,7 @@ class DataTransactionController extends Controller
                             'access_code' => 'rujsvo', //access_code[rand(0,1)],
                             'ussd_code' => $code,
                             'referrence' => ,
-                        ];*/
+                        ];
 
 
                 // dd($message_details);

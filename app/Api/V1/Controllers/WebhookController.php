@@ -9,6 +9,7 @@ use App\Jobs\DataWebhook;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobs\AirtimeWebhook;
+use App\Api\V1\Controllers\DataTransactionController;
 
 class WebhookController extends Controller
 {
@@ -35,10 +36,56 @@ class WebhookController extends Controller
         $check_etisalat_wait = (strpos($request->message,'please wait for a confirmation SMS thank you') !==false);
 
         $check_ussd_time_out = (strpos($request->message,'Ussd timeout occurred!') !== false);
+
+        $connection_mmi = (strpos($request->message,'Connection problem or invalid MMI code.') !== false);
+
+        $fall_back = (strpos($request->message,'SHARE') !== false);
+
+        $fall_sorry = (strpos($request->message,'Sorry') !== false);
+
+        $check_oops = (strpos($request->message,'Oops') !== false);
+
+        $enter_number = (strpos($request->message,"Enter Recipient's numbe") !== false);
+
+        $invalid_input = (strpos($request->message,"Invalid input provided.") !== false);
+
+        $invalid_msisdn = (strpos($request->message,"Invalid msisdn provided") !== false);
+
+        $wrong_number = (strpos($request->message,"You are not sending to valid MTN number.") !== false);
+
+        $invalid_input2 = (strpos($request->message,"Yello, invalid input entered . Please check and try again.") !== false);
+
+        $system_busy = (strpos($request->message,"System is busy. Please try later.") !== false); 
+
+
+        $mmi_error = (strpos($request->message,"MMI complete.") !== false);
+
+        $unknown_application = (strpos($request->message,"UNKNOWN APPLICATION") !== false);
+
+
+
+       
+
         
 
 
-        if ( $check_etisalat_failed or $check_airtel_failed or $check_etisalat_wait or $check_ussd_time_out) {
+        if ( $check_etisalat_failed
+            or $check_airtel_failed
+            or $check_etisalat_wait
+            or $check_ussd_time_out
+            or $connection_mmi
+            or $check_oops
+            or $fall_back
+            or $enter_number
+            or $fall_sorry
+            or $invalid_input
+            or $invalid_msisdn
+            or $wrong_number
+            or $mmi_error
+            or $unknown_application
+            or $invalid_input2
+            or $system_busy
+           ) {
             return response()->json(['status' => 'success']);
         }
 

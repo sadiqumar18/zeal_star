@@ -113,8 +113,8 @@ class DataProductController extends Controller
             'description'=>"debit"
         ]));
 
-
-       // $this->vend($transaction);
+          
+        $this->vend($transaction);
 
 
        
