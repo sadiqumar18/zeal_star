@@ -2,13 +2,14 @@
 
 namespace  App\Api\V1\Controllers;
 
+use App\Setting;
 use App\AirtimeProduct;
-use App\AirtimeTransaction;
 use App\DataTransaction;
 use App\Jobs\DataWebhook;
+use App\AirtimeTransaction;
+use App\Jobs\AirtimeWebhook;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Jobs\AirtimeWebhook;
 use App\Api\V1\Controllers\DataTransactionController;
 
 class WebhookController extends Controller
@@ -97,7 +98,13 @@ class WebhookController extends Controller
 
             $dataController = new  DataTransactionController;
 
-            $dataController->retry($ref_code);
+            $allow_transaction = Setting::find(1)->allow_transaction;
+
+            if ($allow_transaction == 'on') {
+                $dataController->retry($ref_code);
+            }
+
+           
 
         }
 
