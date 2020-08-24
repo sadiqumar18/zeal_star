@@ -65,7 +65,7 @@ class AirtimeTransactionController extends Controller
 
                 $ussd_code = "*456*1*2*{$amount}*{$number}*1*3539#";
 
-                $telehost->sendUssd('0ugh74', $ussd_code, $referrence);
+                $telehost->sendUssd('123abc', $ussd_code, $referrence);
 
                 break;
             case 'AIRTEL':
