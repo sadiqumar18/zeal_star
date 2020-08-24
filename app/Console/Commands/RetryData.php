@@ -2,12 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Setting;
 use Carbon\Carbon;
 use App\DataTransaction;
+use App\Services\Telerivet;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\RetryData as JobsRetryData;
-use App\Services\Telerivet;
 use App\Api\V1\Controllers\DataTransactionController;
 
 class RetryData extends Command
@@ -41,59 +42,35 @@ class RetryData extends Command
      *
      * @return mixed
      */
-    public function handle(DataTransactionController $dataController, DataTransaction $dataTransaction,Telerivet $telerivet)
+    public function handle(DataTransactionController $dataController, DataTransaction $dataTransaction, Telerivet $telerivet)
     {
-        
-        
-
-        $dt = $dataTransaction->whereStatus('processing')->where('network',$this->argument('network'))->limit(10)->orderBy('id','ASC')->get();
-
-      
-        //dd(DataTransaction::whereDate('created_at', Carbon::yesterday())->count());
 
 
-       // dd(count($dt));
-        
 
+        $allow_transaction = Setting::find(1)->allow_transaction;
+
+       
+        if ($allow_transaction == 'on') {
+
+
+            $dt = $dataTransaction->whereStatus('processing')->where('network', $this->argument('network'))->limit(10)->orderBy('id', 'ASC')->get();
+
+
+
+            $filtered =  $dt->filter(function ($array) {
+                $to = Carbon::createFromFormat('Y-m-d H:s:i', $array->created_at);
+    
+                $start = Carbon::createFromFormat('Y-m-d H:s:i', Carbon::now());
+    
+                return $array->created_at->lt(Carbon::now()->subMinutes($this->argument('minutes')));
+    
+            })->each(function ($array) use ($dataController) {
+                $dataController->retry($array->referrence);
+            });
            
+        }
 
 
-
-
-        $filtered =  $dt->filter(function ($array) {
-
-            $to = Carbon::createFromFormat('Y-m-d H:s:i', $array->created_at);
-
-            $start = Carbon::createFromFormat('Y-m-d H:s:i', Carbon::now());
-
-          /*  var_dump('created_at '.$array->created_at->tostring());
-            var_dump('minutes '.$start->diffInMinutes($to));
-            var_dump('number '.$array->number);
-            var_dump('now '.Carbon::now()->tostring());
-           */
-            return $array->created_at->lt(Carbon::now()->subMinutes($this->argument('minutes')));
-            
-
-        })->each(function ($array) use ($dataController){
-
-           // $delay = DB::table('jobs')->count() + 20;
-
-           
-
-           // $telerivet->sendMessage($array->code,'131');
-
-            $dataController->retry($array->referrence);
-
-           // sleep(5);
-
-            //JobsRetryData::dispatch($array->referrence)->delay(now()->addSeconds($delay));
-
-            //$array->update(['updated_at'=>Carbon::now()]);
-
-        });
-
-       // dd($filtered);
-
-
+       
     }
 }
