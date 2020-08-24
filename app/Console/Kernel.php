@@ -27,13 +27,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 
-        $allow_transaction = Setting::find(1)->allow_transaction;
-
        
-        if ($allow_transaction == 'on') {
-            $schedule->command('retry:data 10 mtn')->everyFiveMinutes();
-        }
-
+        $schedule->command('retry:data 10 mtn')->everyFiveMinutes();
+        
         $schedule->command('telescope:prune --hours=2')->hourly();
         $schedule->command('telescope:clear')->hourly();
         $schedule->exec('chown -R www-data:www-data /var/www/Zealvend/storage/logs')->everyMinute();
