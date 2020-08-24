@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('telescope:prune --hours=2')->hourly();
         $schedule->command('telescope:clear')->hourly();
-        $schedule->command('retry:data 5 mtn')->everyFiveMinutes();
+        $schedule->command('retry:data 5 mtn')->everyTenMinutes();
         $schedule->exec('chown -R www-data:www-data /var/www/Zealvend/storage/logs')->everyMinute();
     }
 

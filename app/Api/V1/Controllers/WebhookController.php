@@ -58,7 +58,7 @@ class WebhookController extends Controller
 
         $fall_sorry = (strpos($request->message,'Sorry') !== false);
 
-        $check_oops = (strpos($request->message,'Oops') !== false);
+        $check_oops = (strpos($request->message,'Oops, looks like the code you used was incorrect. Please check and try again.') !== false);
 
         $enter_number = (strpos($request->message,"Enter Recipient's numbe") !== false);
 
@@ -93,11 +93,11 @@ class WebhookController extends Controller
         }
 
 
-        if($enter_number or $invalid_msisdn or $system_busy or $connection_mmi){
+        if($enter_number or $invalid_msisdn or $system_busy or $connection_mmi or $check_oops){
 
             $dataController = new  DataTransactionController;
 
-           // $dataController->retry($ref_code);
+            $dataController->retry($ref_code);
 
         }
 

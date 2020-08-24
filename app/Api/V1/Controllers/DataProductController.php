@@ -114,7 +114,7 @@ class DataProductController extends Controller
         ]));
 
           
-      // $this->vend($transaction);
+     $this->vend($transaction);
 
 
        
