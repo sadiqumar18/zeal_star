@@ -23,7 +23,7 @@ class WebhookController extends Controller
 
 
 
-        $ref_code ;
+        
        
         $check_retry = (strpos($request->ref_code, 'retry') !== false);
         
@@ -36,6 +36,7 @@ class WebhookController extends Controller
             $ref_code = $request->ref_code;
 
         }
+        
 
 
         $message = $request->message;
