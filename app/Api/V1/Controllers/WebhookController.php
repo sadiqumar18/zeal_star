@@ -21,7 +21,22 @@ class WebhookController extends Controller
     {
 
 
-        $ref_code = $request->ref_code;
+
+        $ref_code ;
+       
+        $check_retry = (strpos($request->ref_code, 'retry') !== false);
+        
+        if($check_retry){
+
+            $ref_code = explode('-',$request->ref_code)[1];
+            
+        }else{
+
+            $ref_code = $request->ref_code;
+
+        }
+
+
         $message = $request->message;
 
         //check successfully
@@ -63,6 +78,11 @@ class WebhookController extends Controller
         $unknown_application = (strpos($request->message,"UNKNOWN APPLICATION") !== false);
 
 
+        $customer_service = (strpos($request->message,"Dear Customer, Service is currently unavailable.") !== false);
+
+
+
+
 
         if($wrong_number){
 
@@ -73,6 +93,15 @@ class WebhookController extends Controller
         }
 
 
+        if($enter_number or $invalid_msisdn or $system_busy or $connection_mmi){
+
+            $dataController = new  DataTransactionController;
+
+           // $dataController->retry($ref_code);
+
+        }
+
+      
         
 
 
@@ -92,6 +121,7 @@ class WebhookController extends Controller
             or $unknown_application
             or $invalid_input2
             or $system_busy
+            or $customer_service
            ) {
             return response()->json(['status' => 'success']);
         }
@@ -138,11 +168,13 @@ class WebhookController extends Controller
                 return response()->json(['status' => 'success']);
             }
 
-            //get number
-            $number = explode(' ',$message);
+           //get number
+           preg_match_all('!\d+!', $message, $array);
 
+          
 
-            $number = "0" . substr($number[6], 3, 12);
+           $number = "0" . substr($array[0][1], 3, 12);
+
 
             $transaction = DataTransaction::whereNumber($number)->where('network','GLO')->whereStatus('processing')->first();
 

@@ -53,7 +53,7 @@ trait VendData {
 
                 $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
-                $response =  $telehost->sendMultipleUssd('0ugh74',$ussd_string,$params->except(0),'1',$referrence);
+                $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,$params->except(0),'1',$referrence);
 
             }else{
 
@@ -61,11 +61,19 @@ trait VendData {
 
                 $conver_to_array = $params->except(0)->toArray();
 
-               //$telehost->sendMessage('123abc', $code, '131', $referrence);
+              // $telehost->sendMessage('123abc', $code, '131', $referrence);
 
+              if($bundle == 'MTN-3GB'){
+                $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
+              }else{
+                $response = $telehost->sendUssd('123abc', $code, $referrence);
+
+              }
+
+             
               // $telerivet->sendMessage($code,131);
                
-                $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
+                //$response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
 
              
             }

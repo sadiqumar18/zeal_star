@@ -75,7 +75,7 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
-        if ($dataBundle->is_suspended == 1 ) {
+        if ($dataBundle->is_suspended == 1 or $network == 'AIRTEL' ) {
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
         }
       
@@ -114,7 +114,7 @@ class DataProductController extends Controller
         ]));
 
           
-        $this->vend($transaction);
+      // $this->vend($transaction);
 
 
        
