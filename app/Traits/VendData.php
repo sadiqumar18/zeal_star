@@ -6,6 +6,7 @@ use App\DataProduct;
 use App\Services\Telehost;
 use Illuminate\Support\Str;
 use App\Services\Telerivet;
+use App\Setting;
 
 trait VendData {
  
@@ -34,6 +35,7 @@ trait VendData {
 
         $params = $this->getParams($ussd,$number);
 
+      
 
         $code = str_replace('{{number}}', $number, $dataBundle->code);
 
@@ -124,6 +126,8 @@ trait VendData {
       return $ussd->splice(1)->map(function($key) use($number){
             if($key == '{{number}}'){
                 return "{$number}";
+            }else if($key == '{{pin}}'){
+                return Setting::find(1)->sme_data_pin;
             }else{
                 return $key;
             }

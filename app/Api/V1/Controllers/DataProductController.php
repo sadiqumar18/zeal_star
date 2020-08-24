@@ -13,6 +13,7 @@ use App\Jobs\SendTelehostUssd;
 use App\Jobs\SendTelehostMessage;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Setting;
 use App\Traits\VendData;
 
 class DataProductController extends Controller
@@ -113,8 +114,14 @@ class DataProductController extends Controller
             'description'=>"debit"
         ]));
 
-          
-        $this->vend($transaction);
+        $allow_transaction = Setting::find(1)->allow_transaction;
+
+       
+
+          if ($allow_transaction == 'on') {
+            $this->vend($transaction);
+          }
+       
 
 
        

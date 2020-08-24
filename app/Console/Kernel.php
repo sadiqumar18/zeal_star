@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Setting;
 use App\Console\Commands\RetryData;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -25,12 +26,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+
+        $allow_transaction = Setting::find(1)->allow_transaction;
+
+       
+        if ($allow_transaction == 'on') {
+            $schedule->command('retry:data 10 mtn')->everyFiveMinutes();
+        }
 
         $schedule->command('telescope:prune --hours=2')->hourly();
         $schedule->command('telescope:clear')->hourly();
-       // $schedule->command('retry:data 10 mtn')->everyFiveMinutes();
         $schedule->exec('chown -R www-data:www-data /var/www/Zealvend/storage/logs')->everyMinute();
     }
 

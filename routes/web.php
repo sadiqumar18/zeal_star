@@ -39,26 +39,10 @@ Route::get('/account/verify/webhook', function () {
 
 
 
-Route::get('test',function(Telehost $telehost){
+Route::get('test',function(){
 
-    ini_set('max_execution_time', 0); 
-    $transactions = DataTransaction::where('megabytes',0)->orderBy('id','desc')->limit(20000)
-    ->get();
+   //config(['settings.on_transactions' => 'America/Chicago']);
 
-  //  dd(DataTransaction::find(2)->update(['megabytes'=>2000]));
-    
-    $sum =  $transactions->where('status', 'successful')->each(function ($transaction) {
-       
-       // var_dump($transaction);
-       // dd(DataProduct::where('bundle', $transaction->bundle)->first());
-        $meg = DataProduct::where('bundle', $transaction->bundle)->first()->megabytes;
- 
-        DataTransaction::find($transaction->id)->update(['megabytes'=>$meg]);
-
-       
-        
-
-    });
-
+    dd(config('settings.on_transactions'));
 
 });
