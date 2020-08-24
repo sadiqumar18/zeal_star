@@ -35,11 +35,11 @@ trait VendData {
 
         $params = $this->getParams($ussd,$number);
 
-      
+     
 
         $code = str_replace('{{number}}', $number, $dataBundle->code);
 
-       
+        
 
         $response = null;
        
@@ -68,6 +68,10 @@ trait VendData {
               if($bundle == 'MTN-3GB'){
                 $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
               }else{
+
+                $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
+
+            
                 $response = $telehost->sendUssd('123abc', $code, $referrence);
 
               }
