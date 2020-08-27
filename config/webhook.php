@@ -42,6 +42,9 @@ return [
         "successful",
         "under process",
         "topped up"
+    ],
+    "change_pin_clause"=>[
+        "your security key is"
     ]
 
 ];

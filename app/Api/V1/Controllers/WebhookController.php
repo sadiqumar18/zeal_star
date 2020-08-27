@@ -47,6 +47,16 @@ class WebhookController extends Controller
         }
 
 
+        $check_change_pin_case =  collect(config('webhook.change_pin_clause'))->contains(function ($value, $key) use ($message) {
+            return (strpos($message, $value) !== false);
+        });
+
+        if ($check_change_pin_case) {
+            dd($message);
+            return response()->json(['status' => 'success']);
+        }
+
+
 
         $check_reverse_case =  collect(config('webhook.reverse_clause'))->contains(function ($value, $key) use ($message) {
             return (strpos($message, $value) !== false);
