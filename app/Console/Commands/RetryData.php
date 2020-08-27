@@ -55,6 +55,7 @@ class RetryData extends Command
 
             $dt = $dataTransaction->whereStatus('processing')->where('network', $this->argument('network'))->limit(10)->orderBy('id', 'ASC')->get();
 
+            //dd($dt);
 
 
             $filtered =  $dt->filter(function ($array) {
@@ -65,6 +66,9 @@ class RetryData extends Command
                 return $array->created_at->lt(Carbon::now()->subMinutes($this->argument('minutes')));
     
             })->each(function ($array) use ($dataController) {
+ 
+                //echo var_dump($array->referrence);
+
                 $dataController->retry($array->referrence);
             });
            

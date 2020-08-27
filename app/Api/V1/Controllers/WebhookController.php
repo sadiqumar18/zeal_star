@@ -29,13 +29,16 @@ class WebhookController extends Controller
         
         if($check_retry){
 
-            $ref_code = explode('-',$request->ref_code)[1];
+            $ref_code = explode('?',$request->ref_code)[1];
             
         }else{
 
             $ref_code = $request->ref_code;
 
         }
+
+
+      
         
 
 
@@ -82,20 +85,32 @@ class WebhookController extends Controller
 
         $customer_service = (strpos($request->message,"Dear Customer, Service is currently unavailable.") !== false);
 
+        $share_limit = (strpos($request->message,"You have reached your SME data share limit.") !== false);
 
 
+        $carrier_info = (strpos($request->message,"Carrier info") !== false);
 
+        $insufiicient_data = (strpos($request->message,"You don't have sufficient data to share.") !== false);
 
-        if($wrong_number){
+        $etisalat_operation_failed = (strpos($request->message,"Sorry Operation failed , Please try again later") !== false);
+
+       $etisalat_insuficient_balance = (strpos($request->message,"SORRY!Insufficient credit balance for the plan you want to buy.Please recharge your line or you can simply Borrow Data. To Borrow Data now, just dial *321#") !== false);
+
+       $glo_wrong_number = (strpos($request->message,"Sorry, you are not gifting to a valid Globacom user.") !== false);
+    
+       
+       if($wrong_number){
 
             $dataController = new  DataTransactionController;
+
+           
 
             $dataController->reverseTransaction($ref_code);
 
         }
 
 
-        if($enter_number or $invalid_msisdn or $system_busy or $connection_mmi or $check_oops){
+        if($enter_number or $invalid_msisdn or $system_busy or $connection_mmi or $check_oops or $share_limit or $etisalat_operation_failed or $glo_wrong_number ){
 
             $dataController = new  DataTransactionController;
 
@@ -130,6 +145,9 @@ class WebhookController extends Controller
             or $invalid_input2
             or $system_busy
             or $customer_service
+            or  $carrier_info
+            or $etisalat_insuficient_balance
+            or $insufiicient_data
            ) {
             return response()->json(['status' => 'success']);
         }
@@ -145,20 +163,24 @@ class WebhookController extends Controller
                     return response()->json(['status' => 'success']);
                 }
 
+                $message = explode('.',$message)[0];
+
+
                $exploded_message = explode(' ', $message);  //preg_match_all('!\d+!', $message, $array);
 
+              
               
                 //get number
                 preg_match_all('!\d+!', $message, $array);
 
                 $number = "0" . substr($array[0][1], 3, 12);
                 
-                $bundle = $exploded_message[4];
+                $bundle = $exploded_message[6];
 
                
                 $data_bundle = $this->getMtnBundle($bundle);
 
-
+            
                 $transaction = DataTransaction::whereNumber($number)->whereBundle($data_bundle)->whereStatus('processing')->first();
 
 
@@ -275,27 +297,42 @@ class WebhookController extends Controller
 
                 $topup_flag =  (strpos($request->message, 'topped up') !== false);
 
+                $check_mtn_new_success = (strpos($request->message, 'Dear Customer') !== false);
+
                 if ((strpos($request->message, 'SENT') !== false)
                 ) {
                  return response()->json(['status' => 'success']);
                 }
 
+
+                if($check_mtn_new_success){
+                   
+                    $message = explode('.',$message)[0];
+
+            
+                    $this->ussdTransaction($ref_code,$message);
+
+                    return response()->json(['status' => 'success']);
+
+
+                }
+
                 if ($check_successfully) {
-                    $this->ussdTransaction($request,$message);
+                    $this->ussdTransaction($ref_code,$message);
 
                     return response()->json(['status' => 'success']);
                 }
 
                 if($airtel_flag){
 
-                    $this->ussdTransaction($request,$message);
+                    $this->ussdTransaction($ref_code,$message);
 
                     return response()->json(['status' => 'success']);
                 }
 
                 if ($topup_flag) {
                 
-                $this->ussdTransaction($request,$message);
+                $this->ussdTransaction($ref_code,$message);
 
                 return response()->json(['status' => 'success']);
 
@@ -303,7 +340,7 @@ class WebhookController extends Controller
 
               
 
-                $this->ussdTransaction($request,$message);
+                $this->ussdTransaction($ref_code,$message);
 
                 return response()->json(['status' => 'success']);
 
@@ -328,14 +365,14 @@ class WebhookController extends Controller
 
 
 
-    private function ussdTransaction($request,$message)
+    private function ussdTransaction($ref_code,$message)
     {
-             $transaction = DataTransaction::where('referrence', $request->ref_code)->whereStatus('processing')->first();
+             $transaction = DataTransaction::where('referrence', $ref_code)->whereStatus('processing')->first();
 
 
             if(is_null($transaction)){
 
-                $airtime_transaction =   AirtimeTransaction::where('referrence', $request->ref_code)->first();
+                $airtime_transaction =   AirtimeTransaction::where('referrence', $ref_code)->first();
 
                 if($airtime_transaction){
 

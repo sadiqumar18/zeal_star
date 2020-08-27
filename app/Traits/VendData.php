@@ -23,7 +23,7 @@ trait VendData {
 
         $random_prefix = Str::random(3);
 
-        $referrence = ($retry)?"retry{$random_prefix}-{$transaction->referrence}":$transaction->referrence;
+        $referrence = ($retry)?"retry{$random_prefix}?{$transaction->referrence}":$transaction->referrence;
 
        
 
