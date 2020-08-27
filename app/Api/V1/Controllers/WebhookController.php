@@ -47,14 +47,6 @@ class WebhookController extends Controller
         }
 
 
-        $check_change_pin_case =  collect(config('webhook.change_pin_clause'))->contains(function ($value, $key) use ($message) {
-            return (strpos($message, $value) !== false);
-        });
-
-        if ($check_change_pin_case) {
-            dd($message);
-            return response()->json(['status' => 'success']);
-        }
 
 
 
@@ -83,6 +75,24 @@ class WebhookController extends Controller
 
 
             return response()->json(['status' => 'retry']);
+        }
+
+
+
+        $check_change_pin_case =  collect(config('webhook.change_pin_clause'))->contains(function ($value, $key) use ($message) {
+            return (strpos($message, $value) !== false);
+        });
+
+        if ($check_change_pin_case) {
+
+           
+            preg_match_all('!\d+!', $message, $array);
+
+            $pin = $array[0][0];
+
+             Setting::find(1)->update(['sme_data_pin'=>$pin]);
+
+            return response()->json(['status' => 'success']);
         }
 
 

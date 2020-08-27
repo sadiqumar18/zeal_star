@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api\V1\Controllers;
 
 use App\Setting;
+use App\Services\Telehost;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class SettingController extends Controller
 {
@@ -58,6 +61,34 @@ class SettingController extends Controller
     public function edit(Setting $setting)
     {
         //
+    }
+
+
+    public function onTransactions()
+    {
+       Setting::find(1)->update(['allow_transaction'=>'on']);
+       return response()->json(['status'=>'success','message'=>'Transaction switched on!']);
+    }
+
+    public function offTransactions()
+    {
+        Setting::find(1)->update(['allow_transaction'=>'off']);
+        return response()->json(['status'=>'success','message'=>'Transaction switched off!']);
+    }
+
+
+    public function resetPin(Telehost $telehost)
+    {
+       
+        $setting = Setting::find(1);
+
+        if($setting->allow_transaction == 'on'){
+          return response()->json(['status'=>'error','message'=>'you need to switch off transaction first']);  
+        }
+
+        $response = $telehost->sendMultipleUssd('123abc', '*461#',collect([2,2,'raihannatu','14/02/1994','kaduna']),1, Str::random(20));
+   
+        return response()->json($response);
     }
 
     /**

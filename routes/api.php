@@ -135,6 +135,24 @@ $api->version('v1', function (Router $api) {
             $api->get('/transactions', 'App\\Api\\V1\\Controllers\\UserController@adminWalletransactions');
             $api->get('/transactions/search/{needle}', 'App\\Api\\V1\\Controllers\\UserController@adminWalleTransactionsSearch');
         });
+
+
+        
+        //settings
+        $api->group(['prefix'=>'setting','middleware' => ['jwt.auth']], function (Router $api) {
+
+            $api->get('/transaction/on', 'App\\Api\\V1\\Controllers\\SettingController@onTransactions');
+            $api->get('/transaction/off', 'App\\Api\\V1\\Controllers\\SettingController@offTransactions');
+            $api->get('/reset/pin', 'App\\Api\\V1\\Controllers\\SettingController@resetPin');
+        
+        
+
+        });
+
+
+
+
+
     });
 
 
