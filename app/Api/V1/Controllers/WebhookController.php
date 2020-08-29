@@ -11,6 +11,7 @@ use App\Jobs\AirtimeWebhook;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Controllers\DataTransactionController;
+use App\Services\Telehost;
 
 class WebhookController extends Controller
 {
@@ -85,12 +86,12 @@ class WebhookController extends Controller
 
         if ($check_change_pin_case) {
 
-           
+
             preg_match_all('!\d+!', $message, $array);
 
             $pin = $array[0][0];
 
-             Setting::find(1)->update(['sme_data_pin'=>$pin,'allow_transaction'=>'on']);
+            Setting::find(1)->update(['sme_data_pin' => $pin, 'allow_transaction' => 'on']);
 
             return response()->json(['status' => 'success']);
         }
@@ -101,9 +102,34 @@ class WebhookController extends Controller
             return (strpos($message, $value) !== false);
         });
 
-        $check_oops_case = collect(config('webhook.check_oops_clause'))->contains(function ($value, $key) use ($message) {
+        $check_stop_transaction_and_change_pin = collect(config('webhook.check_stop_transaction_and_change_pin'))->contains(function ($value, $key) use ($message) {
             return (strpos($message, $value) !== false);
         });
+
+
+
+        if ($check_stop_transaction_and_change_pin) {
+
+            $setting = Setting::find(1);
+
+
+
+            if ($setting->allow_transaction == 'on') {
+
+
+                $telehost = new Telehost;
+
+                $setting->update(['allow_transaction' => 'off']);
+
+                $response = $telehost->sendMultipleUssd('123abc', '*461#', collect([2, 2, 'raihannatu', '14/02/1994', 'kaduna']), 1, Str::random(20));
+
+                return response()->json($response = ['hello']);
+            }
+
+
+
+            return response()->json(['status' => 'success']);
+        }
 
 
 
@@ -254,9 +280,6 @@ class WebhookController extends Controller
 
                     $message = explode('.', $message)[0];
 
-                    if($check_oops_case){
-                        $message = "successful";
-                    }
 
                     $this->ussdTransaction($ref_code, $message);
 

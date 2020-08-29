@@ -23,7 +23,7 @@ return [
         "Dear Customer, Service is currently unavailable.",
         "Carrier info",
         "You don't have sufficient data to share.",
-        "Yello, invalid input entered . Please check and try again."   
+          
     ],
     
     "retry_clause" => [
@@ -46,8 +46,9 @@ return [
     "change_pin_clause"=>[
         "your security key is"
     ],
-    "check_oops_clause"=>[
-        "Oops, activation of SHARE"
+    "check_stop_transaction_and_change_pin"=>[
+        "Oops, activation of SHARE",
+        "Yello, invalid input entered . Please check and try again." 
     ]
 
 ];
