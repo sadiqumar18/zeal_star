@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
     {
 
        
-        $schedule->command('retry:data 10 mtn')->everyFifteenMinutes();
+        $schedule->command('retry:data 5 mtn')->everyTenMinutes();
         
         $schedule->command('telescope:prune --hours=2')->hourly();
         $schedule->command('telescope:clear')->hourly();

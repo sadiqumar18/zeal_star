@@ -90,7 +90,7 @@ class WebhookController extends Controller
 
             $pin = $array[0][0];
 
-             Setting::find(1)->update(['sme_data_pin'=>$pin]);
+             Setting::find(1)->update(['sme_data_pin'=>$pin,'allow_transaction'=>'on']);
 
             return response()->json(['status' => 'success']);
         }
@@ -100,6 +100,11 @@ class WebhookController extends Controller
         $check_successful_case = collect(config('webhook.success_clause'))->contains(function ($value, $key) use ($message) {
             return (strpos($message, $value) !== false);
         });
+
+        $check_oops_case = collect(config('webhook.check_oops_clause'))->contains(function ($value, $key) use ($message) {
+            return (strpos($message, $value) !== false);
+        });
+
 
 
 
@@ -248,6 +253,10 @@ class WebhookController extends Controller
                 if ($check_successful_case) {
 
                     $message = explode('.', $message)[0];
+
+                    if($check_oops_case){
+                        $message = "successful";
+                    }
 
                     $this->ussdTransaction($ref_code, $message);
 

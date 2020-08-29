@@ -22,16 +22,16 @@ return [
         "UNKNOWN APPLICATION",
         "Dear Customer, Service is currently unavailable.",
         "Carrier info",
-        "You don't have sufficient data to share."
+        "You don't have sufficient data to share.",
+        "Yello, invalid input entered . Please check and try again."   
     ],
-
+    
     "retry_clause" => [
         "Connection problem or invalid MMI code.",
         "Oops, looks like the code you used was incorrect. Please check and try again.",
-        "Enter Recipient's numbe",
+        "Enter Recipient's number",
         "Invalid msisdn provided",
         "You are not sending to valid MTN number.",
-        "Yello, invalid input entered . Please check and try again.",
         "System is busy. Please try later.",
         "You have reached your SME data share limit.",
         "Sorry Operation failed , Please try again later",
@@ -45,6 +45,9 @@ return [
     ],
     "change_pin_clause"=>[
         "your security key is"
+    ],
+    "check_oops_clause"=>[
+        "Oops, activation of SHARE"
     ]
 
 ];
