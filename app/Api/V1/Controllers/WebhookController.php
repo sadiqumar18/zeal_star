@@ -124,7 +124,7 @@ class WebhookController extends Controller
 
                 $response = $telehost->sendMultipleUssd('123abc', '*461#', collect([2, 2, 'raihannatu', '14/02/1994', 'kaduna']), 1, Str::random(20));
 
-                return response()->json($response = ['hello']);
+                return response()->json($response);
             }
 
 
