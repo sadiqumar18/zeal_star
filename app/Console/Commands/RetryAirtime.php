@@ -2,23 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\Setting;
+use App\AirtimeTransaction;
+use App\Api\V1\Controllers\AirtimeTransactionController;
 use Carbon\Carbon;
-use App\DataTransaction;
-use App\Services\Telerivet;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use App\Jobs\RetryData as JobsRetryData;
-use App\Api\V1\Controllers\DataTransactionController;
 
-class RetryData extends Command
+class RetryAirtime extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'retry:data {minutes} {network}';
+    protected $signature = 'retry:airtime {minutes} {network}';
 
     /**
      * The console command description.
@@ -42,18 +38,10 @@ class RetryData extends Command
      *
      * @return mixed
      */
-    public function handle(DataTransactionController $dataController, DataTransaction $dataTransaction)
+    public function handle(AirtimeTransactionController $airtimeTransactionController)
     {
 
-
-
-        $allow_transaction = Setting::find(1)->allow_transaction;
-
-
-        if ($allow_transaction == 'on') {
-
-
-            $dt = $dataTransaction->whereStatus('processing')->where('network', $this->argument('network'))->limit(15)->orderBy('id', 'ASC')->get();
+        $dt = AirtimeTransaction::whereStatus('processing')->where('network', $this->argument('network'))->limit(15)->orderBy('id', 'ASC')->get();
 
 
             $filtered =  $dt->filter(function ($array) {
@@ -64,11 +52,10 @@ class RetryData extends Command
 
                 return $array->created_at->lt(Carbon::now()->subMinutes($this->argument('minutes')));
                 
-            })->each(function ($array) use ($dataController) {
+            })->each(function ($array) use ($airtimeTransactionController) {
 
-                $dataController->retry($array->referrence);
+                $airtimeTransactionController->retry($array->referrence);
 
             });
-        }
     }
 }

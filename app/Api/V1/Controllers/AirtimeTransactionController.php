@@ -46,10 +46,10 @@ class AirtimeTransactionController extends Controller
 
         $airtime_product = AirtimeProduct::where('network', $network)->first();
 
-       
+
         $discount = $amount  - ($amount * $this->getAirtimePercentage($user, $airtime_product));
 
-       
+
 
         if ($discount > $user->balance) {
             return response()->json(['status' => 'failed', 'message' => 'Insuficient balance!!'], 400);
@@ -59,45 +59,8 @@ class AirtimeTransactionController extends Controller
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable'], 400);
         }
 
-        switch ($network) {
-
-            case 'MTN':
-
-                $ussd_code = "*456*1*2*{$amount}*{$number}*1*3539#";
-
-                $telehost->sendUssd('123abc', $ussd_code, $referrence);
-
-                break;
-            case 'AIRTEL':
-
-                $ussd_code = "*605*2*1*{$number}*{$amount}*8084#";
-
-                $ussd_params = $this->getUssd($ussd_code);
-
-                $params = $this->getParams($ussd_params, $number, $amount);
-
-                $telehost->sendUssd('0j9scw', $ussd_code, $referrence);
-
-               // $telehost->sendMultipleUssd('0j9scw', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
-
-
-                break;
-
-
-            case 'GLO':
-                # code...
-                break;
-            case 'ETISALAT':
-                # code...
-                break;
-            default:
-                # code...
-                break;
-        }
-
 
         $new_balance = $user->balance - $discount;
-
 
 
         $transaction = $user->airtimeTransactions()->save(new AirtimeTransaction([
@@ -106,7 +69,7 @@ class AirtimeTransactionController extends Controller
             "network" => $network,
             "amount" => $discount,
             "price" => $amount,
-            "status" => 'successful'
+            "status" => 'processing'
         ]));
 
         $user->wallet()->save(new Wallet([
@@ -119,6 +82,8 @@ class AirtimeTransactionController extends Controller
 
         $user->update(['balance' => $new_balance]);
 
+        $this->vendAirtime($transaction);
+
 
         return response()->json(['status' => 'success', 'data' => $transaction], 201);
     }
@@ -126,7 +91,7 @@ class AirtimeTransactionController extends Controller
 
     public function reverseTransaction($referrence)
     {
-        $transaction = AirtimeTransaction::whereReferrence($referrence)->first();//whereStatus('processing')->first();
+        $transaction = AirtimeTransaction::whereReferrence($referrence)->first(); //whereStatus('processing')->first();
 
         if (is_null($transaction)) {
             return response()->json(['status' => 'error', 'message' => 'Transaction not found or sucessfull already'], 404);
@@ -141,7 +106,7 @@ class AirtimeTransactionController extends Controller
 
         $user = $transaction->user;
 
-        // dd($user);
+
 
         $user->wallet()->save(new Wallet([
             'referrence' => "R-{$referrence}",
@@ -161,6 +126,21 @@ class AirtimeTransactionController extends Controller
         }
 
         return response()->json(['status' => 'success', 'data' => $transaction]);
+    }
+
+    public function retry($referrence)
+    {
+        $transaction = AirtimeTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
+
+        if (is_null($transaction)) {
+            return response()->json(['status' => 'error', 'message' => 'Transaction not found'], 404);
+        }
+
+    
+        $this->vendAirtime($transaction, true);
+
+      
+        return response()->json(['status' => 'success', 'message' => 'Transaction successfull']);
     }
 
 
@@ -194,23 +174,4 @@ class AirtimeTransactionController extends Controller
 
         return response()->json(['status' => 'success', 'data' => $transaction]);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

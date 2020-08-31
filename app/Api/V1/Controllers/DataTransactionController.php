@@ -179,9 +179,7 @@ class DataTransactionController extends Controller
     public function retry($referrence)
     {
 
-        $telerivet = new Telerivet;
-        $telehost = new Telehost;
-
+      
         
 
         $transaction = DataTransaction::whereReferrence($referrence)->whereStatus('processing')->first();

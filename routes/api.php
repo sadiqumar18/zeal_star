@@ -118,7 +118,8 @@ $api->version('v1', function (Router $api) {
         $api->group(['prefix'=>'airtime','middleware' => ['jwt.auth']], function (Router $api) {
 
             $api->get('/reverse/{referrence}', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@reverseTransaction');
-        
+            $api->get('/retry/{referrence}', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@retry');
+         
 
         });
 
@@ -161,6 +162,16 @@ $api->version('v1', function (Router $api) {
         // dd($request->minutes);
 
         $theExitCode = Artisan::call("retry:data {$request->minutes} {$request->network}");
+        $result = Artisan::output();
+    });
+
+
+
+    $api->get('/airtime/retry', function (Request $request) {
+
+        // dd($request->minutes);
+
+        $theExitCode = Artisan::call("retry:airtime {$request->minutes} {$request->network}");
         $result = Artisan::output();
     });
 

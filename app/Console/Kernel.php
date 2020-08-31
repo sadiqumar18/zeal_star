@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\RetryAirtime;
 use App\Setting;
 use App\Console\Commands\RetryData;
 use Illuminate\Console\Scheduling\Schedule;
@@ -15,7 +16,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        RetryData::class
+        RetryData::class,
+        RetryAirtime::class
     ];
 
     /**
