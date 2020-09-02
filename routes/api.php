@@ -161,7 +161,7 @@ $api->version('v1', function (Router $api) {
 
         // dd($request->minutes);
 
-        $theExitCode = Artisan::call("retry:data {$request->minutes} {$request->network}");
+        $theExitCode = Artisan::call("retry:data {$request->minutes} {$request->network} {$request->limit}");
         $result = Artisan::output();
     });
 
