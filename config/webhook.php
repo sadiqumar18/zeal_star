@@ -23,7 +23,8 @@ return [
         "Dear Customer, Service is currently unavailable.",
         "Carrier info",
         "You don't have sufficient data to share.",
-          
+        "SORRY!Insufficient credit balance",
+        //"Oops, activation of SHARE"   
     ],
     
     "retry_clause" => [

@@ -53,7 +53,7 @@ class RetryData extends Command
         if ($allow_transaction == 'on') {
 
 
-            $dt = $dataTransaction->whereStatus('processing')->where('network', $this->argument('network'))->limit($this->argument('network'))->orderBy('id', 'ASC')->get();
+            $dt = $dataTransaction->whereStatus('processing')->where('network', $this->argument('network'))->limit($this->argument('limit'))->orderBy('id', 'ASC')->get();
 
             
 
