@@ -168,20 +168,20 @@ $api->version('v1', function (Router $api) {
     });
 
 
-    $api->get('/create/account', function (Request $request,Payant $payant) {
+    // $api->get('/create/account', function (Request $request,Payant $payant) {
 
-        $users = User::where('account_number',null)->get();
+    //     $users = User::where('account_number',null)->limit(3)->get();
 
-        $users->each(function($user) use($payant){
-            $user_details = $user->getPersonalAccountDetails();
+    //     $users->each(function($user) use($payant){
+    //         $user_details = $user->getPersonalAccountDetails();
 
-           $account = $payant->createPersonsalAccount($user_details);
+    //        $account = $payant->createPersonsalAccount($user_details);
 
-           $user->update(['account_number'=>$account['account_number']]);
+    //        $user->update(['account_number'=>$account['account_number']]);
             
-        });
+    //     });
        
-    });
+    // });
 
     $api->get('/airtime/retry', function (Request $request) {
 
