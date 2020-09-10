@@ -133,7 +133,7 @@ class UserController extends Controller
     }
 
 
-    public function generateAccount(Request $request)
+    public function generateAccount(Request $request, Payant $payant)
     {
 
       
@@ -142,61 +142,11 @@ class UserController extends Controller
        
         $user = auth()->user();
 
-        $data = [
-            "client"=>[
-                'first_name'=>$user->fullname,
-                'last_name'=>$user->fullname,
-                'email'=>$user->email,
-                'phone'=>"+234" . substr($user->number, 1, 12)
-            ],
-            'items'=>[
-                [
-                'item'=>'Zealvend account funding',
-                'description'=>'funding',
-                'unit_cost'=>"{$amount}",
-                'quantity'=>1
-                ]
-            ],
-            "due_date"=>Carbon::now()->format('d/m/Y'),
-            "fee_bearer"=>"client",
-            "split_details"=>[
-                "type"=>"percentage",
-                "fee_bearer"=>"client",
-                "receivers"=>[
-                    [
-                        "wallet_reference_code"=>"Jo4ZhR6WTj",
-                        "value"=>"95",
-                        "primary"=>"true"
-                    ],
-                    [
-                        "wallet_reference_code"=>"cRyFviDf6t",
-                        "value"=>"5",
-                        "primary"=>"false"
-                    ]
-                ]
-            ]
-        ];
-
-        //dd(json_encode($data));
-
-    
-        $payant = new Payant;
-
-       $result = $payant->createInvoice($data);
-
-
        
-        if($result['status'] == 'failed'){
-            return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
-        };
+        $account_data = $user->getDynamicAccountDetails($amount);
 
-
-        $referrence = $result['data']->reference_code;
-
-        $response = $payant->generateAccount($referrence);
-
-
-
+       $response = $payant->createDynamicAccount($account_data);
+       
         if($response['status'] == 'failed'){
             return response()->json(['status'=>'error','message'=>'Unable to generate account number']);
         };
