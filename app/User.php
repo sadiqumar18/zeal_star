@@ -139,7 +139,7 @@ class User extends Authenticatable implements JWTSubject
                 "sendNotifications"=> true
             ],
             "type"=> "RESERVED",
-            "accountName"=> $this->email ,
+            "accountName"=> $this->fullname ,
             "bankCode"=>"000001",
             "currency"=> "NGN",
             "country"=> "NG",
