@@ -89,34 +89,28 @@ class DataTransactionController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
+       
 
         //create invoice
 
-        $invoce_details = $user->getInvoicedata($dataPrice);
+        $account_details = $user->getDynamicAccountDetails($dataPrice);
 
+       
+        $response = $payant->createDynamicAccount($account_details);
 
-        $invoice_response = $payant->createInvoice($invoce_details);
-
-        if ($invoice_response['status'] == 'failed') {
+        if ($response['status'] == 'failed') {
             return response()->json(['status' => 'error', 'message' => 'Unable to generate account number']);
         };
 
-
-        $invoice_referrence = $invoice_response['data']->reference_code;
-
-
-        $account_info_response = $payant->generateAccount($invoice_referrence);
-
-        if ($account_info_response['status'] == 'failed') {
-            return response()->json(['status' => 'error', 'message' => 'Unable to generate account number']);
-        };
+       
+        $referrence = $response['referrence'];
 
 
         $user->onlineDataTransactions()->save(new OnlineDataTransaction([
             "number" => $number,
-            "referrence" => $invoice_referrence,
+            "referrence" => $referrence,
             "network" => $network,
-            "price" => $account_info_response['amount'],
+            "price" => $response['amount'],
             "bundle" => $bundle,
             "status" => "processing"
         ]));
@@ -124,10 +118,10 @@ class DataTransactionController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'account_number' => $account_info_response['account_number'],
-            'account_name' => $account_info_response['account_name'],
-            'amount' => $account_info_response['amount'],
-            'bank_name' => $account_info_response['bank_name'],
+            'account_number' => $response['account_number'],
+            'account_name' => $response['account_name'],
+            'amount' => $response['amount'],
+            'bank_name' => $response['bank_name'],
             'message' => "Make a bank transfer to this account within 10 mins."
         ]);
     }

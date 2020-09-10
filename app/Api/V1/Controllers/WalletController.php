@@ -97,16 +97,17 @@ class WalletController extends Controller
     {
 
 
-        if ($request->type != "invoice.paid") {
-            return response()->json(['status' => 'failed', 'message' => 'Unable to verify payment!!'], 400);
-        }
+        
 
-        $referrence = $request->data['reference_code'];
+        $referrence = $request->account["_id"];
+
+       
 
 
         $check_online_referrence = OnlineDataTransaction::where('referrence', $referrence)->where('status', 0)->first();
 
 
+      
 
         if (!is_null($check_online_referrence)) {
             $online_vending_response =  $this->processOnlinevending($check_online_referrence);
@@ -118,13 +119,18 @@ class WalletController extends Controller
             return response()->json(['status' => 'success', 'message' => 'payment successful!!'], 200);
         }
 
+        $referrence = $request->_id;
+
+
+        
+
         $check_referrence = Wallet::whereReferrence($referrence)->first();
 
         if (!is_null($check_referrence)) {
             return response()->json(['status' => 'failed', 'message' => 'Unable to verify payment!!'], 400);
         }
 
-        $email =  $request->data['client']['email'];
+        $email =  $request->account['customer']['email'];
 
         $user = User::whereEmail($email)->first();
 
@@ -133,10 +139,17 @@ class WalletController extends Controller
         }
 
 
-        $amount = $request->data['items'][0]['unit_cost'];
+        $amount = $request->amount;
+
+        if ($amount > 3000) {
+            $amount = $amount - 50;
+        }else{
+            $amount = $amount - 20;
+        }
 
 
         $balance_before = $user->balance;
+        
         $new_balance = $balance_before + $amount;
 
         $user->update(['balance' => $new_balance]);
@@ -160,12 +173,7 @@ class WalletController extends Controller
 
         $user = User::find($transaction->user_id);
 
-        $response = $this->vend($transaction);
-
-
-        if ($response['status'] != 'success') {
-            return ['status' => 'failed'];
-        }
+       
 
         $bundle = DataProduct::where('bundle',$transaction->bundle)->first();
 
@@ -186,6 +194,15 @@ class WalletController extends Controller
             'balance_after' => $user->balance,
             'description' => "Online vending"
         ]));
+
+        
+
+        $response = $this->vend($transaction);
+
+
+        if ($response['status'] != 'success') {
+            return ['status' => 'failed'];
+        }
 
         $transaction->delete();
 

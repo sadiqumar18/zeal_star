@@ -19,7 +19,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'fullname', 'email','number', 'password','pin','webhook_url','api_key','balance','referrer'
+        'fullname', 'email','number', 'password','pin','webhook_url','api_key','balance','referrer','account_number'
     ];
 
    
@@ -94,6 +94,56 @@ class User extends Authenticatable implements JWTSubject
     {
 
        return $this->where('number',$this->referrer)->first();
+    }
+
+
+    public function getDynamicAccountDetails($amount)
+    {
+
+        if ($amount > 3000) {
+            $amount = $amount + 50;
+        }else {
+            $amount = $amount + 20;
+        }
+
+        return [
+                "customer" => [
+                    "name"=> $this->fullname,
+                    "email"=> $this->email,
+                    "phoneNumber"=> "+234" . substr($this->number, 1, 12),
+                    "sendNotifications"=> true
+                ],
+                "type"=> "DYNAMIC",
+                "accountName"=> $this->fullname ,
+                "bankCode"=>"000001",
+                "currency"=> "NGN",
+                "country"=> "NG",
+                "limitDetails"=> [
+                    "minimumTransactionValue"=> $amount,
+                    "singleTransactionValue" => $amount,
+                    "dailyTransactionVolume" => 1,
+                    "dailyTransactionValue" => $amount
+                ]
+            ];
+        
+    }
+
+
+    public function getPersonalAccountDetails()
+    {
+        return [
+            "customer" => [
+                "name"=> $this->fullname,
+                "email"=> $this->email,
+                "phoneNumber"=> "+234" . substr($this->number, 1, 12),
+                "sendNotifications"=> true
+            ],
+            "type"=> "RESERVED",
+            "accountName"=> $this->email ,
+            "bankCode"=>"000001",
+            "currency"=> "NGN",
+            "country"=> "NG",
+        ];
     }
 
 
