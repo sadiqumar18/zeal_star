@@ -152,15 +152,28 @@ class UserController extends Controller
         };
 
 
+        
+
+        if ($amount > 3000) {
+            $fee = 50;
+            $amount = $amount + $fee;
+        }else {
+            $fee = 20;
+            $amount = $amount + $fee;
+        }
+
+
         return response()->json([
             'status'=>'success',
-            'account_number'=>$response['account_number'],
-            'account_name'=>$response['account_name'],
-            'amount'=>$response['amount'],
             'bank_name'=>$response['bank_name'],
-            'message'=>"Make a bank transfer to this account within 10 mins."
+            'account_name'=>$response['account_name'],
+            'account_number'=>$response['account_number'],
+            'amount'=>$amount,
+            'fee'=>$fee,
+            'total'=> $response['amount'],
+            'message'=>"Kindly Transfer {$response['amount']} to the account above within 10 minutes"
             ]);
 
-
+        
     }
 }
