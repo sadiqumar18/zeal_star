@@ -116,14 +116,25 @@ class DataTransactionController extends Controller
         ]));
 
 
+        if ($dataPrice > 3000) {
+            $fee = 50;
+            $amount = $dataPrice + $fee;
+        }else {
+            $fee = 20;
+            $amount = $dataPrice + $fee;
+        }
+
+
         return response()->json([
-            'status' => 'success',
-            'account_number' => $response['account_number'],
-            'account_name' => $response['account_name'],
-            'amount' => $response['amount'],
-            'bank_name' => $response['bank_name'],
-            'message' => "Make a bank transfer to this account within 10 mins."
-        ]);
+            'status'=>'success',
+            'bank_name'=>$response['bank_name'],
+            'account_name'=>$response['account_name'],
+            'account_number'=>$response['account_number'],
+            'amount'=>$dataPrice,
+            'fee'=>$fee,
+            'total'=> $response['amount'],
+            'message'=>"Kindly Transfer {$response['amount']} to the account above within 10 minutes"
+            ]);
     }
 
 
