@@ -24,6 +24,7 @@ return [
         "Carrier info",
         "You don't have sufficient data to share.",
         "SORRY!Insufficient credit balance",
+        "Sorry, your request may not respond in time. Please try again later."
         //"Oops, activation of SHARE"   
     ],
     
