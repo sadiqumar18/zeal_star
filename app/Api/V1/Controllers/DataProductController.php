@@ -124,7 +124,7 @@ class DataProductController extends Controller
 
           if($network == 'MTN'){
             if ($allow_transaction == 'on') {
-               dd($this->vend($transaction));
+               $this->vend($transaction);
               }
               return response()->json(['status' => 'success', 'data' => $transaction], 201);
           }else{
