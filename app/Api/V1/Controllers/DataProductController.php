@@ -93,6 +93,7 @@ class DataProductController extends Controller
         $user->update(['balance' => $new_balance]);
 
 
+        $route = $this->getRoute($user,$network);
       
 
         $transaction = $user->dataTransactions()->save(new DataTransaction([
@@ -102,7 +103,8 @@ class DataProductController extends Controller
             "price" => $dataPrice,
             "bundle" => $bundle,
             "megabytes"=> $dataBundle->megabytes,
-            "status"=>"processing"
+            "status"=>"processing",
+            "route" => $route
         ]));
 
        
@@ -117,12 +119,12 @@ class DataProductController extends Controller
         $allow_transaction = Setting::find(1)->allow_transaction;
 
        
-
+        
          
 
           if($network == 'MTN'){
             if ($allow_transaction == 'on') {
-                $this->vend($transaction);
+               dd($this->vend($transaction));
               }
               return response()->json(['status' => 'success', 'data' => $transaction], 201);
           }else{
