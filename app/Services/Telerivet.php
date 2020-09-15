@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\DataTransaction;
 use GuzzleHttp\Client;
+use Exception;
 
 class  Telerivet{
 
@@ -32,7 +33,7 @@ class  Telerivet{
 
 
        // if(strpos($message, 'SMEB') !== false || strpos($message, 'SMED') !== false || strpos($message, 'SMEC') !== false){
-            $phone_id = 'PN95ea83f99b1adea8';
+            $phone_id = 'PNf8d8e0431f87f4e4';
         //  }else{
            // $phone_id = 'PNd6018e2dc833fff0';
         // }
@@ -44,8 +45,14 @@ class  Telerivet{
             'phone_id'=>$phone_id
         ];
 
-       $response =  $this->client->post("https://api.telerivet.com/v1/projects/{$project_id}/messages/send",['json'=>$data])->getBody();
+        try {
+            $response =  $this->client->post("https://api.telerivet.com/v1/projects/{$project_id}/messages/send",['json'=>$data])->getBody();
 
+        } catch (Exception $th) {
+            //throw $th;
+        }
+
+      
     }
 
 

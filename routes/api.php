@@ -553,12 +553,24 @@ $api->version('v1', function (Router $api) {
 
             $message = $request->content;
 
-            //get number
+            $exploded_message = explode(' ', $message);
+
+
+
             preg_match_all('!\d+!', $message, $array);
 
             $number = "0" . substr($array[0][1], 3, 12);
 
-            $bundle = explode(' ', $message)[4];
+            $bundle = $exploded_message[6];
+
+            //get number
+           /* preg_match_all('!\d+!', $message, $array);
+
+            $number = "0" . substr($array[0][1], 3, 12);
+
+            $bundle = explode(' ', $message)[4];*/
+
+           // dd($number);
 
 
 
@@ -585,6 +597,8 @@ $api->version('v1', function (Router $api) {
 
 
             if ($transaction) {
+
+                
 
                 $transaction->update(['status' => 'successful', 'message' => $message]);
 
