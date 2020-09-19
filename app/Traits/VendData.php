@@ -51,7 +51,7 @@ trait VendData {
            $check_gifting = ((strpos(strtolower($bundle), 'gbg') !== false) or  (strpos(strtolower($bundle), 'mbg') !== false));
 
 
-           /* if($check_gifting){
+            /*if($check_gifting){
 
                 $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
@@ -78,13 +78,14 @@ trait VendData {
 
               $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
 
+             //*461*3*3*{{number}}*{{pin}}#
              
                $telerivet->sendMessage($code,131);
                
                 //$response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
 
              
-           // }
+           //}
 
                
                 break;

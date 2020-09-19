@@ -1,7 +1,7 @@
 <?php
 
 
-ini_set('max_execution_time', 0);
+
 
 use App\AirtimeTransaction;
 use App\Wallet;
@@ -598,7 +598,7 @@ $api->version('v1', function (Router $api) {
 
             if ($transaction) {
 
-                
+                $message = explode('.', $message)[0];
 
                 $transaction->update(['status' => 'successful', 'message' => $message]);
 
