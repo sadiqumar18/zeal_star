@@ -99,6 +99,7 @@ class DataProductController extends Controller
 
 
         //$route = $this->getRoute($user,$network);
+        
       
 
         $transaction = $user->dataTransactions()->save(new DataTransaction([
