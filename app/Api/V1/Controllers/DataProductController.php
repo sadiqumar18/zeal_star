@@ -112,6 +112,7 @@ class DataProductController extends Controller
             "status"=>"processing",
            
         ]));
+        
 
        
         $user->wallet()->save(new Wallet([
