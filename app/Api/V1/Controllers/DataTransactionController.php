@@ -133,7 +133,7 @@ class DataTransactionController extends Controller
             'amount'=>$dataPrice,
             'fee'=>$fee,
             'total'=> $response['amount'],
-            'message'=>"Kindly Transfer {$response['amount']} to the account above within 10 minutes"
+            'message'=>"Kindly Transfer ₦{$response['amount']} to the account above within 10 minutes"
             ]);
     }
 

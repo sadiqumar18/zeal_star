@@ -10,7 +10,7 @@ use App\Setting;
 
 trait VendData {
  
-    public function vend($transaction, $retry = null) {
+    public function vend($transaction,  $retry = null) {
 
         $telehost = new Telehost;
         $telerivet = new Telerivet;
@@ -19,8 +19,9 @@ trait VendData {
         $bundle = $transaction->bundle;
         $network = $transaction->network;
         $number = $transaction->number;
-        
+        $route = $transaction->route;
 
+       
         $random_prefix = Str::random(3);
 
         $referrence = ($retry)?"retry{$random_prefix}?{$transaction->referrence}":$transaction->referrence;
@@ -55,7 +56,7 @@ trait VendData {
 
                 $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
-                $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,$params->except(0),'1',$referrence);
+                $response =  $telehost->sendMultipleUssd($route,$ussd_string,$params->except(0),'1',$referrence);
 
             }else{
 
@@ -72,7 +73,7 @@ trait VendData {
                 $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
 
             
-                $response = $telehost->sendUssd('123abc', $code, $referrence);
+                $response = $telehost->sendUssd($route, $code, $referrence);
 
               }*/
 
@@ -93,7 +94,7 @@ trait VendData {
 
                 //$telehost->sendMultipleUssd('2lerfb',$ussd_string,$params,'2',$referrence);
 
-               $response = $telehost->sendUssd('2lerfb', $code, $referrence);
+               $response = $telehost->sendUssd($route, $code, $referrence);
 
                 break;
 
@@ -101,7 +102,7 @@ trait VendData {
 
 
                // $response = $telehost->sendMultipleUssd('0j9scw',$ussd_string,collect($params->except(0)),'1',$referrence);
-                $telehost->sendUssd('0j9scw', $code, $referrence);
+                $telehost->sendUssd($route, $code, $referrence);
  
 
             break;
@@ -109,7 +110,7 @@ trait VendData {
 
             case 'etisalat':
 
-             $response = $telehost->sendUssd('1rrerv', $code, $referrence);
+             $response = $telehost->sendUssd($route, $code, $referrence);
 
 
            break;
@@ -148,6 +149,33 @@ trait VendData {
             }
           });
    
+    }
+
+
+
+    public function getRoute($user,$network,$gifting = null )
+    {
+        switch (strtolower($network)) {
+
+            case 'mtn':
+                $route = ($gifting)? 'gifting' : $user->sme_data_route;
+                break;
+            case 'airtel':
+                $route = '0j9scw';
+                break;
+            case 'glo':
+                $route = '2lerfb';
+                break; 
+            case 'etisalat':
+                $route = '1rrerv';
+                break;       
+            
+            default:
+                $route = null;
+                break;
+        }
+
+        return $route;
     }
 
  
