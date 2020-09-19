@@ -94,7 +94,7 @@ trait VendData {
 
                 //$telehost->sendMultipleUssd('2lerfb',$ussd_string,$params,'2',$referrence);
 
-               $response = $telehost->sendUssd($route, $code, $referrence);
+               $response = $telehost->sendUssd('2lerfb', $code, $referrence);
 
                 break;
 
@@ -102,7 +102,7 @@ trait VendData {
 
 
                // $response = $telehost->sendMultipleUssd('0j9scw',$ussd_string,collect($params->except(0)),'1',$referrence);
-                $telehost->sendUssd($route, $code, $referrence);
+                $telehost->sendUssd('0j9scw', $code, $referrence);
  
 
             break;
@@ -110,7 +110,7 @@ trait VendData {
 
             case 'etisalat':
 
-             $response = $telehost->sendUssd($route, $code, $referrence);
+             $response = $telehost->sendUssd('1rrerv', $code, $referrence);
 
 
            break;
