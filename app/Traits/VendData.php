@@ -100,9 +100,12 @@ trait VendData {
 
             case 'airtel':
 
+                $ussd_string = "*605#";
 
-               // $response = $telehost->sendMultipleUssd('0j9scw',$ussd_string,collect($params->except(0)),'1',$referrence);
-                $telehost->sendUssd('0j9scw', $code, $referrence);
+              
+
+                $response = $telehost->sendMultipleUssd('abc123',$ussd_string,collect($params->toArray()),'1',$referrence);
+                //$telehost->sendUssd('0j9scw', $code, $referrence);
  
 
             break;
