@@ -48,7 +48,7 @@ trait VendAirtime
 
 
 
-                return  $telehost->sendUssd('0j9scw', $ussd_code, $referrence);
+                return  $telehost->sendUssd('abc123', $ussd_code, $referrence);
 
                 // $telehost->sendMultipleUssd('0j9scw', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
 
