@@ -39,7 +39,8 @@ return [
         "Sorry Operation failed , Please try again later",
         "SORRY!Insufficient credit balance for the plan you want to buy.Please recharge your line or you can simply Borrow Data. To Borrow Data now, just dial *321#",
         "You have entered invalid PIN.",
-        "Sorry for the inconvenience Please try after some time"
+        "Sorry for the inconvenience Please try after some time",
+        "Sorry Operation failed , Please try again later"
     ],
     "success_clause"=>[
         "successfully",
