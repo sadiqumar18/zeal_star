@@ -38,7 +38,8 @@ return [
         "You have reached your SME data share limit.",
         "Sorry Operation failed , Please try again later",
         "SORRY!Insufficient credit balance for the plan you want to buy.Please recharge your line or you can simply Borrow Data. To Borrow Data now, just dial *321#",
-        "You have entered invalid PIN."
+        "You have entered invalid PIN.",
+        "Sorry for the inconvenience Please try after some time"
     ],
     "success_clause"=>[
         "successfully",
