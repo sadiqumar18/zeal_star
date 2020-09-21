@@ -56,7 +56,7 @@ trait VendData {
 
                 $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
-                $response =  $telehost->sendMultipleUssd($route,$ussd_string,$params->except(0),'1',$referrence);
+                $response =  $telehost->sendMultipleUssd('123abc',$ussd_string,$params->except(0),'1',$referrence);
 
             }else{
 
