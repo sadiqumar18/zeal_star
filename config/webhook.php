@@ -24,7 +24,8 @@ return [
         "Carrier info",
         "You don't have sufficient data to share.",
         "SORRY!Insufficient credit balance",
-        "Sorry, your request may not respond in time. Please try again later."
+        "Sorry, your request may not respond in time. Please try again later.",
+        "Oops, activation of 40GB Monthly Plan plan was not successful"
         //"Oops, activation of SHARE"   
     ],
     
@@ -38,12 +39,14 @@ return [
         "You have reached your SME data share limit.",
         "Sorry Operation failed , Please try again later",
         "SORRY!Insufficient credit balance for the plan you want to buy.Please recharge your line or you can simply Borrow Data. To Borrow Data now, just dial *321#",
+        "Service Temporarily unavailable."
     ],
     "success_clause"=>[
         "successfully",
         "successful",
         "under process",
-        "topped up"
+        "topped up",
+        "Oops, activation of 40GB Monthly Plan plan was not successful"
     ],
     "change_pin_clause"=>[
         "your security key is"
