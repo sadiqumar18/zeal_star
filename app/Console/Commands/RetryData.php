@@ -55,7 +55,7 @@ class RetryData extends Command
 
             $dt = $dataTransaction->whereStatus('processing')->where('network', $this->argument('network'))->limit($this->argument('limit'))->orderBy('id', 'ASC')->get();
 
-            
+          
 
             $filtered =  $dt->filter(function ($array) {
 

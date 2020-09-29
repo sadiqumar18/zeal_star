@@ -23,7 +23,7 @@ class LoginController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        
+       
 
         try {
             $token = Auth::guard()->attempt($credentials);

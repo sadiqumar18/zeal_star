@@ -14,7 +14,7 @@ return [
         // here you can specify some validation rules for your sign-in request
         'validation_rules' => [
             'fullname' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|unique:users',
             'number' => 'required|unique:users',
             'password' => 'required',
             'webhook_url'=>'url',
@@ -32,7 +32,7 @@ return [
 
         // here you can specify some validation rules for your login request
         'validation_rules' => [
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required'
         ]
     ],

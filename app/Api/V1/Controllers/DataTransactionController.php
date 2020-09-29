@@ -194,6 +194,7 @@ class DataTransactionController extends Controller
         }
 
        
+       
         //echo var_dump($transaction->referrence);
 
         $this->vend($transaction,true);
