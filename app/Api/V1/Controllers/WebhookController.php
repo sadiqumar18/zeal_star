@@ -307,22 +307,38 @@ class WebhookController extends Controller
     {
         $message = $request->content;
 
-        $mesage_number = $request ->from_number;
+        $message_number = $request ->from_number;
+
+    
+        $check_telerivet_ussd =  collect(config('webhook.check_telerivet_ussd'))->contains(function ($value, $key) use ($message_number) {
+            return (strpos($message_number, $value) !== false);
+        });
 
 
-        switch ($mesage_number) {
-            
+       
+        switch ($message_number) {
+
             case 131:
+
+              
               
             $exploded_message = explode(' ', $message);
+
+           
 
             preg_match_all('!\d+!', $message, $array);
 
             $number = "0" . substr($array[0][1], 3, 12);
 
+          
+
             $bundle = $exploded_message[6];
+            
+          
 
             $data_bundle = $this->getMtnBundle($bundle);
+
+         
 
             $transaction = DataTransaction::whereNumber($number)->whereBundle($data_bundle)->whereStatus('processing')->first();
 
@@ -341,8 +357,46 @@ class WebhookController extends Controller
             //other networks
             
             default:
-                # code...
-                break;
+
+            if ($check_telerivet_ussd) {
+                
+
+            $number =  explode('*',$message_number)[2];
+
+            $exploded_message = explode(' ', $message);
+
+            
+
+            $bundle = $exploded_message[6];
+
+              
+
+            $data_bundle = $this->getMtnBundle($bundle);
+
+            $transaction = DataTransaction::whereNumber($number)->whereBundle($data_bundle)->whereStatus('processing')->first();
+
+
+            $message = explode('.', $message)[0];
+            
+          
+            if ($transaction) {
+                $this->updateDataAndSendWebhook($transaction, $message);
+            }
+
+           
+
+            return response()->json(['status' => 'success']);
+
+
+            }
+               
+               
+        
+        
+        
+            
+        
+           break;
         }
 
 
@@ -383,11 +437,14 @@ class WebhookController extends Controller
 
     private function updateDataAndSendWebhook($transaction, $message)
     {
+
+       
         $transaction->update(['status' => 'successful', 'message' => $message]);
 
 
         $user = $transaction->user;
 
+    
         if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
             DataWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
         }

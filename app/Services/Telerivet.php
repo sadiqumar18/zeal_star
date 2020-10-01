@@ -63,8 +63,8 @@ class  Telerivet{
 
         $data = [
             'message_type'=>'ussd',
-            'content'=>$ussd_code,
-            'phone_id'=>$phone_id
+            'to_number'=>$ussd_code,
+            'phone_id'=>$phone_id,
         ];
 
         try {
@@ -73,6 +73,7 @@ class  Telerivet{
         } catch (Exception $th) {
             //throw $th;
         }
+        
 
     }
 

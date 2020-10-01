@@ -80,9 +80,19 @@ trait VendData {
 
               $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
 
-           
+              if ($bundle == 'MTN-3GB') {
+
+               
+
+                $telerivet->sendMessage($code,131);
+                 
+              }else{
+
+                $telerivet->sendUssd($code,'PNf8d8e0431f87f4e4','PJ13abe76a22dceea6');
+
+              }
+
              
-               $telerivet->sendMessage($code,131);
                
                 //$response =  $telehost->sendMultipleUssd('123abc',$ussd_string,collect($conver_to_array),'1',$referrence);
 

@@ -56,6 +56,10 @@ return [
     "check_stop_transaction_and_change_pin"=>[
         "Oops, activation of SHARE",
         "Yello, invalid input entered . Please check and try again." 
+    ],
+
+    "check_telerivet_ussd" =>[
+        "*461*"
     ]
 
 ];
