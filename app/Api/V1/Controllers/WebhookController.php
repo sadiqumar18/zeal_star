@@ -301,6 +301,61 @@ class WebhookController extends Controller
 
 
 
+   
+    
+    public function telerivetWebhook(Request $request)
+    {
+        $message = $request->content;
+
+        $mesage_number = $request ->from_number;
+
+
+        switch ($mesage_number) {
+            
+            case 131:
+              
+            $exploded_message = explode(' ', $message);
+
+            preg_match_all('!\d+!', $message, $array);
+
+            $number = "0" . substr($array[0][1], 3, 12);
+
+            $bundle = $exploded_message[6];
+
+            $data_bundle = $this->getMtnBundle($bundle);
+
+            $transaction = DataTransaction::whereNumber($number)->whereBundle($data_bundle)->whereStatus('processing')->first();
+
+
+            $message = explode('.', $message)[0];
+
+            if ($transaction) {
+                $this->updateDataAndSendWebhook($transaction, $message);
+            }
+
+            return response()->json(['status' => 'success']);
+
+            break;
+
+
+            //other networks
+            
+            default:
+                # code...
+                break;
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
     private function ussdTransaction($ref_code, $message)
     {
         $transaction = DataTransaction::where('referrence', $ref_code)->whereStatus('processing')->first();
