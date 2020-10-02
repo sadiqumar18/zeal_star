@@ -314,6 +314,10 @@ class WebhookController extends Controller
             return (strpos($message_number, $value) !== false);
         });
 
+        $check_telerivet_glo =  collect(config('webhook.check_telerivet_glo'))->contains(function ($value, $key) use ($message_number) {
+            return (strpos($message_number, $value) !== false);
+        });
+
 
         $check_successful_case = collect(config('webhook.success_clause'))->contains(function ($value, $key) use ($message) {
             return (strpos($message, $value) !== false);
@@ -465,6 +469,27 @@ class WebhookController extends Controller
             return response()->json(['status' => 'success']);
 
 
+            }
+
+
+            if ($check_telerivet_glo) {
+
+                if (!$check_successful_case) {
+                    return response()->json(['status' => 'success']);
+                }
+               
+                $number =  explode('*',$message_number)[3];
+
+                $number = explode('#',$number)[0];
+
+                $transaction = DataTransaction::whereNumber($number)->where('network','GLO')->whereStatus('processing')->first();
+
+                if ($transaction) {
+                    $this->updateDataAndSendWebhook($transaction, $message);
+                }
+    
+                return response()->json(['status' => 'success']);
+    
             }
                
                
