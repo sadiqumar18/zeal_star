@@ -105,7 +105,9 @@ trait VendData {
 
                 //$telehost->sendMultipleUssd('2lerfb',$ussd_string,$params,'2',$referrence);
 
-               $response = $telehost->sendUssd('2lerfb', $code, $referrence);
+               //$response = $telehost->sendUssd('2lerfb', $code, $referrence);
+
+               $telerivet->sendUssd($code,'PNecd52f098894635e','PJ13abe76a22dceea6');
 
                 break;
 
@@ -114,8 +116,9 @@ trait VendData {
                 $ussd_string = "*605#";
 
               
-
-                $response = $telehost->sendMultipleUssd('abc123',$ussd_string,collect($params->toArray()),'1',$referrence);
+                $telerivet->sendUssd($code,'PNdc88084962137beb','PJ13abe76a22dceea6');
+                
+                //$response = $telehost->sendMultipleUssd('abc123',$ussd_string,collect($params->toArray()),'1',$referrence);
                 //$telehost->sendUssd('0j9scw', $code, $referrence);
  
 
@@ -124,7 +127,10 @@ trait VendData {
 
             case 'etisalat':
 
-             $response = $telehost->sendUssd('1rrerv', $code, $referrence);
+
+              $telerivet->sendUssd($code,'PNc16d8641aef8770d','PJ13abe76a22dceea6');
+
+             //$response = $telehost->sendUssd('1rrerv', $code, $referrence);
 
 
            break;
