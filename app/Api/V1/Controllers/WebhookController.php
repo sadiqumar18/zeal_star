@@ -315,6 +315,11 @@ class WebhookController extends Controller
         });
 
 
+        $check_successful_case = collect(config('webhook.success_clause'))->contains(function ($value, $key) use ($message) {
+            return (strpos($message, $value) !== false);
+        });
+
+
        
         switch ($message_number) {
 
@@ -352,6 +357,78 @@ class WebhookController extends Controller
             return response()->json(['status' => 'success']);
 
             break;
+
+
+            case 'AirtelERC':
+
+
+                $exploded_message = explode(' ', $message);
+
+                $number = $exploded_message[8];
+
+                $transaction = DataTransaction::whereNumber($number)->where('status', 'processing')->where('network', 'AIRTEL')->orderBy('id', 'DESC')->first();
+
+
+               /* if (is_null($transaction)) {
+
+                    $airtime_transaction = AirtimeTransaction::whereNumber($number)->where('network', 'AIRTEL')->orderBy('id', 'DESC')->first();
+
+                    $this->updateAirtimeAndSendWebhook($airtime_transaction, $message);
+                }*/
+
+                if ($transaction) {
+                    $this->updateDataAndSendWebhook($transaction, $message);
+                }
+
+                return response()->json(['status' => 'success']);
+
+            break;
+
+            case '9mobile':
+
+                if (!$check_successful_case) {
+                    return response()->json(['status' => 'success']);
+                }
+
+                $exploded_message = explode(' ', $message);
+
+                $remove_period = explode('.', $exploded_message[9]);
+
+
+                $number = "0" . $remove_period[0];
+
+
+                $transaction = DataTransaction::whereNumber($number)->where('network', 'ETISALAT')->whereStatus('processing')->first();
+
+                if ($transaction) {
+                    $this->updateDataAndSendWebhook($transaction, $message);
+                }
+
+                return response()->json(['status' => 'success']);
+
+                break;
+
+                if (!$check_successful_case) {
+                    return response()->json(['status' => 'success']);
+                }
+
+                //get number
+                preg_match_all('!\d+!', $message, $array);
+
+
+
+                $number = "0" . substr($array[0][1], 3, 12);
+
+
+                $transaction = DataTransaction::whereNumber($number)->where('network', 'GLO')->whereStatus('processing')->first();
+
+                if ($transaction) {
+                    $this->updateDataAndSendWebhook($transaction, $message);
+                }
+
+                return response()->json(['status' => 'success']);
+
+                break;
 
 
             //other networks
