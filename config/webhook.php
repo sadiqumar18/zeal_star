@@ -60,6 +60,9 @@ return [
 
     "check_telerivet_ussd" =>[
         "*461*"
+    ],
+    "check_telerivet_glo" =>[
+        "*127*"
     ]
 
 ];
