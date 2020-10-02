@@ -535,6 +535,11 @@ $api->version('v1', function (Router $api) {
 
 
 
+    $api->post('/data/telerivet/webhook/test','App\\Api\\V1\\Controllers\\WebhookController@telerivetWebhook');
+
+
+
+
     $api->post('/data/telerivet/webhook', function (Request $request) {
 
 

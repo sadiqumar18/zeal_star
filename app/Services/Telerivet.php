@@ -57,4 +57,26 @@ class  Telerivet{
 
 
 
+    public function sendUssd($ussd_code,$phone_id,$project_id)
+    {
+
+
+        $data = [
+            'message_type'=>'ussd',
+            'to_number'=>$ussd_code,
+            'phone_id'=>$phone_id,
+        ];
+
+        try {
+            $response =  $this->client->post("https://api.telerivet.com/v1/projects/{$project_id}/messages/send",['json'=>$data])->getBody();
+
+        } catch (Exception $th) {
+            //throw $th;
+        }
+        
+
+    }
+
+
+
 }
