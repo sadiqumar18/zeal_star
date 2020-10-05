@@ -29,7 +29,12 @@ class LoginController extends Controller
             $token = Auth::guard()->attempt($credentials);
 
             if(!$token) {
-                throw new AccessDeniedHttpException();
+                return response()
+                ->json([
+                    'status' => 'error',
+                    'message' => 'invalid email/password'
+                ],403);
+                //throw new AccessDeniedHttpException();
             }
 
         } catch (JWTException $e) {
@@ -43,6 +48,7 @@ class LoginController extends Controller
                 'status' => 'ok',
                 'token' => $token,
                 'is_admin'=>true,
+                'user'=> Auth::user()->makeHidden('roles'),
                 'expires_in' => Auth::guard()->factory()->getTTL() * 60
             ]);
 
