@@ -58,7 +58,10 @@ class LoginController extends Controller
             ->json([
                 'status' => 'ok',
                 'token' => $token,
+                'is_admin'=>false,
+                'user'=> Auth::user()->makeHidden('roles'),
                 'expires_in' => Auth::guard()->factory()->getTTL() * 60
             ]);
+
     }
 }
