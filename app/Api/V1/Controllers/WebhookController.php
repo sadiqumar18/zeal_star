@@ -307,7 +307,10 @@ class WebhookController extends Controller
     {
         $message = $request->content;
 
+
+
         $message_number = $request ->from_number;
+
 
     
         $check_telerivet_ussd =  collect(config('webhook.check_telerivet_ussd'))->contains(function ($value, $key) use ($message_number) {
@@ -315,6 +318,10 @@ class WebhookController extends Controller
         });
 
         $check_telerivet_glo =  collect(config('webhook.check_telerivet_glo'))->contains(function ($value, $key) use ($message_number) {
+            return (strpos($message_number, $value) !== false);
+        });
+
+        $check_telerivet_mtn_airtime =  collect(config('webhook.check_telerivet_mtn_airtime'))->contains(function ($value, $key) use ($message_number) {
             return (strpos($message_number, $value) !== false);
         });
 
@@ -435,6 +442,33 @@ class WebhookController extends Controller
                 break;
 
 
+                case 'MTN Topit':
+
+                   
+
+                    $number = explode('To:', $message);
+    
+                   
+
+                    $number = "0" . substr($number[1], 4, 12);
+
+                  
+    
+                    $transaction = AirtimeTransaction::where('status','processing')->whereNumber($number)->orderBy('id', 'DESC')->first();
+    
+                  
+    
+                    if ($transaction) {
+                        $this->updateAirtimeAndSendWebhook($transaction, $message);
+                    }
+
+                    return response()->json(['status' => 'success']);
+    
+    
+                    break;
+    
+
+
             //other networks
             
             default:
@@ -490,6 +524,28 @@ class WebhookController extends Controller
     
                 return response()->json(['status' => 'success']);
     
+            }
+
+            if ($check_telerivet_mtn_airtime) {
+
+                if (!$check_successful_case) {
+                    return response()->json(['status' => 'success']);
+                }
+
+                $number =  explode('*',$message_number)[5];
+
+                $transaction = AirtimeTransaction::whereNumber($number)->where('network','MTN')->whereStatus('processing')->first();
+
+                if ($transaction) {
+                    $message =  $message = explode('.', $message);
+
+                    $message = $message[0]."".$message[4];
+
+                    $this->updateAirtimeAndSendWebhook($transaction, $message);
+                }
+
+                return response()->json(['status' => 'success']);
+               
             }
                
                
