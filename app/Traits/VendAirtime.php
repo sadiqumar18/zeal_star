@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\DataProduct;
 use App\Services\Telehost;
+use App\Services\Telerivet;
 use Illuminate\Support\Str;
 
 trait VendAirtime
@@ -15,8 +16,9 @@ trait VendAirtime
     {
 
 
+        $telerivet = new Telerivet;
 
-        $telehost = new Telehost;
+        //$telehost = new Telehost;
 
         $network = $transaction->network;
         $number = $transaction->number;
@@ -34,24 +36,27 @@ trait VendAirtime
                 $ussd_code = "*456*1*2*{$amount}*{$number}*1*3539#";
 
 
+                $telerivet->sendUssd($ussd_code,'PNf8d8e0431f87f4e4','PJ13abe76a22dceea6');
+               // return $telehost->sendUssd('123abc', $ussd_code, $referrence);
 
-                return $telehost->sendUssd('123abc', $ussd_code, $referrence);
+
 
                 break;
             case 'AIRTEL':
 
                 $ussd_code = "*605*2*1*{$number}*{$amount}*8084#";
 
-                $ussd_params = $this->getUssd($ussd_code);
+                // $ussd_params = $this->getUssd($ussd_code);
 
-                $params = $this->getParams($ussd_params, $number, $amount);
+                // $params = $this->getParams($ussd_params, $number, $amount);
 
 
 
-                return  $telehost->sendUssd('abc123', $ussd_code, $referrence);
+                // return  $telehost->sendUssd('abc123', $ussd_code, $referrence);
 
                 // $telehost->sendMultipleUssd('0j9scw', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
 
+                $telerivet->sendUssd($ussd_code,'PNdc88084962137beb','PJ13abe76a22dceea6');
 
                 break;
 

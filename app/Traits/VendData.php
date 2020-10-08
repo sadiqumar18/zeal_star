@@ -12,7 +12,7 @@ trait VendData {
  
     public function vend($transaction,  $retry = null) {
 
-        $telehost = new Telehost;
+        //$telehost = new Telehost;
         $telerivet = new Telerivet;
 
 

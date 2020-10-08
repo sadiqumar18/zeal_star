@@ -63,6 +63,10 @@ return [
     ],
     "check_telerivet_glo" =>[
         "*127*"
+    ],
+
+    "check_telerivet_mtn_airtime" =>[
+        "*456*"
     ]
 
 ];
