@@ -48,6 +48,27 @@ class DataProductController extends Controller
     }
 
 
+    public function allBundles()
+    {
+        $bundles = DataProduct::orderBy('network')->get();
+
+        $user_package = auth()->user()->package;
+
+        $bundles = $bundles->map(function ($bundle) use ($user_package) {
+            return   [
+                'network' => $bundle['network'],
+                'validity' => $bundle['validity'],
+                'bundle' => $bundle['bundle'],
+                'price' => $bundle[$user_package]
+            ];
+        });
+
+
+
+        return response()->json(['status' => 'success', 'data' => $bundles]);
+    }
+
+
 
 
 
