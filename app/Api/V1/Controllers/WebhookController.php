@@ -375,17 +375,21 @@ class WebhookController extends Controller
 
                 $exploded_message = explode(' ', $message);
 
+               
+
                 $number = $exploded_message[8];
 
                 $transaction = DataTransaction::whereNumber($number)->where('status', 'processing')->where('network', 'AIRTEL')->orderBy('id', 'DESC')->first();
+         
+             
 
-
-               /* if (is_null($transaction)) {
+                if (is_null($transaction)) {
 
                     $airtime_transaction = AirtimeTransaction::whereNumber($number)->where('network', 'AIRTEL')->orderBy('id', 'DESC')->first();
-
+                   
                     $this->updateAirtimeAndSendWebhook($airtime_transaction, $message);
-                }*/
+                    
+                }
 
                 if ($transaction) {
                     $this->updateDataAndSendWebhook($transaction, $message);
