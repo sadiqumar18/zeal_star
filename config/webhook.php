@@ -67,6 +67,10 @@ return [
 
     "check_telerivet_mtn_airtime" =>[
         "*456*"
+    ],
+
+    "check_telerivet_airtel_data"=>[
+        "*141*"
     ]
 
 ];

@@ -311,6 +311,8 @@ class WebhookController extends Controller
 
         $message_number = $request ->from_number;
 
+        
+
 
     
         $check_telerivet_ussd =  collect(config('webhook.check_telerivet_ussd'))->contains(function ($value, $key) use ($message_number) {
@@ -329,6 +331,15 @@ class WebhookController extends Controller
         $check_successful_case = collect(config('webhook.success_clause'))->contains(function ($value, $key) use ($message) {
             return (strpos($message, $value) !== false);
         });
+
+
+        $check_telerivet_airtel_data = collect(config('webhook.check_telerivet_airtel_data'))->contains(function($value, $key) use ($message_number)
+        {
+            return (strpos($message_number, $value) !== false);
+        });
+
+
+    
 
 
        
@@ -550,6 +561,27 @@ class WebhookController extends Controller
 
                 return response()->json(['status' => 'success']);
                
+            }
+
+            if ($check_telerivet_airtel_data) {
+
+                if (!$check_successful_case) {
+                    return response()->json(['status' => 'success']);
+                }
+
+                $number =  explode('*',$message_number)[7];
+
+                $transaction = DataTransaction::whereNumber($number)->where('network','AIRTEL')->whereStatus('processing')->first();
+
+
+                if ($transaction) {
+
+                    $this->updateDataAndSendWebhook($transaction, $message);
+                }
+
+                return response()->json(['status' => 'success']);
+                
+
             }
                
                
