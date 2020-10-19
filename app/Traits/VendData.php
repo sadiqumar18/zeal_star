@@ -176,8 +176,10 @@ trait VendData
                     case 'telehost':
 
                         $ussd_string = "*605#";
+                        
+                         $response = $telehost->sendUssd('abc123', $code, $referrence);
 
-                        $response = $telehost->sendMultipleUssd('abc123', $ussd_string, collect($params->toArray()), '1', $referrence);
+                        //$response = $telehost->sendMultipleUssd('abc123', $ussd_string, collect($params->toArray()), '1', $referrence);
 
                         break;
                 }
