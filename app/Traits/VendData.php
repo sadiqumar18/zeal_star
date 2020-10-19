@@ -18,7 +18,7 @@ trait VendData
         $telerivet = new Telerivet;
         $settings = Setting::first();
 
-       
+
         $bundle = $transaction->bundle;
         $network = $transaction->network;
         $number = $transaction->number;
@@ -57,11 +57,11 @@ trait VendData
 
                 switch ($settings->mtn_data_route) {
 
-                    
+
 
                     case 'telerivet':
 
-                     
+
 
                         $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
 
@@ -93,15 +93,15 @@ trait VendData
 
                             // $telehost->sendMessage('123abc', $code, '131', $referrence);
 
-                            // if($bundle == 'MTN-3GB'){
-                            $response =  $telehost->sendMultipleUssd('123abc', $ussd_string, collect($conver_to_array), '1', $referrence);
-                            //}else{
+                            if ($bundle == 'MTN-3GB') {
+                                $response =  $telehost->sendMultipleUssd('123abc', $ussd_string, collect($conver_to_array), '1', $referrence);
+                            } else {
 
-                            //$code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
+                                $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
 
 
-                            //$response = $telehost->sendUssd($route, $code, $referrence);
-
+                                $response = $telehost->sendUssd('123abc', $code, $referrence);
+                            }
                         }
 
                         break;
@@ -150,7 +150,7 @@ trait VendData
                 switch ($settings->glo_data_route) {
 
                     case 'telerivet':
-                       
+
                         $response = $telerivet->sendUssd($code, 'PNecd52f098894635e', 'PJ13abe76a22dceea6');
                         break;
                     case 'telehost':
