@@ -18,7 +18,7 @@ trait VendAirtime
 
         $telerivet = new Telerivet;
 
-        //$telehost = new Telehost;
+        $telehost = new Telehost;
 
         $network = $transaction->network;
         $number = $transaction->number;
