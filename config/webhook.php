@@ -26,8 +26,8 @@ return [
         "You don't have sufficient data to share.",
         "SORRY!Insufficient credit balance",
         "Sorry, your request may not respond in time. Please try again later.",
-        "Oops, activation of 40GB Monthly Plan plan was not successful",
-        "Oops, activation of SHARE"   
+        "Oops, activation of 40GB Monthly Plan plan was not successful"
+        //"Oops, activation of SHARE"   
     ],
     
     "retry_clause" => [
@@ -49,7 +49,8 @@ return [
         "successful",
         "under process",
         "topped up",
-        "Oops, activation of 40GB Monthly Plan plan was not successful"
+        "Oops, activation of 40GB Monthly Plan plan was not successful",
+        "Oops, activation of SHARE" 
     ],
     "change_pin_clause"=>[
         "your security key is"
