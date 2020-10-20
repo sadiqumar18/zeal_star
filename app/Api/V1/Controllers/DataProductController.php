@@ -130,7 +130,7 @@ class DataProductController extends Controller
             "price" => $dataPrice,
             "bundle" => $bundle,
             "megabytes"=> $dataBundle->megabytes,
-            "status"=>($network == "AIRTEL")?"successful":"processing",
+            "status"=>"processing",
            
         ]));
         

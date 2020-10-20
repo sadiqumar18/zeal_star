@@ -8,7 +8,8 @@ return [
 
     "reverse_clause" => [
         "You are not sending to valid MTN number.",
-        "Sorry, you are not gifting to a valid Globacom user."
+        "Sorry, you are not gifting to a valid Globacom user.",
+        "USSD string *312*500_gift was not recognized."
     ],
 
     "ignore_clause" => [
