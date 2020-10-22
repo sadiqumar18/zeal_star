@@ -46,15 +46,15 @@ trait VendAirtime
 
                 $ussd_code = "*605*2*1*{$number}*{$amount}*8084#";
 
-                // $ussd_params = $this->getUssd($ussd_code);
+                 $ussd_params = $this->getUssd($ussd_code);
 
-                 //$params = $this->getParams($ussd_params, $number, $amount);
+                 $params = $this->getParams($ussd_params, $number, $amount);
 
 
 
-                 return  $telehost->sendUssd('abc123', $ussd_code, $referrence);
+                // return  $telehost->sendUssd('abc123', $ussd_code, $referrence);
 
-                // $telehost->sendMultipleUssd('0j9scw', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
+                 $telehost->sendMultipleUssd('abc123', "*{$ussd_params->get(0)}#", $params, 1, $referrence);
 
                 //$telerivet->sendUssd($ussd_code,'PNdc88084962137beb','PJ13abe76a22dceea6');
 
