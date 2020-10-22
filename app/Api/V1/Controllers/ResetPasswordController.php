@@ -20,6 +20,8 @@ class ResetPasswordController extends Controller
             }
         );
 
+        
+
         if($response !== Password::PASSWORD_RESET) {
             throw new HttpException(500);
         }
