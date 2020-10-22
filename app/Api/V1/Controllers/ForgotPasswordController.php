@@ -23,11 +23,15 @@ class ForgotPasswordController extends Controller
         $sendingResponse = $broker->sendResetLink($request->only('email'));
 
         if($sendingResponse !== Password::RESET_LINK_SENT) {
-            throw new HttpException(500);
+            return response()->json([
+                'status' => 'failed',
+                "message" => "unable to send reset link. Please contact cutomer care!"
+            ], 400);
         }
 
         return response()->json([
-            'status' => 'ok'
+            'status' => 'ok',
+            "message" => "check your email for reset link"
         ], 200);
     }
 
