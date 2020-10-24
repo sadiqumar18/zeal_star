@@ -43,7 +43,15 @@ trait VendData
 
         $code = str_replace('{{number}}', $number, $dataBundle->code);
 
+        $check_divisible_by_2 = $transaction->id % 2;
 
+
+        $route = ($retry) ? "0ugh74" :  "123abc";
+
+
+       
+
+       
 
         $response = null;
 
@@ -67,9 +75,9 @@ trait VendData
 
                         if ($bundle == 'MTN-3GB') {
 
-
-
                             $telerivet->sendMessage($code, 131);
+
+
                         } else {
 
                             $telerivet->sendUssd($code, 'PNf8d8e0431f87f4e4', 'PJ13abe76a22dceea6');
@@ -83,7 +91,7 @@ trait VendData
 
                             $ussd_string = "*{$ussd->get(0)}*{$params->get(0)}#";
 
-                            $response =  $telehost->sendMultipleUssd('123abc', $ussd_string, $params->except(0), '1', $referrence);
+                            $response =  $telehost->sendMultipleUssd($route, $ussd_string, $params->except(0), '1', $referrence);
                         } else {
 
                             $ussd_string = "*461*3#";
@@ -94,13 +102,13 @@ trait VendData
                             // $telehost->sendMessage('123abc', $code, '131', $referrence);
 
                             if ($bundle == 'MTN-3GB') {
-                                $response =  $telehost->sendMultipleUssd('123abc', $ussd_string, collect($conver_to_array), '1', $referrence);
+                                $response =  $telehost->sendMultipleUssd($route, $ussd_string, collect($conver_to_array), '1', $referrence);
                             } else {
 
                                 $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
 
 
-                                $response = $telehost->sendUssd('123abc', $code, $referrence);
+                                $response = $telehost->sendUssd($route, $code, $referrence);
                             }
                         }
 
