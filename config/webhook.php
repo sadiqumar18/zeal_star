@@ -27,7 +27,10 @@ return [
         "You don't have sufficient data to share.",
         "SORRY!Insufficient credit balance",
         "Sorry, your request may not respond in time. Please try again later.",
-        "Oops, activation of 40GB Monthly Plan plan was not successful"
+        "Oops, activation of 40GB Monthly Plan plan was not successful",
+        "Dear Customer, you cannot send a data plan because you have insufficient balance. Please recharge Airtime and retry.",
+        "SORRY ! An error has occurred. Please try again later.",
+        "Dear Customer, Your account has been locked.Please reset your pin using MyMTN APP or Web. Thank you."
         //"Oops, activation of SHARE"   
     ],
     
@@ -43,7 +46,8 @@ return [
         "SORRY!Insufficient credit balance for the plan you want to buy.Please recharge your line or you can simply Borrow Data. To Borrow Data now, just dial *321#",
         "You have entered invalid PIN.",
         "Sorry for the inconvenience Please try after some time",
-        "Sorry Operation failed , Please try again later"
+        "Sorry Operation failed , Please try again later",
+        "You don't have an active data share plan."
     ],
     "success_clause"=>[
         "successfully",

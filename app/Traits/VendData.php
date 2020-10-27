@@ -46,7 +46,11 @@ trait VendData
         $check_divisible_by_2 = $transaction->id % 2;
 
 
-        $route = ($retry) ? "0ugh74" :  "123abc";
+
+
+        $route = ($check_divisible_by_2 == 0) ? "0ugh74" :  "123abc";
+
+        $pin = ($check_divisible_by_2 == 0) ? "7821" : Setting::find(1)->sme_data_pin;
 
 
        
@@ -102,10 +106,15 @@ trait VendData
                             // $telehost->sendMessage('123abc', $code, '131', $referrence);
 
                             if ($bundle == 'MTN-3GB') {
-                                $response =  $telehost->sendMultipleUssd($route, $ussd_string, collect($conver_to_array), '1', $referrence);
-                            } else {
+                                $response =  $telehost->sendMultipleUssd("123abc", $ussd_string, collect($conver_to_array), '1', $referrence);
+                            } else if($bundle == 'MTN-500MB'){
 
                                 $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
+
+
+                                $response = $telehost->sendUssd("123abc", $code, $referrence);
+                            }else {
+                                $code = str_replace('{{pin}}', $pin, $code);
 
 
                                 $response = $telehost->sendUssd($route, $code, $referrence);
