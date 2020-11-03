@@ -48,9 +48,9 @@ trait VendData
 
 
 
-        $route = "123abc"; //($check_divisible_by_2 == 0) ? "0ugh74" :  "123abc";
+        $route = ($check_divisible_by_2 == 0) ? "0ugh74" :  "123abc";
 
-        $pin = Setting::find(1)->sme_data_pin; //($check_divisible_by_2 == 0) ? "7821" : Setting::find(1)->sme_data_pin;
+        $pin = ($check_divisible_by_2 == 0) ? "7821" : Setting::find(1)->sme_data_pin;
 
 
        
