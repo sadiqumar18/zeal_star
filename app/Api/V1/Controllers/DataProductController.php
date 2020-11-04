@@ -97,9 +97,9 @@ class DataProductController extends Controller
         $dataPrice = $this->getDataPrice($user, $dataBundle);
 
 
-      /*  if ($network != 'MTN') {
+       if ($network == 'GLO') {
             return response()->json(['status' => 'failed', 'message' => 'Service Unavailable!!'], 400);
-        }*/
+        }
         
 
         if ($dataBundle->is_suspended == 1 ) {

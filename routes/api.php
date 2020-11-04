@@ -195,11 +195,9 @@ $api->version('v1', function (Router $api) {
 
     $api->get('/data/reversemany', function (Request $request, DataTransactionController $dataController) {
 
-        $transactions =  DataTransaction::where('network', 'AIRTEL')->where('status', 'processing')->get();
+        $transactions =  DataTransaction::where('network', $request->network)->where('status', 'processing')->get();
 
         $transactions->map(function ($d) use ($dataController) {
-
-
 
             $dataController->reverseTransaction($d->referrence);
         });
