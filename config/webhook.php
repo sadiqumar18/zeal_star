@@ -10,7 +10,8 @@ return [
         "You are not sending to valid MTN number.",
         "Sorry, you are not gifting to a valid Globacom user.",
         "USSD string *312*500_gift was not recognized.",
-        "Service Temporarily unavailable."
+        "Service Temporarily unavailable.",
+        "USSD string *141*11*8_gift was not recognized."
     ],
 
     "ignore_clause" => [
@@ -32,7 +33,8 @@ return [
         "SORRY ! An error has occurred. Please try again later.",
         "Dear Customer, Your account has been locked.Please reset your pin using MyMTN APP or Web. Thank you.",
         "USSD string *312*500_gift was not recognized.",
-        "USSD string *141*11*8_gift was not recognized."
+        "USSD string *141*11*8_gift was not recognized.",
+        "Yello, invalid input entered . Please check and try again."
 
         //"Oops, activation of SHARE"   
     ],
@@ -50,7 +52,9 @@ return [
         "You have entered invalid PIN.",
         "Sorry for the inconvenience Please try after some time",
         "Sorry Operation failed , Please try again later",
-        "You don't have an active data share plan."
+        "You don't have an active data share plan.",
+        "You are on SmartCONNECT.Main Bal: N19800.00;Dial 123*1# for Bonus Bal.Dial 315#, Call @ 11k/s; N7 access fee on 1st call of the day applies",
+        "Sorry, the operation failed. Please try again. Thank you for using 9mobile."
     ],
     "success_clause"=>[
         "successfully",
@@ -65,7 +69,8 @@ return [
     ],
     "check_stop_transaction_and_change_pin"=>[
         //"Oops, activation of SHARE",
-        "Yello, invalid input entered . Please check and try again." 
+        //"Yello, invalid input entered . Please check and try again." 
+        "Dear Customer, Your account has been locked.Please reset your pin using MyMTN APP or Web. Thank you."
     ],
 
     "check_telerivet_ussd" =>[

@@ -48,7 +48,7 @@ trait VendData
 
 
 
-        $route =  ($check_divisible_by_2 == 0) ? "0ugh74" :  "123abc";
+        $route =   ($check_divisible_by_2 == 0) ? "0ugh74" :  "123abc";
 
         $pin = ($check_divisible_by_2 == 0) ? "7821" : Setting::find(1)->sme_data_pin;
 
@@ -111,9 +111,9 @@ trait VendData
                                 $code = str_replace('{{pin}}', Setting::find(1)->sme_data_pin, $code);
                                 $response = $telehost->sendUssd("123abc", $code, $referrence);
 
-                            }elseif ($bundle == 'MTN-2GB') {
+                            }else if ($bundle == 'MTN-2GB') {
 
-                                $code = str_replace('{{pin}}', "7821", $code);
+                                $code = str_replace('{{pin}}',"7821" , $code);
                                 $response = $telehost->sendUssd("0ugh74", $code, $referrence);
 
                             } else {
