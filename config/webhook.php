@@ -30,7 +30,10 @@ return [
         "Oops, activation of 40GB Monthly Plan plan was not successful",
         "Dear Customer, you cannot send a data plan because you have insufficient balance. Please recharge Airtime and retry.",
         "SORRY ! An error has occurred. Please try again later.",
-        "Dear Customer, Your account has been locked.Please reset your pin using MyMTN APP or Web. Thank you."
+        "Dear Customer, Your account has been locked.Please reset your pin using MyMTN APP or Web. Thank you.",
+        "USSD string *312*500_gift was not recognized.",
+        "USSD string *141*11*8_gift was not recognized."
+
         //"Oops, activation of SHARE"   
     ],
     
