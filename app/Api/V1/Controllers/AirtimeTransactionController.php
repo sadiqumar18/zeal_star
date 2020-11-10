@@ -34,7 +34,7 @@ class AirtimeTransactionController extends Controller
             'network' => 'required|exists:airtime_products',
             'number' => 'required|regex:/(0)[0-9]{10}/|size:11',
             'amount' => 'required|numeric|regex:/[0-9]/|min:50|max:5000',
-            'referrence' => 'required|unique:data_transactions'
+            'referrence' => 'required|unique:airtime_transactions'
         ]);
 
 
@@ -151,6 +151,13 @@ class AirtimeTransactionController extends Controller
         return response()->json($transactions, 200);
     }
 
+
+    public function list()
+    {
+       $network = AirtimeProduct::all();
+
+       return response()->json(["status" => "success", "data" => $network], 200);
+    }
 
 
 

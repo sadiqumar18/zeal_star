@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\DataProduct;
+
 use App\Services\Telehost;
 use App\Services\Telerivet;
 use Illuminate\Support\Str;
