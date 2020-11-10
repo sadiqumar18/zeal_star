@@ -19,7 +19,6 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('number')->unique();
             $table->string('password');
-            $table->string('pin');
             $table->decimal('balance')->default(0);
             $table->string('webhook_url')->nullable();
             $table->string('api_key')->nullable();
