@@ -123,7 +123,7 @@ $api->version('v1', function (Router $api) {
 
             $api->get('/reverse/{referrence}', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@reverseTransaction');
             $api->get('/retry/{referrence}', 'App\\Api\\V1\\Controllers\\AirtimeTransactionController@retry');
-         
+            $api->get('/transactions','App\\Api\\V1\\Controllers\\AirtimeTransactionController@adminTransactions');
 
         });
 
