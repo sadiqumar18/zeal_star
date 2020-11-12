@@ -5,7 +5,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.3.23",
+        "php": ">=7.4.3",
         "barryvdh/laravel-cors": "0.11.*",
         "dingo/api": "^2",
         "doctrine/dbal": "^2.10",
