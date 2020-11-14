@@ -123,7 +123,7 @@
                 </div>
                 <div class="contact-short-info">
                     <h3 class="title txt-green">About Us</h3>
-                    <p class="txt-blue">ZealVend provides instant data for all networks for direct purchase and reseller. For reseller: register and contact us via WhatsApp</p>
+                    <p class="txt-blue">Zealstar provides instant airtime for all networks for direct purchase and reseller. For reseller: register and contact us via WhatsApp</p>
                 </div>
 
                 <div class="contact-info">
@@ -142,13 +142,13 @@
 						<p class="txt-blue">ZealVend provides instant data for all networks for direct purchase and reseller. For reseller: register and contact us via WhatsApp</p>
 					</div> -->
 
-                    <h3 class="address-name txt-green">Colab 4, Barnawa Close,</h3>
-                    <p class="address txt-blue">Barnawa - Kaduna</p>
+                    <h3 class="address-name txt-green"></h3>
+                    <p class="address txt-blue"></p>
                 </div>
 
                 <div class="contact-address">
                     <div class="contact-item">
-                        <i class="fa fa-map-marker txt-blue"></i> Barnawa
+                        <i class="fa fa-map-marker txt-blue"></i> 
                     </div>
 
                     <div class="contact-item">
@@ -156,15 +156,15 @@
                     </div>
 
                     <div class="contact-item">
-                        <i class="fa fa-phone txt-blue"></i> 07034070927 (WhatsApp Only)
+                        <i class="fa fa-phone txt-blue"></i>  (WhatsApp Only)
                     </div>
 
                     <div class="contact-item">
-                        <i class="fa fa-globe txt-blue"></i> https://zealvend.com
+                        <i class="fa fa-globe txt-blue"></i> https://zealstar.biz
                     </div>
 
                     <div class="contact-item">
-                        <i class="fa fa-envelope txt-blue"></i> data@zealvend.com
+                        <i class="fa fa-envelope txt-blue"></i> help@zealstar.com
                     </div>
                 </div>
 

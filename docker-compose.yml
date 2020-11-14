@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zael_star
+    image: zeal_star
     container_name: app
     restart: unless-stopped
     tty: true
@@ -27,8 +27,8 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "8080:80"
-    #   - "443:443"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "3307:3306"
+      - "3306:3306"
     environment:
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: your_mysql_root_password

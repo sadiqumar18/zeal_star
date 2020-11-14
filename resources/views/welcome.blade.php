@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel='icon' href='landing/images/favicon.ico' type='image/x-icon' />
-	<title>ZealVend</title><!-- Google font file. If you want you can change. -->
+	<title>ZealStar</title><!-- Google font file. If you want you can change. -->
 	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
 	<!-- Fontawesome font file css -->
 	<link rel="stylesheet" type="text/css" href="landing/css/css-font-awesome.min.css">
@@ -23,7 +23,7 @@
 			<!-- Header area start -->
 			<header>
 			<a class="go-back-link" href="javascript:history.html"></a>
-				<h1 class="page-title">ZealVend</h1>
+				<h1 class="page-title">Zeal_star</h1>
 				<!-- <div class="navi-menu-button">
 					<em></em>
 					<em></em>
@@ -32,12 +32,12 @@
 			</header><!-- Header area end --><!-- Page content start --><main><section class="container"><div class="animated-text vertical-center zero-opacity">
 						<h1>
 							<span class="text1 block txt-light" data-transation="fadeInDown" data-start-time="0"><img src="landing/images/logo.png" width="160"></span>
-							<span class="text4 block txt-extra-bold txt-green" data-transation="zoomInDown" data-start-time="500">Get Data</span>
+							<span class="text4 block txt-extra-bold txt-green" data-transation="zoomInDown" data-start-time="500">Get Airtime</span>
 							<span class="text5 block txt-extra-bold txt-green" data-transation="zoomInDown" data-start-time="600">AT AFFORDABLE</span>
 							<span class="text6 block txt-extra-bold txt-green" data-transation="zoomInDown" data-start-time="700">PRICES</span>
 							<span class="text7 block txt-light" data-transation="fadeInUp" data-start-time="1000">Instant crediting</span>
 							<br><div class="text-center" data-transation="tada" data-start-time="2000">
-							<a href="https://www.portal.zealvend.com/" class="button circle blue">Get Started</a>
+							<a href="https://www.portal.zealstar.biz/" class="button circle blue">Get Started</a>
 							<a href="{{url('contact')}}" class="button circle blue">Contact Us</a>
 							</div>
 						</h1>
