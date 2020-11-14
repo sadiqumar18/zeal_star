@@ -603,6 +603,29 @@ class WebhookController extends Controller
 
 
 
+    public function zealvendWebhook(Request $request)
+    {
+
+        if ($request->data["status"] != "successful") {
+            return response()->json(['status' => 'success']);
+        }
+
+
+        $referrence = $request->data["referrence"];
+        $message = $request->message;
+
+        $transaction = AirtimeTransaction::whereReferrence($referrence)->whereStatus('processing')->first();
+
+
+        if ($transaction) {
+            $this->updateAirtimeAndSendWebhook($transaction,$message);
+        }
+
+
+    }
+
+
+
 
     private function ussdTransaction($ref_code, $message)
     {
@@ -652,7 +675,7 @@ class WebhookController extends Controller
         $user = $transaction->user;
 
         if (!is_null($user->webhook_url) or !empty($user->webhook_url)) {
-            AirtimeWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
+            //AirtimeWebhook::dispatch($user->webhook_url, $transaction->id, $message)->delay(now()->addSeconds(5));
         }
     }
 

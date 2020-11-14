@@ -72,6 +72,18 @@ class AirtimeTransactionController extends Controller
             "status" => 'processing'
         ]));
 
+
+        $response = $this->vendAirtime($transaction);
+
+
+        if ($response['status'] != 'success') {
+
+            $transaction->update(['status' => "failed"]);
+            return response()->json(['status' => 'failed', 'message' => "Unable to complete transaction"], 400);
+ 
+        }
+
+
         $user->wallet()->save(new Wallet([
             'referrence' => $referrence,
             'amount' => $discount,
@@ -82,7 +94,7 @@ class AirtimeTransactionController extends Controller
 
         $user->update(['balance' => $new_balance]);
 
-        $this->vendAirtime($transaction);
+       
 
 
         return response()->json(['status' => 'success', 'data' => $transaction], 201);

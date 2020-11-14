@@ -210,6 +210,9 @@ $api->version('v1', function (Router $api) {
 
     $api->post('/data/telehost/webhook', 'App\\Api\\V1\\Controllers\\WebhookController@telehostWebhook');
 
+    $api->post('/airtime/zealvend/webhook', 'App\\Api\\V1\\Controllers\\WebhookController@zealvendWebhook');
+
+
 
      /*   //successfully
 
